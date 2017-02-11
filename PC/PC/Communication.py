@@ -1,4 +1,4 @@
-# speed ranging from 0 to 127 for stop to full power Change incoming from Victor Paz! Hello World!
+# speed ranging from 0 to 127 for stop to full power.
 # for Raspberry Pi 3, port = '/dev/serial0' and baudrate = 9600
 import time
 import socket
