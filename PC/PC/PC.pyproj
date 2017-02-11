@@ -25,7 +25,6 @@
     <Compile Include="Communication.py" />
     <Compile Include="Parser.py" />
     <Compile Include="PC.py" />
-    <Compile Include="RMC_PC.py" />
     <Compile Include="Timer.py" />
     <Compile Include="Xbox360Controller.py" />
     <Compile Include="Xbox360Testing.py" />

@@ -1,79 +1,75 @@
+#Important notes:
+#   Methods put on top, method callers put in bottom
+#   Running under Python 3
+#2/2/2017
+#   Added Parser object: construct and parse commands
+#   Added 'run' function: run commands sent from PC
 
-# speed ranging from 0 to 127 for stop to full power
-# for Raspberry Pi 3, port = '/dev/serial0' and baudrate = 9600
-import math
-import serial
-class Controller(object):
-    def __init__(self, port, baudRate, address):
-        self.port = serial.Serial(port, baudRate, timeout=0)
-        self.address = address
-        self.leftMotor = motor(self.port, address, 1)
-        self.rightMotor = motor(self.port, address, 2)
+from sabretooth import *
+from Parser import *
+import time
+import socket
+import sys
+import _thread
 
-    def forward(self, speed):
-        self.leftMotor.drive('forward', speed)
-        self.rightMotor.drive('forward', speed)
-        
-    def backward(self, speed):
-        self.leftMotor.drive('backward', speed)
-        self.rightMotor.drive('backward', speed)
+serialPort = '/dev/serial0'
+baudRate = 9600
+motors=130
+twoActs=131
+oneActs=132
+wheels = Wheels(serialPort, baudRate, motors)
+arms = Wheels(serialPort, baudRate, twoActs)
+hands = Wheels(serialPort, baudRate, oneActs)
+p=Parser("(,)|")# Command analyzer
 
-    def stop(self):
-        self.leftMotor.drive('forward', 0)
-        self.rightMotor.drive('forward', 0)
-
-    def drive(self,leftSpeed,rightSpeed):#speed ranging from -127 to 127 this this particular function
-        if leftSpeed<0:
-            self.leftMotor.drive('backward', int(math.fabs(leftSpeed)))
-        else:
-            self.leftMotor.drive('forward', int(math.fabs(leftSpeed)))
-        if rightSpeed<0:
-            self.rightMotor.drive('backward',int( math.fabs(rightSpeed)))
-        else:
-            self.rightMotor.drive('forward', int(math.fabs(rightSpeed)))
-#Start Wheels
-class Wheels(Controller):
-    'Basic controls for the wheels'
-    def __init__(self, port, baudRate, address):
-        self.port = serial.Serial(port, baudRate, timeout=0)
-        self.address = address
-        self.leftMotor = motor(self.port, address, 1)
-        self.rightMotor = motor(self.port, address, 2)
-        
-    def left(self,speed):
-        self.leftMotor.drive('backward', speed)
-        self.rightMotor.drive('forward', speed)
-        
-    def right(self,speed):
-        self.leftMotor.drive('forward', speed)
-        self.rightMotor.drive('backward', speed)
-#End Wheels
-        
-#Start LinearActuator
-class LinearActuator(Controller):
-    'Basic controls for the wheels'
-    def __init__(self, port, baudRate, address):
-        self.port = serial.Serial(port, baudRate, timeout=0)
-        self.address = address
-        self.leftMotor = motor(self.port, address, 1)
-        self.rightMotor = motor(self.port, address, 2)
-#End LinearActuator
+def main():
+    _thread.start_new_thread(communication,(12345,))
+def getLocalIP():
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    try:
+        # doesn't even have to be reachable
+        s.connect(('10.255.255.255', 0))
+        IP = s.getsockname()[0]
+    except:
+        IP = '127.0.0.1'
+    finally:
+        s.close()
+    return IP
+def communication(port):
+    host =getLocalIP()
+    s = socket.socket()
+    s.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1)# add this to reuse the port
+    s.bind((host,port))
+    while True:
+        try:
+            print (str(host)+" is listening for a new connection at port "+str(port))
+            s.listen(1)
+            c, addr = s.accept()
+            print("Connection from: "+ str(addr))
+            while True:
+                data = c.recv(1024)
+                if not data: break
+                message=str(data)
+                commands=p.split(message)#split a big string of commands into small strings of commands
+                print (commands)
+                for command in commands:
+                    run(p.parse(command))#Run a parsed command
+                #print(message)
+        except:
+            print("Socket comunication failed.")
+            wheels.stop()
+            c.close()
+def run(input):
+    if input[0]=="wheels":
+        wheels.drive(input[1],input[2])
+    elif input[0]=="left":
+        wheels.left(input[1])
+    elif input[0]=="arms":
+        arms.drive(input[1],input[1])
+    elif input[0]=="hands":
+        hands.drive(input[1],input[1])
+    else:pass
     
-class motor(object):
-    #motorNum is 1 or 2, depending on which motor you wish to control
-    def __init__(self, serial, controllerAddress, motorNum):
-        self.port = serial
-        self.address = controllerAddress
-        self.motorNum = motorNum
-        if motorNum == 1:
-            self.commands = {'forward': 0, 'backward': 1}
-        elif motorNum == 2:
-            self.commands = {'forward': 4, 'backward': 5}
+if __name__ == "__main__":
+        main()
 
-    def drive(self, direction, speed):
-        if speed >127: speed=127
-        if speed <0: speed =0
-        self.port.write(chr(self.address))
-        self.port.write(chr(self.commands[direction]))
-        self.port.write(chr((speed)))
-        self.port.write(chr(int(bin((self.address + self.commands[direction] + speed) & 0b01111111), 2)))
