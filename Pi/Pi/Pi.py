@@ -1,4 +1,8 @@
 #Important notes:
+#   Autorun:
+#       Rename this file into main.py
+#       put it under /home/pi/RMC along with its support files (Ex: Parser.py)
+#       Setup auto start using the guide on programming notes
 #   Methods put on top, method callers put in bottom
 #   Running under Python 3
 #2/2/2017
