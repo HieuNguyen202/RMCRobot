@@ -78,7 +78,7 @@ def startListening(pipe):
             while True:
                 data = c.recv(1024)
                 if not data: break
-                message=str(data)
+                message=data.decode("ascii")
                 print(message)
         except:
             print(str(pipe)+" failed, waiting for new a new connection.")
