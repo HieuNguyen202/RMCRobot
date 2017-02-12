@@ -14,7 +14,8 @@ from Parser import *
 import time
 import socket
 import sys
-import _thread
+#if sys.version_info[0]<3: import thread
+#else: import _thread
 
 serialPort = '/dev/serial0'
 baudRate = 9600
@@ -27,7 +28,9 @@ hands = Wheels(serialPort, baudRate, oneActs)
 p=Parser("(,)|")# Command analyzer
 
 def main():
-    _thread.start_new_thread(communication,(12345,))
+    #if sys.version_info[0]<3:thread.start_new_thread(communication,(12345,))
+    #else: _thread.start_new_thread(communication,(12345,))
+    communication(12345)
 def getLocalIP():
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     try:
