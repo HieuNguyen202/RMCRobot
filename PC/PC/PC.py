@@ -187,10 +187,10 @@ def mouseButtonUp(event):
     print ("Mouse button",event.button,"up at",pygame.mouse.get_pos())
 def joyButtonDown(event):
     'A=0, B=1, X=2, Y=3, LB=4, RB=5, BACK=6, START=7, LEFT JOY BUTTON=8, RIGHT JOY BUTTON=9 down'
-    if event.button==0: #A Increase max speed of wheels or arms
+    if event.button==0: #A Lowers the arm
         message= p.construct(("arms",-80,2)) #Construct a drive command to be sent to the Pi.
         send(message)
-    if event.button==3: #Y Increase max speed of wheels or arms
+    if event.button==3: #Y Raises the arm
         message= p.construct(("arms",80,2)) #Construct a drive command to be sent to the Pi.
         send(message)
     if event.button==5: #RB Increase max speed of wheels or arms
@@ -199,7 +199,7 @@ def joyButtonDown(event):
     if event.button==4: #LB decrease max speed of wheel or arms
         if arms.distToOrigin()>wheels.distToOrigin(): arms.slowDown() #if the right joytick if off center more than the left one, change arm speed. Change wheel speed otherwise
         else: wheels.slowDown()
-    if event.button==2: #Increase max speed of wheels or arms
+    if event.button==2: #Increase max speed of wheels or arms (Change later depending on the feel of the robot)
         message= p.construct(("hands",-80,2)) #Construct a drive command to be sent to the Pi.
         send(message)
     if event.button==1: #Increase max speed of wheels or arms
