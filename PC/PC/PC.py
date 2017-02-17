@@ -1,5 +1,5 @@
 #To run this, you would need to install two modules: pyserial and pygame
-#Need to do:
+#Need to do: changed again
 #   Keep detecting Xbox controller until one is detected
 #   Transfer data in a form of binary to reduce data transmission.
 #2/2/2017:
