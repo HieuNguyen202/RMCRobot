@@ -3,13 +3,20 @@
 #       Rename this file into main.py
 #       put it under /home/pi/RMC along with its support files (Ex: Parser.py)
 #       Setup auto start using the guide on programming notes
-#   Methods put on top, method callers put in bottom
-#   Running under Python 3
+#   Must be ran under Python 3
 #2/2/2017
 #   Added Parser object: construct and parse commands
 #   Added 'run' function: run commands sent from PC
+#2/16/2017
+#   Added a new communication protocol: send a 1-byte command, whose value ranges from 0 to 255 to represent different function
+#   Data usage for the new communication protocol: about 30 bytes/sec (could be reduced even more)
+#   Added 'run2' function: to support the new, compressed communication protocol
+#   Added 'sDrive' in sabertooth.py
+#   Rename sabretooth.py to sabertooth.py
+#   Added Ultility.py for small, handy classes
+#   Put Timer class in Utility.py
 
-from sabretooth import *
+from Sabertooth import *
 from Parser import *
 import time
 import socket
@@ -29,7 +36,7 @@ hands = Wheels(serialPort, baudRate, oneActs)
 p=Parser("(,)|")# Command analyzer
 speedScale=Scale(-127,127)
 t=Timer()
-dataLen=0
+dataCount=0
 
 def main():
     #if sys.version_info[0]<3:thread.start_new_thread(communication,(12345,))
@@ -47,37 +54,42 @@ def getLocalIP():
         s.close()
     return IP
 def communication(port):
+    global dataCount
     host =getLocalIP()
     s = socket.socket()
     s.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1)# add this to reuse the port
     s.bind((host,port))
-    #while True:
-    try:
-        print (str(host)+" is listening for a new connection at port "+str(port))
-        s.listen(1)
-        c, addr = s.accept()
-        print("Connection from: "+ str(addr))
-        t.resetTimer()
-        while t.timer()<60:
-            data = c.recv(1024)
-            if not data: break
-            dataLen=dataLen+len(data)
-            for i in range(0,len(data),2):
-                codeInt=bin2int(data[i:i+2])
-                run2(codeInt)
-            #print(data)
-            #run2(bin2int(data))
-            #message=str(data)
-            #commands=p.split(message)#split a big string of commands into small strings of commands
-            #print (commands)
-            #for command in commands:
-            #    run(p.parse(command))#Run a parsed command
-            #print(message)
-        print ("Total number of bytes used in 1 minute: ",data/2)
-    except:
-        print("Socket comunication failed.")
-        wheels.stop()
-        c.close()
+    while True:
+        try:
+            print (str(host)+" is listening for a new connection at port "+str(port))
+            s.listen(1)
+            c, addr = s.accept()
+            print("Connection from: "+ str(addr))
+            t.resetTimer()
+            while True:
+                data = c.recv(1024)
+                if not data: break
+                dataCount=dataCount+len(data)
+                for i in range(0,len(data),2):
+                    codeInt=bin2int(data[i:i+2])
+                    run2(codeInt)
+                #print(data)
+                #run2(bin2int(data))
+                #message=str(data)
+                #commands=p.split(message)#split a big string of commands into small strings of commands
+                #print (commands)
+                #for command in commands:
+                #    run(p.parse(command))#Run a parsed command
+                #print(message)
+                if t.timer()>60:
+                    numBytes=dataCount/2 #1 byte == 2 hex letter
+                    print ("Total number of bytes used in 1 minute: ",numBytes)
+                    t.resetTimer()
+                    dataCount=0
+        except:
+            print("Socket comunication failed.")
+            wheels.stop()
+            c.close()
 def run(input):
     if input[0]=="wheels":
         wheels.drive(input[1],input[2])

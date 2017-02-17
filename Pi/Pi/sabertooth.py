@@ -1,4 +1,3 @@
-
 # speed ranging from 0 to 127 for stop to full power
 # for Raspberry Pi 3, port = '/dev/serial0' and baudrate = 9600
 import math
@@ -70,13 +69,13 @@ class motor(object):
             self.commands = {'forward': 0, 'backward': 1}
         elif motorNum == 2:
             self.commands = {'forward': 4, 'backward': 5}
-    def sDrive(self, speed):# speed range is from -127 to 127
+    def sDrive(self, speed):# Smart drive! It knows negative speed backward, so speed could range is from -127 to 127
         if speed<0:
             self.drive('backward',int(math.fabs(speed)))
         else:
             self.drive('forward',int(math.fabs(speed)))
 
-    def drive(self, direction, speed):#speed range is from 0 to 127
+    def drive(self, direction, speed):#Dumb drive! Has no idea about negative numbers, and often being abused by sDrive(). Speed range is from 0 to 127
         if speed >127: speed=127
         if speed <0: speed =0
         if sys.version_info[0]<3:
