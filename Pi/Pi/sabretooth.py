@@ -3,6 +3,7 @@
 # for Raspberry Pi 3, port = '/dev/serial0' and baudrate = 9600
 import math
 import serial
+import sys
 class Controller(object):
     def __init__(self, port, baudRate, address):
         self.port = serial.Serial(port, baudRate, timeout=0)
@@ -73,7 +74,13 @@ class motor(object):
     def drive(self, direction, speed):
         if speed >127: speed=127
         if speed <0: speed =0
-        self.port.write(chr(self.address))
-        self.port.write(chr(self.commands[direction]))
-        self.port.write(chr((speed)))
-        self.port.write(chr(int(bin((self.address + self.commands[direction] + speed) & 0b01111111), 2)))
+        if sys.version_info[0]<3:
+            self.port.write(chr(self.address))
+            self.port.write(chr(self.commands[direction]))
+            self.port.write(chr(speed))
+            self.port.write(chr(int(bin((self.address + self.commands[direction] + speed) & 0b01111111),2)))
+        else:
+            self.port.write(chr(self.address).encode())
+            self.port.write(chr(self.commands[direction]).encode())
+            self.port.write(chr(speed).encode())
+            self.port.write(chr(int(bin((self.address + self.commands[direction] + speed) & 0b01111111),2)).encode())

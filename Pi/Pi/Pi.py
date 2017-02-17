@@ -1,4 +1,8 @@
 #Important notes:
+#   Autorun:
+#       Rename this file into main.py
+#       put it under /home/pi/RMC along with its support files (Ex: Parser.py)
+#       Setup auto start using the guide on programming notes
 #   Methods put on top, method callers put in bottom
 #   Running under Python 3
 #2/2/2017
@@ -10,7 +14,8 @@ from Parser import *
 import time
 import socket
 import sys
-import _thread
+#if sys.version_info[0]<3: import thread
+#else: import _thread
 
 serialPort = '/dev/serial0'
 baudRate = 9600
@@ -23,7 +28,9 @@ hands = Wheels(serialPort, baudRate, oneActs)
 p=Parser("(,)|")# Command analyzer
 
 def main():
-    _thread.start_new_thread(communication,(12345,))
+    #if sys.version_info[0]<3:thread.start_new_thread(communication,(12345,))
+    #else: _thread.start_new_thread(communication,(12345,))
+    communication(12345)
 def getLocalIP():
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     try:
