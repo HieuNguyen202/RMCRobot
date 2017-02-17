@@ -279,9 +279,11 @@ def quit(event):
 def send(message):
     'receives a message as a String, encodes it to ASCII before sending it to the Pi'
     commandPipe.send(message.encode('ascii'))
+
 def sendBin(number): #number from 0 to 255
     hexString=format(number, '02x')
     message=binascii.hexlify(binascii.unhexlify(hexString))
     commandPipe.send(message)
+
 if __name__ == "__main__":
         main()
