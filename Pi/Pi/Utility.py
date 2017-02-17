@@ -5,7 +5,8 @@ class Scale(object):
 
     def scale(self, input,inMin,inMax):
         return (input - inMin) * (self.max - self.min) / (inMax - inMin) + self.min
-
+    def unScale(self, input,inMin,inMax):
+        return (input - self.min) * (inMax - inMin) / (self.max - self.min) + inMin
     def setMin(min):
         self.min=min
     def setMax(max):
