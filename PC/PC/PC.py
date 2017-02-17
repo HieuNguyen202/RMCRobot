@@ -9,7 +9,7 @@
 #   Added Parser class: construct and parse commands
 #   Added axis 2 (on the top) control
 #   We can alternatively use the right stick as the manual control for the actuator (create a new joystick object, have axis 3 and 4 update XY of the new stick then send an command for the actuators)
-
+import binascii
 import socket
 import time
 import _thread
@@ -51,6 +51,7 @@ triggerAbs=0 # Moving forward and backward using top triggers has higher priorit
 leftStickDist=0 # current distance to the center of the left joystick
 rightStickDist=0 # current distance to the center of the right joystick
 AXIS_2_ZERO_EQUIVALENT=0.1 # if top triggers' value is less than this number, it's considered zero.
+JOYSTICK_ZERO_EQUIVALENT=AXIS_2_ZERO_EQUIVALENT
 speedScale=Scale(-127,127)
 p=Parser("(,)|") #This object is to construct and parse commands. Ex: (drive, 127,2,127,2,0,0)|
 def test():
@@ -203,10 +204,10 @@ def joyButtonDown(event):
         #message= p.construct(("arms",80,2)) #Construct a drive command to be sent to the Pi.
         #send(message)
     if event.button==5: #RB Increase max speed of wheels or arms
-        if arms.distToOrigin()>wheels.distToOrigin(): arms.speedUp() #if the right joytick if off center more than the left one, change arm speed. Change wheel speed otherwise
+        if arms.distToOrigin()>JOYSTICK_ZERO_EQUIVALENT: arms.speedUp() #if the right joytick if off center more than the left one, change arm speed. Change wheel speed otherwise
         else: wheels.speedUp()
     if event.button==4: #LB decrease max speed of wheel or arms
-        if arms.distToOrigin()>wheels.distToOrigin(): arms.slowDown() #if the right joytick if off center more than the left one, change arm speed. Change wheel speed otherwise
+        if arms.distToOrigin()>JOYSTICK_ZERO_EQUIVALENT: arms.slowDown() #if the right joytick if off center more than the left one, change arm speed. Change wheel speed otherwise
         else: wheels.slowDown()
     if event.button==2: #Increase max speed of wheels or arms (Change later depending on the feel of the robot)
         tellPi('hand',-80)
@@ -222,8 +223,8 @@ def joyButtonUp(event):
     'A=0, B=1, X=2, Y=3, LB=4, RB=5, BACK=6, START=7, LEFT JOY BUTTON=8, RIGHT JOY BUTTON=9 up'
     if event.button==0: #Increase max speed of wheels or arms
         tellPi('arm',0)
-        message= p.construct(("arms",0,2)) #Construct a drive command to be sent to the Pi.
-        send(message)
+        #message= p.construct(("arms",0,2)) #Construct a drive command to be sent to the Pi.
+        #send(message)
     if event.button==3: #Increase max speed of wheels or arms
         tellPi('arm',0)
         #message= p.construct(("arms",0,2)) #Construct a drive command to be sent to the Pi.

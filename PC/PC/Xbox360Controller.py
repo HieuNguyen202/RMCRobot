@@ -62,33 +62,33 @@ class Joystick:
            speed =(int(speedFactor*fullSpeed),int(-speedFactor*fullSpeed))
            if mode!=0:
                speed=(0,speed[1])
-           print("Spin right ", speed)
+           #print("Spin right ", speed)
            return speed
        elif math.fabs(angle)>180-self.SPINNING_ANGLE:# spin left region
            speed =(int(-speedFactor*fullSpeed),int(speedFactor*fullSpeed))
            if mode!=0:
                 speed=(0,speed[1])
-           print("Spin left ", speed)
+           #print("Spin left ", speed)
            return speed
        elif angle<0: #backward region
            angle=math.fabs(angle)
            if angle<=90-self.EQUAL_SPEED_ANGLE:
                curveFactor=self.map(angle,self.SPINNING_ANGLE,90-self.EQUAL_SPEED_ANGLE,self.CURVE_FACTOR,1)
                speed = (int(-speedFactor*fullSpeed),int(-speedFactor*fullSpeed*curveFactor))
-               print("Backward right", speed)
+               #print("Backward right", speed)
                return speed
                
            if angle>=90+self.EQUAL_SPEED_ANGLE:
                curveFactor=self.map(angle,180-self.SPINNING_ANGLE,90+self.EQUAL_SPEED_ANGLE,self.CURVE_FACTOR,1)
                speed = (int(-speedFactor*fullSpeed*curveFactor),int(-speedFactor*fullSpeed))
-               print("Backward left", speed)
+               #print("Backward left", speed)
                return speed
                
            else:
                speed =(int(-speedFactor*fullSpeed),int(-speedFactor*fullSpeed))
                if mode!=0:
                     speed=(speed[0],0)
-               print("Backward straight", speed)
+               #print("Backward straight", speed)
                return speed
                
        else: #forward reason
@@ -97,7 +97,7 @@ class Joystick:
                speed =(int(speedFactor*fullSpeed),int(speedFactor*fullSpeed*curveFactor))
                if mode!=0:
                    speed=(speed[0],speed[0])
-               print("forward right", speed)
+               #print("forward right", speed)
                return speed
                
            if angle>=90+self.EQUAL_SPEED_ANGLE:
@@ -105,14 +105,14 @@ class Joystick:
                speed = (int(speedFactor*fullSpeed*curveFactor),int(speedFactor*fullSpeed))
                if mode!=0:
                    speed=(speed[1],speed[1])
-               print("forward left", speed)
+               #print("forward left", speed)
                return speed
                
            else:
                speed =(int(speedFactor*fullSpeed),int(speedFactor*fullSpeed))
                if mode!=0:
                     speed=(speed[0],0)
-               print("forward straight", speed)
+               #print("forward straight", speed)
                return speed
 
 class Driver(Joystick):

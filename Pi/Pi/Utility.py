@@ -1,3 +1,4 @@
+import time
 class Scale(object):
     def __init__(self, min,max):
         self.min = min
@@ -14,3 +15,12 @@ class Scale(object):
     def setExtremes(min,max):
         self.setMin(min)
         self.setMax(max)
+class Timer:
+    def __init__(self):
+        self._timer=time.time()
+
+    def resetTimer(self):
+	    self._timer = time.time()
+
+    def timer(self):
+	    return time.time()-self._timer

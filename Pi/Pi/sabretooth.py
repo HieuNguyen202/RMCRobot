@@ -72,9 +72,9 @@ class motor(object):
             self.commands = {'forward': 4, 'backward': 5}
     def sDrive(self, speed):# speed range is from -127 to 127
         if speed<0:
-            self.drive('backward',math.fabs(speed))
+            self.drive('backward',int(math.fabs(speed)))
         else:
-            self.drive('forward',math.fabs(speed))
+            self.drive('forward',int(math.fabs(speed)))
 
     def drive(self, direction, speed):#speed range is from 0 to 127
         if speed >127: speed=127

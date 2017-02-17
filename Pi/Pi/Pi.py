@@ -14,7 +14,7 @@ from Parser import *
 import time
 import socket
 import sys
-from Utility
+from Utility import *
 #if sys.version_info[0]<3: import thread
 #else: import _thread
 
@@ -58,7 +58,10 @@ def communication(port):
             while True:
                 data = c.recv(1024)
                 if not data: break
-                print(data)
+                for i in range(0,len(data),2):
+                    codeInt=bin2int(data[i:i+2])
+                    run2(codeInt)
+                #print(data)
                 #run2(bin2int(data))
                 #message=str(data)
                 #commands=p.split(message)#split a big string of commands into small strings of commands
@@ -94,7 +97,7 @@ def run2(input):
     else:pass
 
 def bin2int(binData):
-    return int(binary,16)
+    return int(binData,16)
 
 if __name__ == "__main__":
         main()
