@@ -76,7 +76,10 @@ def run(input):
     elif input[0]=="hands":
         hands.drive(input[1],input[1])
     else:pass
-    
+
+def bin2int(binData):
+    return int(binary,16)
+
 if __name__ == "__main__":
         main()
 
