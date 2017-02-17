@@ -22,6 +22,7 @@ from Xbox360Controller import *
 from Communication import *
 from Timer import *
 from Parser import *
+from Utility import *
 
 '''There are also some other custom classes whose functions are used by this script, all of them has to be placed in a same folder with this script:
 Xbox360Controller: contains the Joystick and Driver class, which tracks joystick coordinate and return scaled motor speed.
@@ -50,13 +51,17 @@ triggerAbs=0 # Moving forward and backward using top triggers has higher priorit
 leftStickDist=0 # current distance to the center of the left joystick
 rightStickDist=0 # current distance to the center of the right joystick
 AXIS_2_ZERO_EQUIVALENT=0.1 # if top triggers' value is less than this number, it's considered zero.
-
+speedScale=Scale(-127,127)
 p=Parser("(,)|") #This object is to construct and parse commands. Ex: (drive, 127,2,127,2,0,0)|
-
+def test():
+    global speedScale
+    for i in range(-128,128):
+        print(i," to ",int(speedScale.unScale(i,64,127)))
 def main():
     global commandPipe
-    loadDashboard() #loading gaming window.
+    #loadDashboard() #loading gaming window.
     detectJoysticks() #detect a joy stick
+    #test()
     while True:                                                     #connect to Pi and start sniffing xbox events
         try:
             commandPipe = Communication(host,commandPort)           #Create a socket object
@@ -166,12 +171,14 @@ def joyAxisMotion(event):
 
     if (event.axis==0 or event.axis==1 or event.axis==2):
         speeds=wheels.speeds(0) #Get valid Sabertooth speed based on XY coordinate of the joysticks. Ex: (-127,100)
-        message= p.construct(("wheels",speeds[0],2,speeds[1],2)) #Construct a drive command to be sent to the Pi.
+        tellPi('drive',speeds[0],speeds[1])
+        #message= p.construct(("wheels",speeds[0],2,speeds[1],2)) #Construct a drive command to be sent to the Pi.
     elif(event.axis==3 or event.axis==4):
         speeds=arms.speeds(1) #Get valid Sabertooth speed based on XY coordinate of the joysticks. Ex: (-127,100)
-        message= p.construct(("arms",speeds[0],2,speeds[1],2)) #Construct a drive command to be sent to the Pi.
-    send(message)
-    print(message)
+        tellPi('dig',speeds[0],speeds[1])
+        #message= p.construct(("arms",speeds[0],2,speeds[1],2)) #Construct a drive command to be sent to the Pi.
+    #send(message)
+    #print(message)
 
 def keyDown(event):
     'Keyboard events, this is how you hack ones password'
@@ -188,11 +195,13 @@ def mouseButtonUp(event):
 def joyButtonDown(event):
     'A=0, B=1, X=2, Y=3, LB=4, RB=5, BACK=6, START=7, LEFT JOY BUTTON=8, RIGHT JOY BUTTON=9 down'
     if event.button==0: #A Lowers the arm
-        message= p.construct(("arms",-80,2)) #Construct a drive command to be sent to the Pi.
-        send(message)
+        tellPi('hand',-80)
+        #message= p.construct(("arms",-80,2)) #Construct a drive command to be sent to the Pi.
+        #send(message)
     if event.button==3: #Y Raises the arm
-        message= p.construct(("arms",80,2)) #Construct a drive command to be sent to the Pi.
-        send(message)
+        tellPi('arm',80)
+        #message= p.construct(("arms",80,2)) #Construct a drive command to be sent to the Pi.
+        #send(message)
     if event.button==5: #RB Increase max speed of wheels or arms
         if arms.distToOrigin()>wheels.distToOrigin(): arms.speedUp() #if the right joytick if off center more than the left one, change arm speed. Change wheel speed otherwise
         else: wheels.speedUp()
@@ -200,77 +209,101 @@ def joyButtonDown(event):
         if arms.distToOrigin()>wheels.distToOrigin(): arms.slowDown() #if the right joytick if off center more than the left one, change arm speed. Change wheel speed otherwise
         else: wheels.slowDown()
     if event.button==2: #Increase max speed of wheels or arms (Change later depending on the feel of the robot)
-        message= p.construct(("hands",-80,2)) #Construct a drive command to be sent to the Pi.
-        send(message)
+        tellPi('hand',-80)
+        #message= p.construct(("hands",-80,2)) #Construct a drive command to be sent to the Pi.
+        #send(message)
     if event.button==1: #Increase max speed of wheels or arms
-        message= p.construct(("hands",80,2)) #Construct a drive command to be sent to the Pi.
-        send(message)
+        tellPi('hand',80)
+        #message= p.construct(("hands",80,2)) #Construct a drive command to be sent to the Pi.
+        #send(message)
     #print ("Joystick '",joysticks[event.joy].get_name(),"' button",event.button,"down.")
     print ("Wheel speed: ",wheels.currentSpeed,"     -     Arms speed: ", arms.currentSpeed)
 def joyButtonUp(event):
     'A=0, B=1, X=2, Y=3, LB=4, RB=5, BACK=6, START=7, LEFT JOY BUTTON=8, RIGHT JOY BUTTON=9 up'
     if event.button==0: #Increase max speed of wheels or arms
+        tellPi('arm',0)
         message= p.construct(("arms",0,2)) #Construct a drive command to be sent to the Pi.
         send(message)
     if event.button==3: #Increase max speed of wheels or arms
-        message= p.construct(("arms",0,2)) #Construct a drive command to be sent to the Pi.
-        send(message)
+        tellPi('arm',0)
+        #message= p.construct(("arms",0,2)) #Construct a drive command to be sent to the Pi.
+        #send(message)
     if event.button==2: #Increase max speed of wheels or arms
-        message= p.construct(("hands",0,2)) #Construct a drive command to be sent to the Pi.
-        send(message)
+        tellPi('hand',0)
+        #message= p.construct(("hands",0,2)) #Construct a drive command to be sent to the Pi.
+        #send(message)
     if event.button==1: #Increase max speed of wheels or arms
-        message= p.construct(("hands",0,2)) #Construct a drive command to be sent to the Pi.
-        send(message)
+        tellPi('hand',0)
+        #message= p.construct(("hands",0,2)) #Construct a drive command to be sent to the Pi.
+        #send(message)
     #print ("Joystick '",joysticks[event.joy].get_name(),"' button",event.button,"up.")
     print ("Joystick button",event.button,"up.")
 def joyHatMotion(event):
     '''Up, down left right buttons next to the right joystick. Could be used for actuator manual control. Its value is like points in a unit circle:
     left=(-1,0) - right=(1,0) - up=(0,1) - down=(0,-1) - upleft=(-1,1) - upright=(1,1) - downleft=(-1,-1) - downright(1,-1) - not pressed=(0,0)'''
     if event.value == (1,0): #right
-        message= p.construct(("hands",-80,2)) #Construct a drive command to be sent to the Pi.
-        send(message)
-        message= p.construct(("arms",0,2))
-        send(message)
+        tellPi('hand',-80)
+        tellPi('arm',0)
+        #message= p.construct(("hands",-80,2)) #Construct a drive command to be sent to the Pi.
+        #send(message)
+        #message= p.construct(("arms",0,2))
+        #send(message)
     elif event.value == (-1,0):
-        message= p.construct(("hands",80,2)) #Construct a drive command to be sent to the Pi.
-        send(message)
-        message= p.construct(("arms",0,2))
-        send(message)
+        tellPi('hand',80)
+        tellPi('arm',0)
+        #message= p.construct(("hands",80,2)) #Construct a drive command to be sent to the Pi.
+        #send(message)
+        #message= p.construct(("arms",0,2))
+        #send(message)
     elif event.value == (0,-1):
-        message= p.construct(("hands",0,2)) #Construct a drive command to be sent to the Pi.
-        send(message)
-        message= p.construct(("arms",-80,2))
-        send(message)
+        tellPi('hand',0)
+        tellPi('arm',-80)
+        #message= p.construct(("hands",0,2)) #Construct a drive command to be sent to the Pi.
+        #send(message)
+        #message= p.construct(("arms",-80,2))
+        #send(message)
     elif event.value == (0,1):
-        message= p.construct(("hands",0,2)) #Construct a drive command to be sent to the Pi.
-        send(message)
-        message= p.construct(("arms",80,2))
-        send(message)
+        tellPi('hand',0)
+        tellPi('arm',80)
+        #message= p.construct(("hands",0,2)) #Construct a drive command to be sent to the Pi.
+        #send(message)
+        #message= p.construct(("arms",80,2))
+        #send(message)
     elif event.value == (1,1):
-        message= p.construct(("hands",-80,2)) #Construct a drive command to be sent to the Pi.
-        send(message)
-        message= p.construct(("arms",80,2))
-        send(message)
+        tellPi('hand',-80)
+        tellPi('arm',80)
+        #message= p.construct(("hands",-80,2)) #Construct a drive command to be sent to the Pi.
+        #send(message)
+        #message= p.construct(("arms",80,2))
+        #send(message)
     elif event.value == (-1,1):
-        message= p.construct(("hands",80,2)) #Construct a drive command to be sent to the Pi.
-        send(message)
-        message= p.construct(("arms",80,2))
-        send(message)
+        tellPi('hand',80)
+        tellPi('arm',80)
+        #message= p.construct(("hands",80,2)) #Construct a drive command to be sent to the Pi.
+        #send(message)
+        #message= p.construct(("arms",80,2))
+        #send(message)
     elif event.value == (-1,-1):
-        message= p.construct(("hands",80,2)) #Construct a drive command to be sent to the Pi.
-        send(message)
-        message= p.construct(("arms",-80,2))
-        send(message)
+        tellPi('hand',80)
+        tellPi('arm',-80)
+        #message= p.construct(("hands",80,2)) #Construct a drive command to be sent to the Pi.
+        #send(message)
+        #message= p.construct(("arms",-80,2))
+        #send(message)
     elif event.value == (1,-1):
-        message= p.construct(("hands",-80,2)) #Construct a drive command to be sent to the Pi.
-        send(message)
-        message= p.construct(("arms",-80,2))
-        send(message)
+        tellPi('hand',-80)
+        tellPi('arm',-80)
+        #message= p.construct(("hands",-80,2)) #Construct a drive command to be sent to the Pi.
+        #send(message)
+        #message= p.construct(("arms",-80,2))
+        #send(message)
     elif event.value == (0,0):
-        message= p.construct(("hands",0,2)) #Construct a drive command to be sent to the Pi.
-        send(message)
-        message= p.construct(("arms",0,2))
-        send(message)
+        tellPi('hand',0)
+        tellPi('arm',0)
+        #message= p.construct(("hands",0,2)) #Construct a drive command to be sent to the Pi.
+        #send(message)
+        #message= p.construct(("arms",0,2))
+        #send(message)
 
     print ("Joystick '",joysticks[event.joy].get_name(),"' hat",event.hat," moved: ",event.value)
 def quit(event):
@@ -279,9 +312,32 @@ def quit(event):
 def send(message):
     'receives a message as a String, encodes it to ASCII before sending it to the Pi'
     commandPipe.send(message.encode('ascii'))
-def sendBin(number): #number from 0 to 255
-    hexString=format(number, '02x')
-    message=binascii.hexlify(binascii.unhexlify(hexString))
+
+def tellPi(command, data1, data2=None):
+    if command=='left':
+        sendInt(int(speedScale.unScale(data1,0,63)))
+    elif command=='right':
+        sendInt(int(speedScale.unScale(data1,64,127)))
+    elif command=='arm':
+        sendInt(int(speedScale.unScale(data1,127,191)))
+    elif command=='hand':
+        sendInt(int(speedScale.unScale(data1,192,255)))
+    elif command=='straight':
+        sendInt(int(speedScale.unScale(data1,0,63)))
+        sendInt(int(speedScale.unScale(data1,64,127)))
+    elif command=='drive':
+        sendInt(int(speedScale.unScale(data1,0,63)))
+        sendInt(int(speedScale.unScale(data2,64,127)))
+    elif command=='dig':
+        sendInt(int(speedScale.unScale(data1,127,191)))
+        sendInt(int(speedScale.unScale(data2,192,255)))
+    if data2 is not None:
+        print(command," ",data1," ", data2)
+    else: print(command," ",data1)
+    
+def sendInt(number): #number from 0 to 255
+    hexString=format(number, '02x')#convert int to binary
+    message=binascii.hexlify(binascii.unhexlify(hexString))#convert int to binary
     commandPipe.send(message)
 
 if __name__ == "__main__":
