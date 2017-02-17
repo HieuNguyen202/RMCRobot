@@ -1,7 +1,7 @@
 #To run this, you would need to install two modules: pyserial and pygame
 #Need to do:
 #   Keep detecting Xbox controller until one is detected
-#   Transfer data in a form of binary to reduce data transmission.
+#   Filter duplicated commands
 #2/2/2017:
 #   Added Speed control for button 4 and 5 down
 #   Changed clock tick to 25
@@ -9,6 +9,8 @@
 #   Added Parser class: construct and parse commands
 #   Added axis 2 (on the top) control
 #   We can alternatively use the right stick as the manual control for the actuator (create a new joystick object, have axis 3 and 4 update XY of the new stick then send an command for the actuators)
+#2/16/2017
+#   Transfer data in a form of binary to reduce data transmission.
 import binascii
 import socket
 import time
