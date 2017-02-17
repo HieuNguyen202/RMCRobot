@@ -14,6 +14,7 @@ from Parser import *
 import time
 import socket
 import sys
+from Utility
 #if sys.version_info[0]<3: import thread
 #else: import _thread
 
@@ -26,6 +27,7 @@ wheels = Wheels(serialPort, baudRate, motors)
 arms = Wheels(serialPort, baudRate, twoActs)
 hands = Wheels(serialPort, baudRate, oneActs)
 p=Parser("(,)|")# Command analyzer
+speedScale=Scale(-127,127)
 
 def main():
     #if sys.version_info[0]<3:thread.start_new_thread(communication,(12345,))
@@ -56,11 +58,13 @@ def communication(port):
             while True:
                 data = c.recv(1024)
                 if not data: break
-                message=str(data)
-                commands=p.split(message)#split a big string of commands into small strings of commands
-                print (commands)
-                for command in commands:
-                    run(p.parse(command))#Run a parsed command
+                print(data)
+                #run2(bin2int(data))
+                #message=str(data)
+                #commands=p.split(message)#split a big string of commands into small strings of commands
+                #print (commands)
+                #for command in commands:
+                #    run(p.parse(command))#Run a parsed command
                 #print(message)
         except:
             print("Socket comunication failed.")
@@ -75,6 +79,18 @@ def run(input):
         arms.drive(input[1],input[1])
     elif input[0]=="hands":
         hands.drive(input[1],input[1])
+    else:pass
+
+def run2(input):
+    if input<0: pass
+    elif input<64:
+        wheels.leftMotor.sDrive(speedScale.scale(input,0,63))
+    elif input<128:
+        wheels.rightMotor.sDrive(speedScale.scale(input,64,127))
+    elif input<192:
+        arms.leftMotor.sDrive(speedScale.scale(input,128,191))
+    elif input<256:
+        arms.leftMotor.sDrive(speedScale.scale(input,192,255))
     else:pass
 
 def bin2int(binData):
