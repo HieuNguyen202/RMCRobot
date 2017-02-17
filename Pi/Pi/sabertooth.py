@@ -1,5 +1,5 @@
 # speed ranging from 0 to 127 for stop to full power
-# for Raspberry Pi 3, port = '/dev/serial0' and baudrate = 9600
+# for Raspberry Pi 3, port = '/dev/serial0' and baudrate = 9600.
 import math
 import serial
 import sys
