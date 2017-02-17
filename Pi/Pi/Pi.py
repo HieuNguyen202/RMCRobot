@@ -28,6 +28,8 @@ arms = Wheels(serialPort, baudRate, twoActs)
 hands = Wheels(serialPort, baudRate, oneActs)
 p=Parser("(,)|")# Command analyzer
 speedScale=Scale(-127,127)
+t=Timer()
+dataLen=0
 
 def main():
     #if sys.version_info[0]<3:thread.start_new_thread(communication,(12345,))
@@ -49,30 +51,33 @@ def communication(port):
     s = socket.socket()
     s.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1)# add this to reuse the port
     s.bind((host,port))
-    while True:
-        try:
-            print (str(host)+" is listening for a new connection at port "+str(port))
-            s.listen(1)
-            c, addr = s.accept()
-            print("Connection from: "+ str(addr))
-            while True:
-                data = c.recv(1024)
-                if not data: break
-                for i in range(0,len(data),2):
-                    codeInt=bin2int(data[i:i+2])
-                    run2(codeInt)
-                #print(data)
-                #run2(bin2int(data))
-                #message=str(data)
-                #commands=p.split(message)#split a big string of commands into small strings of commands
-                #print (commands)
-                #for command in commands:
-                #    run(p.parse(command))#Run a parsed command
-                #print(message)
-        except:
-            print("Socket comunication failed.")
-            wheels.stop()
-            c.close()
+    #while True:
+    try:
+        print (str(host)+" is listening for a new connection at port "+str(port))
+        s.listen(1)
+        c, addr = s.accept()
+        print("Connection from: "+ str(addr))
+        t.resetTimer()
+        while t.timer()<60:
+            data = c.recv(1024)
+            if not data: break
+            dataLen=dataLen+len(data)
+            for i in range(0,len(data),2):
+                codeInt=bin2int(data[i:i+2])
+                run2(codeInt)
+            #print(data)
+            #run2(bin2int(data))
+            #message=str(data)
+            #commands=p.split(message)#split a big string of commands into small strings of commands
+            #print (commands)
+            #for command in commands:
+            #    run(p.parse(command))#Run a parsed command
+            #print(message)
+        print ("Total number of bytes used in 1 minute: ",data/2)
+    except:
+        print("Socket comunication failed.")
+        wheels.stop()
+        c.close()
 def run(input):
     if input[0]=="wheels":
         wheels.drive(input[1],input[2])
