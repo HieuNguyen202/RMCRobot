@@ -27,12 +27,12 @@ from Utility import *
 
 serialPort = '/dev/serial0'
 baudRate = 9600
-motors=130
-twoActs=131
-oneActs=132
-wheels = Wheels(serialPort, baudRate, motors)
-arms = Wheels(serialPort, baudRate, twoActs)
-hands = Wheels(serialPort, baudRate, oneActs)
+motorAddress=130
+actuatorAddress=132
+#oneActs=132
+wheels = Wheels(serialPort, baudRate, motorAddress)
+acts = Wheels(serialPort, baudRate, actuatorAddress)
+#hands = Wheels(serialPort, baudRate, oneActs)
 p=Parser("(,)|")# Command analyzer
 speedScale=Scale(-127,127)
 t=Timer()
@@ -108,9 +108,9 @@ def run2(input):
     elif input<128:
         wheels.rightMotor.sDrive(speedScale.scale(input,64,127))
     elif input<192:
-        arms.leftMotor.sDrive(speedScale.scale(input,128,191))
+        acts.leftMotor.sDrive(speedScale.scale(input,128,191))
     elif input<256:
-        arms.leftMotor.sDrive(speedScale.scale(input,192,255))
+        acts.rightMotor.sDrive(speedScale.scale(input,192,255))
     else:pass
 
 def bin2int(binData):
