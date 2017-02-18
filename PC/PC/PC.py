@@ -56,6 +56,7 @@ AXIS_2_ZERO_EQUIVALENT=0.1 # if top triggers' value is less than this number, it
 JOYSTICK_ZERO_EQUIVALENT=AXIS_2_ZERO_EQUIVALENT
 speedScale=Scale(-127,127)
 p=Parser("(,)|") #This object is to construct and parse commands. Ex: (drive, 127,2,127,2,0,0)|
+
 def test():
     global speedScale
     for i in range(-128,128):
@@ -198,11 +199,11 @@ def mouseButtonUp(event):
 def joyButtonDown(event):
     'A=0, B=1, X=2, Y=3, LB=4, RB=5, BACK=6, START=7, LEFT JOY BUTTON=8, RIGHT JOY BUTTON=9 down'
     if event.button==0: #A Lowers the arm
-        tellPi('hand',-80)
+        tellPi('arm',-arms.currentSpeed)
         #message= p.construct(("arms",-80,2)) #Construct a drive command to be sent to the Pi.
         #send(message)
     if event.button==3: #Y Raises the arm
-        tellPi('arm',80)
+        tellPi('arm',arms.currentSpeed)
         #message= p.construct(("arms",80,2)) #Construct a drive command to be sent to the Pi.
         #send(message)
     if event.button==5: #RB Increase max speed of wheels or arms
@@ -212,11 +213,11 @@ def joyButtonDown(event):
         if arms.distToOrigin()>JOYSTICK_ZERO_EQUIVALENT: arms.slowDown() #if the right joytick if off center more than the left one, change arm speed. Change wheel speed otherwise
         else: wheels.slowDown()
     if event.button==2: #Increase max speed of wheels or arms (Change later depending on the feel of the robot)
-        tellPi('hand',-80)
+        tellPi('hand',-arms.currentSpeed)
         #message= p.construct(("hands",-80,2)) #Construct a drive command to be sent to the Pi.
         #send(message)
     if event.button==1: #Increase max speed of wheels or arms
-        tellPi('hand',80)
+        tellPi('hand',arms.currentSpeed)
         #message= p.construct(("hands",80,2)) #Construct a drive command to be sent to the Pi.
         #send(message)
     #print ("Joystick '",joysticks[event.joy].get_name(),"' button",event.button,"down.")
