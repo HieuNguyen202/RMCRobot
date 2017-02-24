@@ -121,19 +121,19 @@ class Driver(Joystick):
         self.x = 0.0
         self.y = 0.0
         self.maxSpeeds=maxSpeeds
-        self.currentSpeed=self.maxSpeeds[initalSpeedIndex]
-    def speedUp(self): # Switch to speed of the next index in maxSpeeds, if is last index, currentSpeed stay the same.
-        i=self.maxSpeeds.index(self.currentSpeed)
+        self.currentMaxSpeed=self.maxSpeeds[initalSpeedIndex]
+    def speedUp(self): # Switch to speed of the next index in maxSpeeds, if is last index, currentMaxSpeed stay the same.
+        i=self.maxSpeeds.index(self.currentMaxSpeed)
         if i<len(self.maxSpeeds)-1:
             i=i+1
-            self.currentSpeed=self.maxSpeeds[i]
-    def slowDown(self): # Switch to speed of the previous index in maxSpeeds, if is 0 index, currentSpeed stay the same.
-        i=self.maxSpeeds.index(self.currentSpeed)
+            self.currentMaxSpeed=self.maxSpeeds[i]
+    def slowDown(self): # Switch to speed of the previous index in maxSpeeds, if is 0 index, currentMaxSpeed stay the same.
+        i=self.maxSpeeds.index(self.currentMaxSpeed)
         if i>0:
             i=i-1
-            self.currentSpeed=self.maxSpeeds[i]
+            self.currentMaxSpeed=self.maxSpeeds[i]
     def speeds(self,mode): # return speeds of left and right motors based on stick coordinate.
-        return self.getSpeed(self.currentSpeed,mode)
+        return self.getSpeed(self.currentMaxSpeed,mode)
                 
 
           

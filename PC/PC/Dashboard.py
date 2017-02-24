@@ -1,9 +1,12 @@
 import pygame
 import math
+import threading
+import time
 from Utility import *
-class Dashboard():
+class Dashboard(threading.Thread):
     'Communication between two devices using python'
     def __init__(self, x,y, r,numIncrement):
+        threading.Thread.__init__(self)
         self.x = x
         self.y = y
         self.r = r
@@ -16,6 +19,7 @@ class Dashboard():
         self.black = (0,0,0)
         self.pink = (255,200,200)
         self.screen = pygame.display.set_mode((640,480))
+        self.bgColor=self.black
         pygame.display.update()
         pygame.display.set_caption('Monkey Fever')
         pygame.mouse.set_visible(1)
@@ -24,10 +28,24 @@ class Dashboard():
         self.screen.fill(self.black)
         pygame.display.update()
         self.scale=Scale(0,255)
+        self.currentSpeed=0
+        self.preSpeed=self.currentSpeed
 
 
     def __str__(self):
         return "Nothing so toString"
+    def run(self):
+        while True:
+            if self.currentSpeed!=self.preSpeed:
+                display()
+                self.preSpeed=self.currentSpeed
+    def display(self,currentSpeed=None):
+        if currentSpeed==None:
+            currentSpeed=self.currentSpeed
+        pygame.draw.circle(self.screen, self.bgColor, (self.x,self.y), self.r)
+        for i in range(0,currentSpeed):
+            self.drawTri(i)
+            self.update()
     def getTheta(self, n):
         return -(math.pi-(math.pi/self.numIncrement)*n)
     def getX(self, n):
@@ -56,6 +74,7 @@ class Dashboard():
         
     def update(self):
         pygame.display.update()
-
+    def setSpeed(self,speeds):
+        self.currentSpeed=int((math.fabs(speeds[0])+math.fabs(speeds[1]))/2)
 
 
