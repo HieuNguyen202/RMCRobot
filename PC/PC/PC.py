@@ -65,6 +65,8 @@ preRSpeed=rSpeed
 preArmSpeed=armSpeed
 preHandSpeed=handSpeed
 
+password=123
+
 def test():
     global speedScale
     for i in range(-128,128):
@@ -78,7 +80,7 @@ def main():
     while True:                                                     #connect to pi and start sniffing xbox events
         #try:
             commandPipe = Communication(host,commandPort)           #create a socket object
-            while commandPipe.connect()==False: pass                #try connecting until connected
+            while commandPipe.connect(123)==False: pass                #try connecting until connected
             while True:
                 sniffKeys()                                         #loop to read xbox events, send commands to pi untill socket communication fails
         #except:
