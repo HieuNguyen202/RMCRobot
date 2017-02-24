@@ -90,7 +90,7 @@ def communication(port):
             print("Socket comunication failed.")
             wheels.stop()
             c.close()
-def run(input):
+def oldrun(input):
     if input[0]=="wheels":
         wheels.drive(input[1],input[2])
     elif input[0]=="left":
@@ -101,7 +101,7 @@ def run(input):
         hands.drive(input[1],input[1])
     else:pass
 
-def run2(input):
+def run(input):
     if input<0: pass
     elif input<64:
         wheels.leftMotor.sDrive(speedScale.scale(input,0,63))
@@ -111,6 +111,17 @@ def run2(input):
         acts.leftMotor.sDrive(speedScale.scale(input,128,191))
     elif input<256:
         acts.rightMotor.sDrive(speedScale.scale(input,192,255))
+    else:pass
+def run2(input):
+    if input<0: pass
+    elif input<256:
+        wheels.leftMotor.sDrive(speedScale.scale(input,0,255))
+    elif input<512:
+        wheels.rightMotor.sDrive(speedScale.scale(input,256,511))
+    elif input<768:
+        acts.leftMotor.sDrive(speedScale.scale(input,512,767))
+    elif input<1024:
+        acts.rightMotor.sDrive(speedScale.scale(input,768,1023))
     else:pass
 
 def bin2int(binData):
