@@ -63,7 +63,7 @@ def test():
         print(i," to ",int(speedScale.unScale(i,64,127)))
 def main():
     global commandPipe
-    #loadDashboard() #loading gaming window.
+    loadDashboard() #loading gaming window.
     detectJoysticks() #detect a joy stick
     #test()
     while True:                                                     #connect to Pi and start sniffing xbox events
@@ -93,8 +93,11 @@ def startListening(pipe):
             print(str(pipe)+" failed, waiting for new a new connection.")
             c.close()
 def loadDashboard():
+    white = (255, 255, 255)
+    img = pygame.image.load('iitlogo.png')
     screen=pygame.display.set_mode((640,480),0,24)
     pygame.display.set_caption('Monkey Fever')
+    
     #a=100
     #screen.fill((255,255,255))
     #if pygame.key.get_focused():
@@ -110,7 +113,9 @@ def loadDashboard():
     background = pygame.Surface(screen.get_size())
     f1=pygame.font.SysFont("comicsansms",24)                        
     background = background.convert()
-    background.fill((250, 250, 250))
+    screen.fill((white))
+    screen.blit(img,(0,0))
+    pygame.display.flip()
 def detectJoysticks():
     'Detect if a joystick is connected. If there is, initialize it.'
     t1=Timer()
@@ -200,10 +205,14 @@ def joyButtonDown(event):
     'A=0, B=1, X=2, Y=3, LB=4, RB=5, BACK=6, START=7, LEFT JOY BUTTON=8, RIGHT JOY BUTTON=9 down'
     if event.button==0: #A Lowers the arm
         tellPi('arm',-arms.currentSpeed)
+        tellPi('hand',-arms.currentSpeed)
+                
         #message= p.construct(("arms",-80,2)) #Construct a drive command to be sent to the Pi.
         #send(message)
     if event.button==3: #Y Raises the arm
         tellPi('arm',arms.currentSpeed)
+        tellPi('hand',arms.currentSpeed)
+              
         #message= p.construct(("arms",80,2)) #Construct a drive command to be sent to the Pi.
         #send(message)
     if event.button==5: #RB Increase max speed of wheels or arms
@@ -243,17 +252,18 @@ def joyButtonUp(event):
     #print ("Joystick '",joysticks[event.joy].get_name(),"' button",event.button,"up.")
     print ("Joystick button",event.button,"up.")
 def joyHatMotion(event):
+    num =-5
     '''Up, down left right buttons next to the right joystick. Could be used for actuator manual control. Its value is like points in a unit circle:
     left=(-1,0) - right=(1,0) - up=(0,1) - down=(0,-1) - upleft=(-1,1) - upright=(1,1) - downleft=(-1,-1) - downright(1,-1) - not pressed=(0,0)'''
     if event.value == (1,0): #right
-        tellPi('hand',-80)
+        tellPi('hand',-(arms.currentSpeed-num))
         tellPi('arm',0)
         #message= p.construct(("hands",-80,2)) #Construct a drive command to be sent to the Pi.
         #send(message)
         #message= p.construct(("arms",0,2))
         #send(message)
     elif event.value == (-1,0):
-        tellPi('hand',80)
+        tellPi('hand',(arms.currentSpeed-num))
         tellPi('arm',0)
         #message= p.construct(("hands",80,2)) #Construct a drive command to be sent to the Pi.
         #send(message)
@@ -261,42 +271,42 @@ def joyHatMotion(event):
         #send(message)
     elif event.value == (0,-1):
         tellPi('hand',0)
-        tellPi('arm',-80)
+        tellPi('arm',-arms.currentSpeed)
         #message= p.construct(("hands",0,2)) #Construct a drive command to be sent to the Pi.
         #send(message)
         #message= p.construct(("arms",-80,2))
         #send(message)
     elif event.value == (0,1):
         tellPi('hand',0)
-        tellPi('arm',80)
+        tellPi('arm',arms.currentSpeed)
         #message= p.construct(("hands",0,2)) #Construct a drive command to be sent to the Pi.
         #send(message)
         #message= p.construct(("arms",80,2))
         #send(message)
     elif event.value == (1,1):
-        tellPi('hand',-80)
-        tellPi('arm',80)
+        tellPi('hand',-(arms.currentSpeed-num))
+        tellPi('arm',arms.currentSpeed)
         #message= p.construct(("hands",-80,2)) #Construct a drive command to be sent to the Pi.
         #send(message)
         #message= p.construct(("arms",80,2))
         #send(message)
     elif event.value == (-1,1):
-        tellPi('hand',80)
-        tellPi('arm',80)
+        tellPi('hand',(arms.currentSpeed-num))
+        tellPi('arm',arms.currentSpeed)
         #message= p.construct(("hands",80,2)) #Construct a drive command to be sent to the Pi.
         #send(message)
         #message= p.construct(("arms",80,2))
         #send(message)
     elif event.value == (-1,-1):
-        tellPi('hand',80)
-        tellPi('arm',-80)
+        tellPi('hand',(arms.currentSpeed-num))
+        tellPi('arm',-arms.currentSpeed)
         #message= p.construct(("hands",80,2)) #Construct a drive command to be sent to the Pi.
         #send(message)
         #message= p.construct(("arms",-80,2))
         #send(message)
     elif event.value == (1,-1):
-        tellPi('hand',-80)
-        tellPi('arm',-80)
+        tellPi('hand',-(arms.currentSpeed-num))
+        tellPi('arm',-arms.currentSpeed)
         #message= p.construct(("hands",-80,2)) #Construct a drive command to be sent to the Pi.
         #send(message)
         #message= p.construct(("arms",-80,2))
@@ -312,7 +322,8 @@ def joyHatMotion(event):
     print ("Joystick '",joysticks[event.joy].get_name(),"' hat",event.hat," moved: ",event.value)
 def quit(event):
     print ("Received event 'Quit', exiting.")
-    pygame.display.quit()
+    #pygame.display.quit()
+    #sys.quit(0)
 def send(message):
     'receives a message as a String, encodes it to ASCII before sending it to the Pi'
     commandPipe.send(message.encode('ascii'))
