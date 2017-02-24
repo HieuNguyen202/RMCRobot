@@ -37,6 +37,7 @@ p=Parser("(,)|")# Command analyzer
 speedScale=Scale(-127,127)
 t=Timer()
 dataCount=0
+password=123
 
 def main():
     #if sys.version_info[0]<3:thread.start_new_thread(communication,(12345,))
@@ -67,7 +68,7 @@ def communication(port):
             data = c.recv(1024)
             if not data: break
             receivedPassword=bin2int(data[0:2])
-            if receivedPassword!=receivedPassword:
+            if receivedPassword!=password:
                 c.close()
             else:
                 print("Connection from: "+ str(addr))
