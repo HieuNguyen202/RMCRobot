@@ -66,25 +66,20 @@ def communication(port):
             s.listen(1)
             c, addr = s.accept()
             data = c.recv(1024)
-            if not data: break
-            receivedPassword=bin2int(data[0:2])
-            if receivedPassword!=password:
-                c.close()
-            else:
-                print("Connection from: "+ str(addr))
-                t.resetTimer()
-                while True:
-                    data = c.recv(1024)
-                    if not data: break
-                    dataCount=dataCount+len(data)
-                    for i in range(0,len(data),2):
-                        codeInt=bin2int(data[i:i+2])
-                        run(codeInt)
-                    if t.timer()>60:
-                        numBytes=dataCount/2 #1 byte == 2 hex letter
-                        print ("Total number of bytes used in 1 minute: ",numBytes)
-                        t.resetTimer()
-                        dataCount=0
+            print("Connection from: "+ str(addr))
+            t.resetTimer()
+            while True:
+                data = c.recv(1024)
+                if not data: break
+                dataCount=dataCount+len(data)
+                for i in range(0,len(data),2):
+                    codeInt=bin2int(data[i:i+2])
+                    run(codeInt)
+                if t.timer()>60:
+                    numBytes=dataCount/2 #1 byte == 2 hex letter
+                    print ("Total number of bytes used in 1 minute: ",numBytes)
+                    t.resetTimer()
+                    dataCount=0
         except:
             print("Socket comunication failed.")
             wheels.stop()
