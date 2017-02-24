@@ -120,8 +120,6 @@ def run2(input):
         wheels.rightMotor.sDrive(speedScale.scale(input,256,511))
     elif input<768:
         acts.leftMotor.sDrive(speedScale.scale(input,512,767))
-    elif input<1024:
-        acts.rightMotor.sDrive(speedScale.scale(input,768,1023))
     else:pass
 
 def bin2int(binData):
