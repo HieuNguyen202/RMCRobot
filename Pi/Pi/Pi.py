@@ -64,28 +64,26 @@ def communication(port):
             print (str(host)+" is listening for a new connection at port "+str(port))
             s.listen(1)
             c, addr = s.accept()
-            print("Connection from: "+ str(addr))
-            t.resetTimer()
-            while True:
-                data = c.recv(1024)
-                if not data: break
-                dataCount=dataCount+len(data)
-                for i in range(0,len(data),2):
-                    codeInt=bin2int(data[i:i+2])
-                    run(codeInt)
-                #print(data)
-                #run2(bin2int(data))
-                #message=str(data)
-                #commands=p.split(message)#split a big string of commands into small strings of commands
-                #print (commands)
-                #for command in commands:
-                #    run(p.parse(command))#Run a parsed command
-                #print(message)
-                if t.timer()>60:
-                    numBytes=dataCount/2 #1 byte == 2 hex letter
-                    print ("Total number of bytes used in 1 minute: ",numBytes)
-                    t.resetTimer()
-                    dataCount=0
+            data = c.recv(1024)
+            if not data: break
+            receivedPassword=bin2int(data[0:2])
+            if receivedPassword!=receivedPassword:
+                c.close()
+            else:
+                print("Connection from: "+ str(addr))
+                t.resetTimer()
+                while True:
+                    data = c.recv(1024)
+                    if not data: break
+                    dataCount=dataCount+len(data)
+                    for i in range(0,len(data),2):
+                        codeInt=bin2int(data[i:i+2])
+                        run(codeInt)
+                    if t.timer()>60:
+                        numBytes=dataCount/2 #1 byte == 2 hex letter
+                        print ("Total number of bytes used in 1 minute: ",numBytes)
+                        t.resetTimer()
+                        dataCount=0
         except:
             print("Socket comunication failed.")
             wheels.stop()

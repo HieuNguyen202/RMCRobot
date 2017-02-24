@@ -168,7 +168,7 @@ def joyAxisMotion(event):
         if triggerAbs<AXIS_2_ZERO_EQUIVALENT: #if using the top triggers, don't update Y
             arms.setY(-event.value)
 
-    elif (evnt.axis==2):
+    elif (event.axis==2):
         wheels.setY(-event.value)#Update the value of top triggers to Y, right trigger for going forward, left trigger for going backward.
         triggerAbs=math.fabs(event.value) #Update this so next time, it knows whether top triggers are being used.
     else:pass
