@@ -72,7 +72,7 @@ def communication(port):
                 dataCount=dataCount+len(data)
                 for i in range(0,len(data),2):
                     codeInt=bin2int(data[i:i+2])
-                    run2(codeInt)
+                    run(codeInt)
                 #print(data)
                 #run2(bin2int(data))
                 #message=str(data)
