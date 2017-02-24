@@ -23,6 +23,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Communication.py" />
+    <Compile Include="Dashboard.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Parser.py" />
     <Compile Include="PC.py" />
     <Compile Include="Timer.py" />

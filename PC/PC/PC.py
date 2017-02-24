@@ -25,7 +25,7 @@ from Communication import *
 from Timer import *
 from Parser import *
 from Utility import *
-
+from Dashboard import *
 '''There are also some other custom classes whose functions are used by this script, all of them has to be placed in a same folder with this script:
 Xbox360Controller: contains the Joystick and Driver class, which tracks joystick coordinate and return scaled motor speed.
 Communication: Handle socket communication between a Pi and a PC.
@@ -63,18 +63,37 @@ def test():
         print(i," to ",int(speedScale.unScale(i,64,127)))
 def main():
     global commandPipe
+    db=Dashboard(320,240,100,127)
+    for i in range(0,128):
+        db.drawTri(i)
+        time.sleep(0.002)
+        db.update()
+    for i in range(0,128):
+        db.drawTri(-i)
+        time.sleep(0.002)
+        db.update()
+    db1=Dashboard(100,100,100,127)
+    for i in range(0,128):
+        db1.drawTri(i)
+        time.sleep(0.002)
+        db1.update()
+    for i in range(0,128):
+        db1.drawTri(-i)
+        time.sleep(0.002)
+        db1.update()
+    
     #loadDashboard() #loading gaming window.
-    detectJoysticks() #detect a joy stick
+    #detectJoysticks() #detect a joy stick
     #test()
-    while True:                                                     #connect to Pi and start sniffing xbox events
-        try:
-            commandPipe = Communication(host,commandPort)           #Create a socket object
-            while commandPipe.connect()==False: pass                #Try connecting until connected
-            while True:
-                sniffKeys()                                         #Loop to read xbox events, send commands to Pi untill socket communication fails
-        except:
-            print("Socket communication or sniffKeys function failed")
-            commandPipe.close()
+    #while True:                                                     #connect to Pi and start sniffing xbox events
+    #    try:
+    #        commandPipe = Communication(host,commandPort)           #Create a socket object
+    #        while commandPipe.connect()==False: pass                #Try connecting until connected
+    #        while True:
+    #            sniffKeys()                                         #Loop to read xbox events, send commands to Pi untill socket communication fails
+    #    except:
+    #        print("Socket communication or sniffKeys function failed")
+     #       commandPipe.close()
   
 def startListening(pipe):
     'Listen to feedback from a Pi, but not needed for now. Put this under a multithreading process'
