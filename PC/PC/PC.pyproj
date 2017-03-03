@@ -34,7 +34,14 @@
     <Compile Include="Xbox360Testing.py" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="iitlogo.png" />
+    <Content Include="images\iitlogo.png" />
+    <Content Include="images\iitoff.png" />
+    <Content Include="images\iitpon.png" />
+    <Content Include="images\speed.ico" />
+    <Content Include="images\xbox.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="images\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
