@@ -36,7 +36,7 @@
   <ItemGroup>
     <Content Include="images\iitlogo.png" />
     <Content Include="images\iitoff.png" />
-    <Content Include="images\iitpon.png" />
+    <Content Include="images\iiton.png" />
     <Content Include="images\speed.ico" />
     <Content Include="images\xbox.png" />
   </ItemGroup>

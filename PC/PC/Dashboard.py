@@ -2,15 +2,18 @@ import pygame
 import math
 import threading
 import time
+import os
 from Utility import *
 class Dashboard(threading.Thread):
     'Communication between two devices using python'
-    def __init__(self, x,y, r,numIncrement):
+    def __init__(self, width,height):
         threading.Thread.__init__(self)
-        self.x = x
-        self.y = y
-        self.r = r
-        self.numIncrement = numIncrement
+        #self.x = x
+        #self.y = y
+        #self.r = r
+        #self.numIncrement = numIncrement
+        self.width=width
+        self.height=height
         self.red = (255,0,0)
         self.green = (0,255,0)
         self.blue = (0,0,255)
@@ -18,7 +21,7 @@ class Dashboard(threading.Thread):
         self.white = (255,255,255)
         self.black = (0,0,0)
         self.pink = (255,200,200)
-        self.screen = pygame.display.set_mode((640,480))
+        self.screen = pygame.display.set_mode((self.width,self.height))
         self.bgColor=self.black
         pygame.display.update()
         pygame.display.set_caption('Monkey Fever')
@@ -30,7 +33,17 @@ class Dashboard(threading.Thread):
         self.scale=Scale(0,255)
         self.currentSpeed=0
         self.preSpeed=self.currentSpeed
-
+        self.iitOn = pygame.image.load(os.path.join('images', 'iiton.png'))
+        self.iitOff = pygame.image.load(os.path.join('images', 'iitoff.png'))
+        self.speedIcon = pygame.image.load(os.path.join('images', 'speed.ico'))
+        self.xbox = pygame.image.load(os.path.join('images', 'xbox.png'))
+        print(self.iitOn.get_rect().size[0]/2)
+        self.screen.blit(self.iitOn,(self.width/2,self.height/2))
+        self.screen.blit(self.iitOff,(self.width/2,self.height/2))
+        self.screen.blit(self.speedIcon,(self.width/2,self.height/2))
+        self.screen.blit(self.xbox,(self.width/2,self.height/2))
+        self.screen.blit(self.iitOn,(self.width/2,self.height/2))
+        pygame.display.update()
 
     def __str__(self):
         return "Nothing so toString"
@@ -78,3 +91,44 @@ class Dashboard(threading.Thread):
         self.currentSpeed=int((math.fabs(speeds[0])+math.fabs(speeds[1]))/2)
 
 
+class Image:
+    def __init__(self, width,height):
+        threading.Thread.__init__(self)
+        'comments'
+        self.image = pygame.image.load(os.path.join('images', 'iiton.png'))
+        #self.x = x
+        #self.y = y
+        #self.r = r
+        #self.numIncrement = numIncrement
+        self.width=width
+        self.height=height
+        self.red = (255,0,0)
+        self.green = (0,255,0)
+        self.blue = (0,0,255)
+        self.darkBlue = (0,0,128)
+        self.white = (255,255,255)
+        self.black = (0,0,0)
+        self.pink = (255,200,200)
+        self.screen = pygame.display.set_mode((self.width,self.height))
+        self.bgColor=self.black
+        pygame.display.update()
+        pygame.display.set_caption('Monkey Fever')
+        pygame.mouse.set_visible(1)
+        self.background = pygame.Surface(self.screen.get_size())
+        #self.f1=pygame.font.SysFont("comicsansms",24)                        
+        self.screen.fill(self.black)
+        pygame.display.update()
+        self.scale=Scale(0,255)
+        self.currentSpeed=0
+        self.preSpeed=self.currentSpeed
+        self.iitOn = pygame.image.load(os.path.join('images', 'iiton.png'))
+        self.iitOff = pygame.image.load(os.path.join('images', 'iitoff.png'))
+        self.speedIcon = pygame.image.load(os.path.join('images', 'speed.ico'))
+        self.xbox = pygame.image.load(os.path.join('images', 'xbox.png'))
+        print(self.iitOn.get_rect().size[0]/2)
+        self.screen.blit(self.iitOn,(self.width/2,self.height/2))
+        self.screen.blit(self.iitOff,(self.width/2,self.height/2))
+        self.screen.blit(self.speedIcon,(self.width/2,self.height/2))
+        self.screen.blit(self.xbox,(self.width/2,self.height/2))
+        self.screen.blit(self.iitOn,(self.width/2,self.height/2))
+        pygame.display.update()

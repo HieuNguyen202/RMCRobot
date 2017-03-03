@@ -54,7 +54,7 @@ AXIS_2_ZERO_EQUIVALENT=0.1 # if top triggers' value is less than this number, it
 JOYSTICK_ZERO_EQUIVALENT=0.2
 speedScale=Scale(-127,127)
 p=Parser("(,)|") #This object is to construct and parse commands. Ex: (drive, 127,2,127,2,0,0)|
-db=Dashboard(320,240,200,127)
+db=Dashboard(1000,800)
 lSpeed=0
 rSpeed=0
 armSpeed=0
@@ -73,17 +73,17 @@ def main():
     
     global commandPipe
     global db
-    db.start()
-    detectJoysticks()
-    while True:                                                     #connect to pi and start sniffing xbox events
-        #try:
-            commandPipe = Communication(host,commandPort)           #create a socket object
-            while commandPipe.connect()==False: pass                #try connecting until connected
-            while True:
-                sniffKeys()                                         #loop to read xbox events, send commands to pi untill socket communication fails
-        #except:
-            print("socket communication or sniffkeys function failed")
-            commandPipe.close()
+    #db.start()
+    #detectJoysticks()
+    #while True:                                                     #connect to pi and start sniffing xbox events
+    #    try:
+    #        commandPipe = Communication(host,commandPort)           #create a socket object
+    #        while commandPipe.connect()==False: pass                #try connecting until connected
+    #        while True:
+    #            sniffKeys()                                         #loop to read xbox events, send commands to pi untill socket communication fails
+    #    except:
+    #        print("socket communication or sniffkeys function failed")
+    #        commandPipe.close()
 def startListening(pipe):
     'Listen to feedback from a Pi, but not needed for now. Put this under a multithreading process'
     pipe.bind()
