@@ -1,6 +1,7 @@
 # speed ranging from 0 to 127 for stop to full power.
 # for Raspberry Pi 3, port = '/dev/serial0' and baudrate = 9600
 import time
+import binascii
 import socket
 from Timer import *
 class Communication(socket.socket):
@@ -39,4 +40,13 @@ class Communication(socket.socket):
 
     def close(self):
         self.s.close()
-        
+
+    def sendInt(number): #number from 0 to 255
+        hexString=format(number, '02x')#convert int to binary
+        message=binascii.hexlify(binascii.unhexlify(hexString))#convert int to binary
+        self.send(message)
+
+    def sendInt2(number): #number from 0 to 65535
+        hexString=format(number, '04x')#convert int to binary
+        message=binascii.hexlify(binascii.unhexlify(hexString))#convert int to binary
+        self.send(message)
