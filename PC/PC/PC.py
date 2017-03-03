@@ -54,7 +54,7 @@ AXIS_2_ZERO_EQUIVALENT=0.1 # if top triggers' value is less than this number, it
 JOYSTICK_ZERO_EQUIVALENT=0.2
 speedScale=Scale(-127,127)
 p=Parser("(,)|") #This object is to construct and parse commands. Ex: (drive, 127,2,127,2,0,0)|
-db=Dashboard(1000,800)
+db=RMCDashBoard(1200,900)
 lSpeed=0
 rSpeed=0
 armSpeed=0
@@ -74,16 +74,23 @@ def main():
     global commandPipe
     global db
     #db.start()
-    #detectJoysticks()
-    #while True:                                                     #connect to pi and start sniffing xbox events
-    #    try:
-    #        commandPipe = Communication(host,commandPort)           #create a socket object
-    #        while commandPipe.connect()==False: pass                #try connecting until connected
-    #        while True:
-    #            sniffKeys()                                         #loop to read xbox events, send commands to pi untill socket communication fails
-    #    except:
-    #        print("socket communication or sniffkeys function failed")
-    #        commandPipe.close()
+    db.display("Searching for a Xbox Controller...")
+    if detectJoysticks()==True: db.xboxConnected()
+    db.display("Found a Xbox Controller!")
+    while True:                                                     #connect to pi and start sniffing xbox events
+        #try:
+            commandPipe = Communication(host,commandPort)     
+            db.display("Connecting to a the robot...")
+            #create a socket object
+            while commandPipe.connect()==False: pass                #try connecting until connected
+            db.connected()
+            db.display("Connected")
+            while True:
+                sniffKeys()                                         #loop to read xbox events, send commands to pi untill socket communication fails
+        #except:
+            print("socket communication or sniffkeys function failed")
+            db.disconnected()
+            commandPipe.close()
 def startListening(pipe):
     'Listen to feedback from a Pi, but not needed for now. Put this under a multithreading process'
     pipe.bind()
@@ -100,39 +107,24 @@ def startListening(pipe):
         except:
             print(str(pipe)+" failed, waiting for new a new connection.")
             c.close()
-def loadDashboard():
-    screen=pygame.display.set_mode((640,480),0,24)
-    pygame.display.set_caption('Monkey Fever')
-    #a=100
-    #screen.fill((255,255,255))
-    #if pygame.key.get_focused():
-    #    press=pygame.key.get_pressed()
-    #    for i in range(0,len(press)): 
-    #        if press[i]==1:
-    #            name=pygame.key.name(i)
-    #            text=f1.render(name,True,(0,0,0))
-    #            screen.blit(text,(100,a))
-    #            a=a+100
-    #pygame.display.update()
-    pygame.mouse.set_visible(1)
-    background = pygame.Surface(screen.get_size())
-    f1=pygame.font.SysFont("comicsansms",24)                        
-    background = background.convert()
-    background.fill((250, 250, 250))
 def detectJoysticks():
     'Detect if a joystick is connected. If there is, initialize it.'
+    print("Dectecting a joystick...")
+    pygame.joystick.quit()
+    pygame.joystick.init()
     t1=Timer()
     numJoysticks=pygame.joystick.get_count();
-    print("Dectecting a joystick...")
     t1.resetTimer()
     while numJoysticks==0 and t1.timer()<30.:#Search for a joystick for 30 seconds
+        pygame.joystick.quit()
+        pygame.joystick.init()
         numJoysticks=pygame.joystick.get_count();
     if numJoysticks>0:
         for i in range(0, numJoysticks):
                 joysticks.append(pygame.joystick.Joystick(i))
                 joysticks[-1].init()
                 print ("Detected joystick '",joysticks[-1].get_name(),"'")
-                _thread.start_new_thread(sniffKeys,())
+                #_thread.start_new_thread(sniffKeys,())
         return True
     else: return False
 def sniffKeys():
@@ -187,10 +179,12 @@ def keyUp(event):
     print ("Keyup,",event.key)
 def mouseButtonDown(event):
     'Mouse button'
-    print ("Mouse button",event.button,"down at",pygame.mouse.get_pos())
+    #print ("Mouse button",event.button,"down at",pygame.mouse.get_pos())
+    pass
 def mouseButtonUp(event):
     "Mouse button"
-    print ("Mouse button",event.button,"up at",pygame.mouse.get_pos())
+    #print ("Mouse button",event.button,"up at",pygame.mouse.get_pos())
+    pass
 def joyButtonDown(event):
     'A=0, B=1, X=2, Y=3, LB=4, RB=5, BACK=6, START=7, LEFT JOY BUTTON=8, RIGHT JOY BUTTON=9 down'
     if event.button==0: #A Lowers the arm

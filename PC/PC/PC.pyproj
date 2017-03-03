@@ -34,10 +34,13 @@
     <Compile Include="Xbox360Testing.py" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="images\arm.png" />
     <Content Include="images\iitlogo.png" />
     <Content Include="images\iitoff.png" />
     <Content Include="images\iiton.png" />
+    <Content Include="images\motor.png" />
     <Content Include="images\speed.ico" />
+    <Content Include="images\wifi.png" />
     <Content Include="images\xbox.png" />
   </ItemGroup>
   <ItemGroup>
