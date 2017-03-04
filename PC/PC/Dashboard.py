@@ -118,20 +118,20 @@ class RMCDashboard(RMCFrame):
     def motor(self,level): #fix this later
         dist=100
         if level>=1:
-            self.put(self.iMotor,2,(-dist,0))
+            pass#self.put(self.iMotor,2,(-dist,0))
             if level>=2:
-                self.put(self.iMotor,2,(0,0))
+                pass#self.put(self.iMotor,2,(0,0))
                 if level>=3:
-                    self.put(self.iMotor,2,(dist,0))
+                    pass#self.put(self.iMotor,2,(dist,0))
         pygame.display.update()
     def arm(self,level): #fix this later
         dist=100
         if level>=1:
-            self.put(self.iArm,2,(-dist,-100))
+            pass#self.put(self.iArm,2,(-dist,-100))
             if level>=2:
-                self.put(self.iArm,2,(0,-100))
+                pass#self.put(self.iArm,2,(0,-100))
                 if level>=3:
-                    self.put(self.iArm,2,(dist,-100))
+                    pass#self.put(self.iArm,2,(dist,-100))
         pygame.display.update()
     def xboxConnected(self):
         self.oXbox.show()

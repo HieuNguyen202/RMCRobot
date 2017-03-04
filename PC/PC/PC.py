@@ -17,8 +17,6 @@ import time
 import pygame
 import os, sys
 import pygame
-from pygame.locals import *
-from pygame.key import *
 from Xbox360Controller import *
 from Communication import *
 from Utility import *
@@ -48,7 +46,7 @@ def main():
                 if controller.connected is False:
                     controller.initialize()
                 else:
-                    if commandPipe.connected() is False:
+                    if commandPipe.connected is False:
                         commandPipe.connect()
                     else:
                         while True:

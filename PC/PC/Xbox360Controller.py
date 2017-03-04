@@ -1,10 +1,14 @@
 #!/usr/bin/python3
 import math
 import pygame
+import sys
+from pygame.locals import *
+from pygame.key import *
 from Utility import *
 #from Parser import *
 from Dashboard import *
 from Communication import *
+
 class Joystick:
    'Convert joystick coordinate to Sabertooth-readable numbers. For example, (1,1) to (127, 127)'
    stickCount = 0
@@ -145,7 +149,7 @@ class JoystickDriver(Joystick):
 class XboxController(object):
     'a class to handle joystick coordinate and convert it to motor speeds: parametter: (maxSpeeds, indexOfInitialMaxSpeed)'
     def __init__(self,dashboard,commandPipe):
-        #pygame.init()
+        pygame.init()
         self.connected=False
         self.dashboard=dashboard
         self.clock = pygame.time.Clock() # control the xbox controller's frequency of updating button and joystick events.
@@ -159,11 +163,14 @@ class XboxController(object):
         self.AXIS_2_ZERO_EQUIVALENT=0.1 # if top triggers' value is less than this number, it's considered zero.
         self.JOYSTICK_ZERO_EQUIVALENT=0.2
         self.commandPipe=commandPipe
+        self.clockTick=40
+        #self.clock.tick(self.clockTick) # 25 is good, how frequently the pygame module updates xbox events. Ex: 25 means 25 times/sec
+        self.dashboard.display("Set clock tick to "+str(self.clockTick))
         
     def listen(self):
         'Listen to xbox key events and call the corresponding functions if an button is pressed or a joystick is moved.'
         for event in pygame.event.get():
-            if event.type==QUIT: quit(event)
+            if event.type==QUIT: self.quit(event)
             elif event.type == KEYDOWN and event.key == K_ESCAPE: self.quit(event)
             elif event.type == KEYDOWN: keyDownevent(event)
                         #elif event.type == MOUSEMOTION:
@@ -177,6 +184,7 @@ class XboxController(object):
             elif event.type == JOYHATMOTION: self.joyHatMotion(event)           
     def joyAxisMotion(self,event):
         'This function update X and Y coordinate of the joysticks, converts it into speeds (from -127 to 127), send the command to the Pi.'
+        self.clock.tick(self.clockTick)
         if (event.axis==0): #left stick, horizontal
             self.wheels.setX(event.value)
         elif (event.axis==1): #left stick, vertical
@@ -184,10 +192,10 @@ class XboxController(object):
                 self.wheels.setY(-event.value)
 
         elif (event.axis==4):#right stick, vertical.
-            arms.setX(event.value)
+            self.arms.setX(event.value)
         elif (event.axis==3):#right stick, horizontal
             if self.triggerAbs<self.AXIS_2_ZERO_EQUIVALENT: #if using the top triggers, don't update Y
-                arms.setY(-event.value)
+                self.arms.setY(-event.value)
 
         elif (event.axis==2):
             self.wheels.setY(-event.value)#Update the value of top triggers to Y, right trigger for going forward, left trigger for going backward.
@@ -278,6 +286,7 @@ class XboxController(object):
     def quit(self,event):
         self.dashboard.display("Exiting...")
         pygame.display.quit()
+        sys.exit()
     def initialize(self):
         'Detect if a XboxController is connected. If there is, initialize it.'
         self.dashboard.display("Looking for a Xbox Controller...")
@@ -299,8 +308,6 @@ class XboxController(object):
             self.connected=True
             self.dashboard.display("Found a Xbox Controller.")
             self.dashboard.xboxConnected()
-            self.clock.tick(25) # 25 is good, how frequently the pygame module updates xbox events. Ex: 25 means 25 times/sec
-            self.dashboard.display("Set clock tick to 25.")
         else:
             self.connected=False
             self.dashboard.display("Could not find a Xbox Controller.")
