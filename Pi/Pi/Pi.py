@@ -37,6 +37,7 @@ p=Parser("(,)|")# Command analyzer
 speedScale=Scale(-127,127)
 t=Timer()
 dataCount=0
+password=123
 
 def main():
     #if sys.version_info[0]<3:thread.start_new_thread(communication,(12345,))
@@ -64,6 +65,7 @@ def communication(port):
             print (str(host)+" is listening for a new connection at port "+str(port))
             s.listen(1)
             c, addr = s.accept()
+            data = c.recv(1024)
             print("Connection from: "+ str(addr))
             t.resetTimer()
             while True:
@@ -72,15 +74,7 @@ def communication(port):
                 dataCount=dataCount+len(data)
                 for i in range(0,len(data),2):
                     codeInt=bin2int(data[i:i+2])
-                    run2(codeInt)
-                #print(data)
-                #run2(bin2int(data))
-                #message=str(data)
-                #commands=p.split(message)#split a big string of commands into small strings of commands
-                #print (commands)
-                #for command in commands:
-                #    run(p.parse(command))#Run a parsed command
-                #print(message)
+                    run(codeInt)
                 if t.timer()>60:
                     numBytes=dataCount/2 #1 byte == 2 hex letter
                     print ("Total number of bytes used in 1 minute: ",numBytes)
@@ -90,7 +84,7 @@ def communication(port):
             print("Socket comunication failed.")
             wheels.stop()
             c.close()
-def run(input):
+def oldrun(input):
     if input[0]=="wheels":
         wheels.drive(input[1],input[2])
     elif input[0]=="left":
@@ -101,7 +95,7 @@ def run(input):
         hands.drive(input[1],input[1])
     else:pass
 
-def run2(input):
+def run(input):
     if input<0: pass
     elif input<64:
         wheels.leftMotor.sDrive(speedScale.scale(input,0,63))
@@ -111,6 +105,15 @@ def run2(input):
         acts.leftMotor.sDrive(speedScale.scale(input,128,191))
     elif input<256:
         acts.rightMotor.sDrive(speedScale.scale(input,192,255))
+    else:pass
+def run2(input):
+    if input<0: pass
+    elif input<256:
+        wheels.leftMotor.sDrive(speedScale.scale(input,0,255))
+    elif input<512:
+        wheels.rightMotor.sDrive(speedScale.scale(input,256,511))
+    elif input<768:
+        acts.leftMotor.sDrive(speedScale.scale(input,512,767))
     else:pass
 
 def bin2int(binData):

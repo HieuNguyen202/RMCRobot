@@ -33,6 +33,19 @@
     <Compile Include="Xbox360Controller.py" />
     <Compile Include="Xbox360Testing.py" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="images\arm.png" />
+    <Content Include="images\iitlogo.png" />
+    <Content Include="images\iitoff.png" />
+    <Content Include="images\iiton.png" />
+    <Content Include="images\motor.png" />
+    <Content Include="images\speed.ico" />
+    <Content Include="images\wifi.png" />
+    <Content Include="images\xbox.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="images\" />
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <PtvsTargetsFile>$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets</PtvsTargetsFile>
