@@ -73,8 +73,11 @@ def communication(port):
                 if not data: break
                 dataCount=dataCount+len(data)
                 for i in range(0,len(data),2):
-                    codeInt=bin2int(data[i:i+2])
-                    run(codeInt)
+                    eachByte=data[i:i+2]
+                    message=Message(eachByte)
+                    run3(message)
+                    #codeInt=bin2int()
+                    #run(codeInt)
                 if t.timer()>60:
                     numBytes=dataCount/2 #1 byte == 2 hex letter
                     print ("Total number of bytes used in 1 minute: ",numBytes)
@@ -115,6 +118,16 @@ def run2(input):
     elif input<768:
         acts.leftMotor.sDrive(speedScale.scale(input,512,767))
     else:pass
+def run3(message):
+    if message.getCommandInt==0:
+        lSpeed=speedScale.scale(message.getData1Int(),0,7)
+        rSpeed=speedScale.scale(message.getData2Int(),0,7)
+        wheels.drive(lSpeed,rSpeed)
+    if message.getCommandInt==1:
+        lSpeed=speedScale.scale(message.getData1Int(),0,7)
+        rSpeed=speedScale.scale(message.getData2Int(),0,7)
+        arms.drive(lSpeed,rSpeed)
+    
 
 def bin2int(binData):
     return int(binData,16)

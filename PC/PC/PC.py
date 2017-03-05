@@ -21,6 +21,7 @@ from Xbox360Controller import *
 from Communication import *
 from Utility import *
 from Dashboard import *
+
 '''There are also some other custom classes whose functions are used by this script, all of them has to be placed in a same folder with this script:
 Xbox360Controller: contains the Joystick and Driver class, which tracks joystick coordinate and return scaled motor speed.
 Communication: Handle socket communication between a Pi and a PC.
@@ -33,29 +34,42 @@ commandPort = 12345    # Port that's been opened in the Pi
 dashboardSize=(1200,900)
 
 def test():
-    global speedScale
-    for i in range(-128,128):
-        print(i," to ",int(speedScale.unScale(i,64,127)))
+    commandInt=1
+    data1Int="11"
+    data2Int=5
+    m1=Message(commandInt,data1Int,data2Int)
+    m2=Message(commandInt,data1Int,data2Int)
+    m3=Message(commandInt,data1Int,data2Int)
+    if m1.equals(m2): print("Yeah m1 = m2")
+    if m1.equals(m3): print("Yeah m1 = m3")
+    
+
+    #speedScale=Scale(-127,127)
+    #for i in range(-127,128):
+    #    print(i," to ",int(speedScale.unScale(i,64,127)), " back to ",int(speedScale.scale(int(speedScale.unScale(i,64,127)),64,127)))
+
+
 def main():
-    dashboard=RMCDashboard(dashboardSize,5,5)
-    while True:
-        #try:
-            commandPipe = Communication(host,commandPort,dashboard)
-            controller=XboxController(dashboard,commandPipe)
-            while True:
-                if controller.connected is False:
-                    controller.initialize()
-                else:
-                    if commandPipe.connected is False:
-                        commandPipe.connect()
-                    else:
-                        while True:
-                            controller.listen()
-        #except:
-            dashboard.display("Communication or XboxController failed")
-            dashboard.disconnected()
-            controller.uninitialize()
-            dashboard.xboxDisconnected()
-            commandPipe.close()
+    test()
+    #dashboard=RMCDashboard(dashboardSize,5,5)
+    #while True:
+    #    #try:
+    #        commandPipe = Communication(host,commandPort,dashboard)
+    #        controller=XboxController(dashboard,commandPipe)
+    #        while True:
+    #            if controller.connected is False:
+    #                controller.initialize()
+    #            else:
+    #                if commandPipe.connected is False:
+    #                    commandPipe.connect()
+    #                else:
+    #                    while True:
+    #                        controller.listen()
+    #    #except:
+    #        dashboard.display("Communication or XboxController failed")
+    #        dashboard.disconnected()
+    #        controller.uninitialize()
+    #        dashboard.xboxDisconnected()
+    #        commandPipe.close()
 if __name__ == "__main__":
         main()

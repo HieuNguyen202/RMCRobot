@@ -28,7 +28,6 @@
     <Compile Include="Not used\server.py" />
     <Compile Include="Not used\socket_programming.py" />
     <Compile Include="Not used\TestingSabertooth.py" />
-    <Compile Include="Parser.py" />
     <Compile Include="Pi.py" />
     <Compile Include="Sabertooth.py" />
     <Compile Include="Utility.py">

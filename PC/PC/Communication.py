@@ -89,7 +89,7 @@ class Communication(socket.socket):
     def sendInt2(self,number): #number from 0 to 65535
         hexString=format(number, '04x')#convert int to binary
         message=binascii.hexlify(binascii.unhexlify(hexString))#convert int to binary
-        self.send(message)
+        self.send(emssage)
 
 
 
