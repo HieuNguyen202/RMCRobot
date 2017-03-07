@@ -43,33 +43,32 @@ def test():
     if m1.equals(m2): print("Yeah m1 = m2")
     if m1.equals(m3): print("Yeah m1 = m3")
     
-
-    #speedScale=Scale(-127,127)
-    #for i in range(-127,128):
-    #    print(i," to ",int(speedScale.unScale(i,64,127)), " back to ",int(speedScale.scale(int(speedScale.unScale(i,64,127)),64,127)))
+    speedScale=Scale(-127,127)
+    for i in range(-127,128):
+        print(i," to ",int(speedScale.unScale(i,64,127)), " back to ",int(speedScale.scale(int(speedScale.unScale(i,64,127)),64,127)))
 
 
 def main():
-    test()
-    #dashboard=RMCDashboard(dashboardSize,5,5)
-    #while True:
-    #    #try:
-    #        commandPipe = Communication(host,commandPort,dashboard)
-    #        controller=XboxController(dashboard,commandPipe)
-    #        while True:
-    #            if controller.connected is False:
-    #                controller.initialize()
-    #            else:
-    #                if commandPipe.connected is False:
-    #                    commandPipe.connect()
-    #                else:
-    #                    while True:
-    #                        controller.listen()
-    #    #except:
-    #        dashboard.display("Communication or XboxController failed")
-    #        dashboard.disconnected()
-    #        controller.uninitialize()
-    #        dashboard.xboxDisconnected()
-    #        commandPipe.close()
+    #test()
+    dashboard=RMCDashboard(dashboardSize,5,5)
+    while True:
+        #try:
+            commandPipe = Communication(host,commandPort,dashboard)
+            controller=XboxController(dashboard,commandPipe)
+            while True:
+                if controller.connected is False:
+                    controller.initialize()
+                else:
+                    if commandPipe.connected is False:
+                        commandPipe.connect()
+                    else:
+                        while True:# consider removing this
+                            controller.listen()
+        #except:
+            dashboard.display("Communication or XboxController failed")
+            dashboard.disconnected()
+            controller.uninitialize()
+            dashboard.xboxDisconnected()
+            commandPipe.close()
 if __name__ == "__main__":
         main()

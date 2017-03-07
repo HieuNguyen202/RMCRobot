@@ -91,8 +91,6 @@ class Communication(socket.socket):
         message=binascii.hexlify(binascii.unhexlify(hexString))#convert int to binary
         self.send(emssage)
 
-
-
     def sendInt(self,number1,number2): #number from 0 to 255
         hexString1=format(number1, '02x')#convert int to binary
         hexString2=format(number2, '02x')
