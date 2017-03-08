@@ -48,8 +48,7 @@ class Wheels(Controller):
         self.leftMotor.drive('forward', speed)
         self.rightMotor.drive('backward', speed)
 
-#End Wheels
-        
+#End Wheels     
 #Start LinearActuator
 class LinearActuator(Controller):
     'Basic controls for the wheels'

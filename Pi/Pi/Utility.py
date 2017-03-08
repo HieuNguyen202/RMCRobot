@@ -1,21 +1,13 @@
 import time
 import binascii
 class Scale(object):
-    def __init__(self, min,max):
-        self.min = min
-        self.max = max
-
-    def scale(self, input,inMin,inMax):
-        return (input - inMin) * (self.max - self.min) / (inMax - inMin) + self.min
-    def unScale(self, input,inMin,inMax):
-        return (input - self.min) * (inMax - inMin) / (self.max - self.min) + inMin
-    def setMin(min):
-        self.min=min
-    def setMax(max):
-        self.max=max
-    def setExtremes(min,max):
-        self.setMin(min)
-        self.setMax(max)
+    def __init__(self, inMin,inMax, outMin,outMax):
+        self.inMin=inMin
+        self.inMax=inMax
+        self.outMin=outMin
+        self.outMax=outMax
+    def scale(self, x):
+        return (x - self.inMin) * (self.outMax - self.outMin) / (self.inMax - self.inMin) + self.outMin
 class Timer(object):
     def __init__(self):
         self._timer=time.time()
@@ -26,6 +18,7 @@ class Timer(object):
     def timer(self):
 	    return time.time()-self._timer
 class Parser(object):
+    'old communication method, works but inefficient'
     def __init__(self,stringFormat):# Ex: "(,)|"
         dividers=tuple(stringFormat)
         self.leftP=dividers[0]
@@ -63,14 +56,16 @@ class Parser(object):
         output+=self.rightP+self.bar
         return output
 class NumberBase(object):
+    'Contains data type conversions necessary for Message object'
     def bin2int(self,bin):
         return int(bin,16)
     def binString2int(self,binString):
         return int(binString,2)
     def bin2binString(self,bin):
         return self.int2binString(self.bin2int(bin),len(bin)*4)#nuber of hex times 4
-    def int2bin(self,number): #number from 0 to 255
-        hexString=format(number, '02x')#convert int to binary
+    def int2bin(self,number,length): #number from 0 to 255
+        hexFormat='0'+str(length/4)+'x'
+        hexString=format(number, hexFormat)#convert int to binary
         bin=binascii.hexlify(binascii.unhexlify(hexString))#convert int to binary
         return bin
     def int2binString(self,number,size):
@@ -80,7 +75,7 @@ class NumberBase(object):
         return output
 class Message(NumberBase):
     'Message to be sent to the Pi'
-    def __init__(self, command,data1=None,data2=None,numCommandDitgit=None, numData1Digit=None, numData2Digit=None):
+    def __init__(self, numCommandDitgit=None, numData1Digit=None, numData2Digit=None):
         self.numCommandDitgit=None
         self.numData1Digit=None
         self.numData2Digit=None
@@ -89,9 +84,9 @@ class Message(NumberBase):
         self.data2Int=None
         if numCommandDitgit is None or numData1Digit is None or numData2Digit is None:
             self.setStructure(2,3,3)
-        self.setValues(command,data1,data2)
+        else: self.setStructure(numCommandDitgit,numData1Digit,numData2Digit)
     def getInt(self): return self.binString2int(self.getBinString())
-    def getBin(self): return self.int2bin(self.getInt()) #return bin data that can be sent by socket
+    def getBin(self): return self.int2bin(self.getInt(),self.getLength()) #return bin data that can be sent by socket
     def getBinString(self): return self.getCommandBinString()+ self.getData1BinString() + self.getData2BinString()
     def getData1Int(self): return self.data1Int
     def getData2Int(self): return self.data2Int
@@ -99,6 +94,7 @@ class Message(NumberBase):
     def getData1BinString(self): return self.int2binString(self.data1Int,self.numData1Digit)
     def getData2BinString(self): return self.int2binString(self.data2Int,self.numData2Digit)
     def getCommandBinString(self): return self.int2binString(self.commandInt,self.numCommandDitgit)
+    def getLength(self):return self.numCommandDitgit+self.numData1Digit+self.numData2Digit
     def setStructure(self,numCommandDitgit, numData1Digit, numData2Digit):
         if isinstance(numCommandDitgit, str): self.numCommandDitgit=self.binString2int(numCommandDitgit)
         else: self.numCommandDitgit=numCommandDitgit
@@ -134,4 +130,6 @@ class Message(NumberBase):
             return True
         else:
             return False
+    
         
+  

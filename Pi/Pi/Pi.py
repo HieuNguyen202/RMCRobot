@@ -17,7 +17,6 @@
 #   Put Timer class in Utility.py
 
 from Sabertooth import *
-from Parser import *
 import time
 import socket
 import sys
@@ -33,11 +32,12 @@ actuatorAddress=132
 wheels = Wheels(serialPort, baudRate, motorAddress)
 acts = Wheels(serialPort, baudRate, actuatorAddress)
 #hands = Wheels(serialPort, baudRate, oneActs)
-p=Parser("(,)|")# Command analyzer
-speedScale=Scale(-127,127)
+#p=Parser("(,)|")# Command analyzer
+speedScale=Scale(0,math.pow(2,self.message.numData1Digit)-1,-127,127)
 t=Timer()
 dataCount=0
-password=123
+#password=123
+message=Message()
 
 def main():
     #if sys.version_info[0]<3:thread.start_new_thread(communication,(12345,))
@@ -56,12 +56,14 @@ def getLocalIP():
     return IP
 def communication(port):
     global dataCount
+    global message
     host =getLocalIP()
     s = socket.socket()
     s.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1)# add this to reuse the port
     s.bind((host,port))
     while True:
         try:
+            numHexPerMessage=message.getLength()/4
             print (str(host)+" is listening for a new connection at port "+str(port))
             s.listen(1)
             c, addr = s.accept()
@@ -72,9 +74,9 @@ def communication(port):
                 data = c.recv(1024)
                 if not data: break
                 dataCount=dataCount+len(data)
-                for i in range(0,len(data),2):
-                    eachByte=data[i:i+2]
-                    message=Message(eachByte)
+                for i in range(0,len(data),numHexPerMessage):
+                    eachBlock=data[i:i+numHexPerMessage]
+                    message.setValues(eachBlock)
                     run3(message)
                     #codeInt=bin2int()
                     #run(codeInt)
@@ -86,7 +88,9 @@ def communication(port):
         except:
             print("Socket comunication failed.")
             wheels.stop()
+            arms.stop()
             c.close()
+
 def oldrun(input):
     if input[0]=="wheels":
         wheels.drive(input[1],input[2])
@@ -97,7 +101,6 @@ def oldrun(input):
     elif input[0]=="hands":
         hands.drive(input[1],input[1])
     else:pass
-
 def run(input):
     if input<0: pass
     elif input<64:
@@ -118,19 +121,50 @@ def run2(input):
     elif input<768:
         acts.leftMotor.sDrive(speedScale.scale(input,512,767))
     else:pass
-def run3(message):
-    if message.getCommandInt==0:
-        lSpeed=speedScale.scale(message.getData1Int(),0,7)
-        rSpeed=speedScale.scale(message.getData2Int(),0,7)
-        wheels.drive(lSpeed,rSpeed)
-    if message.getCommandInt==1:
-        lSpeed=speedScale.scale(message.getData1Int(),0,7)
-        rSpeed=speedScale.scale(message.getData2Int(),0,7)
-        arms.drive(lSpeed,rSpeed)
-    
 
-def bin2int(binData):
-    return int(binData,16)
+def run3(message):
+    commanInt=self.getCommandInt()
+    data1Int=self.getData1Int()
+    data2Int=self.getData2Int()
+    if commanInt==0:#stop
+        wheels.stop()
+        arms.stop()
+    elif commanInt==1:#drive
+        lSpeed=speedScale.scale(message.getData1Int())
+        rSpeed=speedScale.scale(message.getData2Int())
+        wheels.drive(lSpeed,rSpeed)
+    elif commanInt==2:#both
+        lSpeed=speedScale.scale(message.getData1Int())
+        rSpeed=speedScale.scale(message.getData2Int())
+        arms.drive(lSpeed,rSpeed)
+    elif commanInt==3:#arm
+        speed=speedScale.scale(message.getData1Int())
+        arms.leftMotor.sDrive(speed)
+    elif commanInt==4:#hand
+        speed=speedScale.scale(message.getData1Int())
+        arms.rightMotor.sDrive(speed)
+    elif commanInt==5:
+        pass
+    elif commanInt==6:
+        pass
+    elif commanInt==7:
+        pass
+    elif commanInt==8:
+        pass
+    elif commanInt==9:
+        pass
+    elif commanInt==10:
+        pass
+    elif commanInt==11:
+        pass
+    elif commanInt==12:
+        pass
+    elif commanInt==13:
+        pass
+    elif commanInt==14:
+        pass
+    elif commanInt==15:
+        pass
 
 if __name__ == "__main__":
         main()

@@ -3,19 +3,23 @@
 import time
 import binascii
 import socket
+import math
 from Utility import *
 
 class Communication(socket.socket):
     'Communication between two devices using python'
-    def __init__(self, host, port, dashboard):
+    def __init__(self, host, port, dashboard,message):
         self.s=socket.socket()
+        self.message=message
         self.host = host
         self.port = port
         self.connected=False
         self.dashboard=dashboard
-        self.speedScale=Scale(-127,127)
+        self.speedScale=Scale(-127,127,0,math.pow(2,self.message.numData1Digit)-1)
         self.prevCommand=-1
         self.prevPrevCommand=-1
+        self.commandDict={'stop':0,'drive':1, 'both':2,'arm':3,'hand':4}
+
     def __str__(self):
         return self.host+":"+str(self.port)
 
@@ -44,6 +48,7 @@ class Communication(socket.socket):
         self.s.send(message)
     def close(self):
         self.s.close()
+
     def oldtellPi(self,command, data1, data2=None): # 1 byte message
         if data2==None:#single command
             if data1!=self.prevCommand:
@@ -66,7 +71,7 @@ class Communication(socket.socket):
                     self.sendInt(int(self.speedScale.unScale(data2,192,255)))
                 self.prevPrevCommand=data1
                 self.prevCommand=data2
-    def tellPi2(self, command, data1, data2=None): # 2 byte message
+    def oldtellPi2(self, command, data1, data2=None): # 2 byte message
         if data2==None:#single command
             if data1!=self.prevCommand:
                 if command=='left': self.sendInt2(int(self.speedScale.unScale(data1,0,255))) 
@@ -86,12 +91,11 @@ class Communication(socket.socket):
         hexString=format(number, '02x')#convert int to binary
         message=binascii.hexlify(binascii.unhexlify(hexString))#convert int to binary
         self.send(message)
-    def sendInt2(self,number): #number from 0 to 65535
+    def oldsendInt2(self,number): #number from 0 to 65535
         hexString=format(number, '04x')#convert int to binary
         message=binascii.hexlify(binascii.unhexlify(hexString))#convert int to binary
         self.send(emssage)
-
-    def sendInt(self,number1,number2): #number from 0 to 255
+    def oldsendInt(self,number1,number2): #number from 0 to 255
         hexString1=format(number1, '02x')#convert int to binary
         hexString2=format(number2, '02x')
         bin1=binascii.hexlify(binascii.unhexlify(hexString1))#convert int to binary
@@ -99,11 +103,31 @@ class Communication(socket.socket):
         conbinedBin=bin1 + bin2
         print(conbinedBin)
         self.send(conbinedBin)
-    def tellPi(self, command, data1, data2): # 2 byte message        
+    def oldtellPi(self, command, data1, data2): # 2 byte message        
         if command=='drive':
             lspeed=int(self.speedScale.unScale(data1,0,255))
             rspeed=int(self.speedScale.unScale(data2,0,255))
             self.sendInt(lspeed,rspeed)
+    
+    def tellPi(self, rawCommand, rawData1=None, rawData2=None): # 2 byte message        
+        commandInt=commandDict[rawCommand]
+        if commandInt==0:
+            data1Int=0
+            data2Int=0
+        elif commandInt==1:
+            data1Int=speedScale.scale(rawData1)
+            data2Int=speedScale.scale(rawData2)
+        elif commandInt==2:
+            data1Int=speedScale.scale(rawData1)
+            data2Int=speedScale.scale(rawData2)
+        elif commandInt==3:
+            data1Int=speedScale.scale(rawData1)
+            data2Int=0
+        elif commandInt==4:
+            data1Int=speedScale.scale(rawData1)
+            data2Int=0
+        self.message.setValues(commandInt,data1Int,data2Int)
+        self.send(message.getBin())
 
         #self.prevPrevCommand=data1
         #self.prevCommand=data2

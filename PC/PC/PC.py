@@ -53,7 +53,8 @@ def main():
     dashboard=RMCDashboard(dashboardSize,5,5)
     while True:
         #try:
-            commandPipe = Communication(host,commandPort,dashboard)
+            message=Message()
+            commandPipe = Communication(host,commandPort,dashboard,message)
             controller=XboxController(dashboard,commandPipe)
             while True:
                 if controller.connected is False:
