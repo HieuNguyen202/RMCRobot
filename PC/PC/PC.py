@@ -33,19 +33,14 @@ host = "192.168.2.201" # Destination IP address, Pi's IP address
 commandPort = 12345    # Port that's been opened in the Pi
 dashboardSize=(1200,900)
 
-def test():
-    commandInt=1
-    data1Int="11"
-    data2Int=5
-    m1=Message(commandInt,data1Int,data2Int)
-    m2=Message(commandInt,data1Int,data2Int)
-    m3=Message(commandInt,data1Int,data2Int)
-    if m1.equals(m2): print("Yeah m1 = m2")
-    if m1.equals(m3): print("Yeah m1 = m3")
-    
-    speedScale=Scale(-127,127)
-    for i in range(-127,128):
-        print(i," to ",int(speedScale.unScale(i,64,127)), " back to ",int(speedScale.scale(int(speedScale.unScale(i,64,127)),64,127)))
+def test(controller):
+    while True:
+        controller.commandPipe.tellPi('drive',127,127)
+        controller.commandPipe.tellPi('drive',90,90)
+        controller.commandPipe.tellPi('drive',50,50)
+        controller.commandPipe.tellPi('drive',0,0)
+        controller.commandPipe.tellPi('drive',-127,-127)
+        controller.commandPipe.tellPi('drive',-125,-125)
 
 
 def main():
@@ -53,7 +48,7 @@ def main():
     dashboard=RMCDashboard(dashboardSize,5,5)
     while True:
         #try:
-            message=Message()
+            message=Message(4,6,6)
             commandPipe = Communication(host,commandPort,dashboard,message)
             controller=XboxController(dashboard,commandPipe)
             while True:
@@ -63,6 +58,7 @@ def main():
                     if commandPipe.connected is False:
                         commandPipe.connect()
                     else:
+                        #test(controller)
                         while True:# consider removing this
                             controller.listen()
         #except:

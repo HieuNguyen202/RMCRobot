@@ -15,7 +15,7 @@ class Communication(socket.socket):
         self.port = port
         self.connected=False
         self.dashboard=dashboard
-        self.speedScale=Scale(-127,127,0,math.pow(2,self.message.numData1Digit)-1)
+        self.speedScale=Scale(-127,127,1,math.pow(2,self.message.numData1Digit)-1)
         self.prevMessageInt=-1
         self.commandDict={'stop':0,'drive':1, 'dig':2,'arm':3,'hand':4}
 
@@ -43,31 +43,32 @@ class Communication(socket.socket):
             return self.connected
     def bind(self):
         s.bind(self.host,self.port)
-    def send(self, message):
+    def send(self, message):#error here
         self.s.send(message)
     def close(self):
         self.s.close()   
-    def tellPi(self, rawCommand, rawData1=None, rawData2=None): # 2 byte message        
-        commandInt=commandDict[rawCommand]
+    def tellPi(self, rawCommand, rawData1=None, rawData2=None): # 2 byte message   
+        print('Inside tellPi')     
+        commandInt=self.commandDict[rawCommand]
         if commandInt==0:
             data1Int=0
             data2Int=0
         elif commandInt==1:
-            data1Int=speedScale.scale(rawData1)
-            data2Int=speedScale.scale(rawData2)
+            data1Int=self.speedScale.scaleInt(rawData1)
+            data2Int=self.speedScale.scaleInt(rawData2)
         elif commandInt==2:
-            data1Int=speedScale.scale(rawData1)
-            data2Int=speedScale.scale(rawData2)
+            data1Int=self.speedScale.scaleInt(rawData1)
+            data2Int=self.speedScale.scaleInt(rawData2)
         elif commandInt==3:
-            data1Int=speedScale.scale(rawData1)
+            data1Int=self.speedScale.scaleInt(rawData1)
             data2Int=0
         elif commandInt==4:
-            data1Int=speedScale.scale(rawData1)
+            data1Int=self.speedScale.scaleInt(rawData1)
             data2Int=0
         self.message.setValues(commandInt,data1Int,data2Int)
         thisMessageInt=self.message.getInt()
         if thisMessageInt != self.prevMessageInt: 
-            self.send(message.getBin())
+            self.send(self.message.getBin())
             self.prevMessageInt=thisMessageInt
 
 

@@ -33,11 +33,12 @@ wheels = Wheels(serialPort, baudRate, motorAddress)
 acts = Wheels(serialPort, baudRate, actuatorAddress)
 #hands = Wheels(serialPort, baudRate, oneActs)
 #p=Parser("(,)|")# Command analyzer
-speedScale=Scale(0,math.pow(2,self.message.numData1Digit)-1,-127,127)
+
 t=Timer()
 dataCount=0
 #password=123
-message=Message()
+message=Message(4,6,6)
+speedScale=Scale(1,math.pow(2,message.numData1Digit)-1,-127,127)
 
 def main():
     #if sys.version_info[0]<3:thread.start_new_thread(communication,(12345,))
@@ -63,8 +64,8 @@ def communication(port):
     s.bind((host,port))
     while True:
         try:
-            numHexPerMessage=message.getLength()/4
-            print (str(host)+" is listening for a new connection at port "+str(port))
+            numHexPerMessage=int(message.getLength()/4)
+            print (str(host)+":"+str(port)+" is listening...")
             s.listen(1)
             c, addr = s.accept()
             data = c.recv(1024)
@@ -123,25 +124,25 @@ def run2(input):
     else:pass
 
 def run3(message):
-    commanInt=self.getCommandInt()
-    data1Int=self.getData1Int()
-    data2Int=self.getData2Int()
+    commanInt=message.getCommandInt()
+    data1Int=message.getData1Int()
+    data2Int=message.getData2Int()
     if commanInt==0:#stop
         wheels.stop()
         arms.stop()
     elif commanInt==1:#drive
-        lSpeed=speedScale.scale(message.getData1Int())
-        rSpeed=speedScale.scale(message.getData2Int())
+        lSpeed=speedScale.scaleInt(message.getData1Int())
+        rSpeed=speedScale.scaleInt(message.getData2Int())
         wheels.drive(lSpeed,rSpeed)
     elif commanInt==2:#both
-        lSpeed=speedScale.scale(message.getData1Int())
-        rSpeed=speedScale.scale(message.getData2Int())
+        lSpeed=speedScale.scaleInt(message.getData1Int())
+        rSpeed=speedScale.scaleInt(message.getData2Int())
         arms.drive(lSpeed,rSpeed)
     elif commanInt==3:#arm
-        speed=speedScale.scale(message.getData1Int())
+        speed=speedScale.scaleInt(message.getData1Int())
         arms.leftMotor.sDrive(speed)
     elif commanInt==4:#hand
-        speed=speedScale.scale(message.getData1Int())
+        speed=speedScale.scaleInt(message.getData1Int())
         arms.rightMotor.sDrive(speed)
     elif commanInt==5:
         pass

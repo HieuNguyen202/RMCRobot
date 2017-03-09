@@ -154,7 +154,6 @@ class XboxController(object):
         self.dashboard=dashboard
         self.clock = pygame.time.Clock() # control the xbox controller's frequency of updating button and joystick events.
         self.joysticks = []
-        self.initialize()
         self.wheels=JoystickDriver((50,100,127),1) #a class to handle joystick coordinate and convert it to motor speeds: parametter: (maxSpeeds, indexOfInitialMaxSpeed)
         self.arms=JoystickDriver((50,100,127),1) #a class to handle joystick coordinate and convert it to motor speeds: parametter: (maxSpeeds, indexOfInitialMaxSpeed)
         self.arms.SPINNING_ANGLE=25

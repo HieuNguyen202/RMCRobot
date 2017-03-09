@@ -8,6 +8,10 @@ class Scale(object):
         self.outMax=outMax
     def scale(self, x):
         return (x - self.inMin) * (self.outMax - self.outMin) / (self.inMax - self.inMin) + self.outMin
+    def scaleInt(self,x):
+        return int(self.scale(x))
+    def __str__(self, **kwargs):
+        return "inMin: " + str(self.inMin) +" inMax: " + str(self.inMax)+" outMin: " + str(self.outMin)+" outMax: " + str(self.outMax)
 class Timer(object):
     def __init__(self):
         self._timer=time.time()
@@ -18,7 +22,6 @@ class Timer(object):
     def timer(self):
 	    return time.time()-self._timer
 class Parser(object):
-    'old communication method, works but inefficient'
     def __init__(self,stringFormat):# Ex: "(,)|"
         dividers=tuple(stringFormat)
         self.leftP=dividers[0]
@@ -56,7 +59,6 @@ class Parser(object):
         output+=self.rightP+self.bar
         return output
 class NumberBase(object):
-    'Contains data type conversions necessary for Message object'
     def bin2int(self,bin):
         return int(bin,16)
     def binString2int(self,binString):
@@ -64,7 +66,7 @@ class NumberBase(object):
     def bin2binString(self,bin):
         return self.int2binString(self.bin2int(bin),len(bin)*4)#nuber of hex times 4
     def int2bin(self,number,length): #number from 0 to 255
-        hexFormat='0'+str(length/4)+'x'
+        hexFormat='0'+str(int(length/4))+'x'
         hexString=format(number, hexFormat)#convert int to binary
         bin=binascii.hexlify(binascii.unhexlify(hexString))#convert int to binary
         return bin
@@ -79,9 +81,9 @@ class Message(NumberBase):
         self.numCommandDitgit=None
         self.numData1Digit=None
         self.numData2Digit=None
-        self.commandInt=None
-        self.data1Int=None
-        self.data2Int=None
+        self.commandInt=-1
+        self.data1Int=-1
+        self.data2Int=-1
         if numCommandDitgit is None or numData1Digit is None or numData2Digit is None:
             self.setStructure(2,3,3)
         else: self.setStructure(numCommandDitgit,numData1Digit,numData2Digit)
@@ -130,6 +132,7 @@ class Message(NumberBase):
             return True
         else:
             return False
-    
+    def __str__(self, **kwargs):
+        return "int: "+str(self.getInt())+" bin: "+str(self.getBinString())+" commandInt: "+str(self.getCommandInt())+" data1Int: "+str(self.getData1Int())+" data2Int: "+str(self.getData2Int())
         
   
