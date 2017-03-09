@@ -128,48 +128,6 @@ class Message(NumberBase):
             return True
         else:
             return False
-class MessageReader(Message):
-    'Message to be sent to the Pi'
-    def __init__(self,numCommandDitgit=None, numData1Digit=None, numData2Digit=None):
-        super().__init__(self,numCommandDitgit,numData1Digit,numData2Digit)
-    def run(self):
-        commanInt=self.getCommandInt()
-        data1Int=self.getData1Int()
-        data2Int=self.getData2Int()
-        if commanInt==0:
-            pass
-        elif commanInt==1:
-            pass
-        elif commanInt==2:
-            pass
-        elif commanInt==3:
-            pass
-        elif commanInt==4:
-            pass
-        elif commanInt==5:
-            pass
-        elif commanInt==6:
-            pass
-        elif commanInt==7:
-            pass
-        elif commanInt==8:
-            pass
-        elif commanInt==9:
-            pass
-        elif commanInt==10:
-            pass
-        elif commanInt==11:
-            pass
-        elif commanInt==12:
-            pass
-        elif commanInt==13:
-            pass
-        elif commanInt==14:
-            pass
-        elif commanInt==15:
-            pass
-
-
     
         
   

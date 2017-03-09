@@ -165,7 +165,7 @@ class XboxController(object):
         self.commandPipe=commandPipe
         self.clockTick=40
         #self.clock.tick(self.clockTick) # 25 is good, how frequently the pygame module updates xbox events. Ex: 25 means 25 times/sec
-        self.dashboard.display("Set clock tick to "+str(self.clockTick))
+        
         
     def listen(self):
         'Listen to xbox key events and call the corresponding functions if an button is pressed or a joystick is moved.'
@@ -307,6 +307,7 @@ class XboxController(object):
                     self.joysticks[-1].init() #Initialize the one that was just appended
             self.connected=True
             self.dashboard.display("Found a Xbox Controller.")
+            self.dashboard.display("Clock tick:  "+str(self.clockTick))
             self.dashboard.xboxConnected()
         else:
             self.connected=False

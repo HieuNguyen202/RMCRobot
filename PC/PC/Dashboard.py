@@ -16,7 +16,7 @@ class RMCColor(object):
         self.black = (0,0,0)
         self.pink = (255,200,200)
         self.bgColor=self.white
-        self.front=pygame.font.SysFont("comicsansms",24)
+        self.front=pygame.font.SysFont("Courier Regular",24)
 class RMCFrame(RMCColor):
     'The frame'
     def __init__(self, size,numRow,numColumm):
@@ -152,26 +152,23 @@ class MessageBox(RMCImage):
         self.l2=""
         self.l3=""
         self.gap=30
-
+        self.lines=['','','']
+    def rotate(self,message):
+        for i in [2,1]:
+            self.lines[i-1]=self.lines[i]
+        self.lines[2]=message
     def display(self,message):
         self.hide()
+        self.rotate(message)
+        for i in [0,1,2]:
+            self.displayLine(self.lines[i],i)
+        pygame.display.update() 
+    def displayLine(self,line,index):
         cornor=self.locate(7,7)
         x=cornor[0]-150
         y=cornor[1]+30
-
-        self.l3=self.l2
-        self.text=self.front.render(self.l3,True,self.red)
-        self.frame.screen.blit(self.text,(x,y))
-
-        self.l2=self.l1
-        self.text=self.front.render(self.l2,True,self.red)
-        self.frame.screen.blit(self.text,(x,y+self.gap))
-
-        self.l1=message
-        self.text=self.front.render(self.l1,True,self.red)
-        self.frame.screen.blit(self.text,(x,y+2*self.gap))
-      
-        pygame.display.update() 
+        self.text=self.front.render(line,True,self.red)
+        self.frame.screen.blit(self.text,(x,y+index*self.gap))
 
 #class SpeedRMCDashBoard(DashBoard):
 #    'Communication between two devices using python'

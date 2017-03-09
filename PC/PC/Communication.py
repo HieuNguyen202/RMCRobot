@@ -18,7 +18,7 @@ class Communication(socket.socket):
         self.speedScale=Scale(-127,127,0,math.pow(2,self.message.numData1Digit)-1)
         self.prevCommand=-1
         self.prevPrevCommand=-1
-        self.commandDict={'stop':0,'drive':1, 'both':2,'arm':3,'hand':4}
+        self.commandDict={'stop':0,'drive':1, 'dig':2,'arm':3,'hand':4}
 
     def __str__(self):
         return self.host+":"+str(self.port)
