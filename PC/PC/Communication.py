@@ -9,7 +9,7 @@ from Utility import *
 class Communication(socket.socket):
     'Communication between two devices using python'
     def __init__(self, host, port, dashboard,message):
-        self.s=socket.socket()
+        super().__init__()
         self.message=message
         self.host = host
         self.port = port
@@ -19,9 +19,7 @@ class Communication(socket.socket):
         self.prevMessageInt=-1
         self.commandDict={'stop':0,'drive':1, 'dig':2,'arm':3,'hand':4}
 
-    def __str__(self):
-        return self.host+":"+str(self.port)
-
+    def __str__(self): return self.host+":"+str(self.port)
     def connect(self):
         self.dashboard.display("Connecting to "+ str(self))
         self.dashboard.disconnected()
@@ -33,7 +31,7 @@ class Communication(socket.socket):
         return self.connected
     def privateConnect(self):# to be called by self.connect()
         try:
-            self.s.connect((self.host, self.port))
+            super().connect((self.host, self.port))
             self.dashboard.display("Connection to "+self.host+":"+str(self.port)+" established.")
             self.dashboard.connected()
             self.connected=True
@@ -41,14 +39,8 @@ class Communication(socket.socket):
             self.connected=False
         finally:
             return self.connected
-    def bind(self):
-        s.bind(self.host,self.port)
-    def send(self, message):#error here
-        self.s.send(message)
-    def close(self):
-        self.s.close()   
+    def bind(self): super().bind(self.host,self.port)
     def tellPi(self, rawCommand, rawData1=None, rawData2=None): # 2 byte message   
-        print('Inside tellPi')     
         commandInt=self.commandDict[rawCommand]
         if commandInt==0:
             data1Int=0
