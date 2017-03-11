@@ -15,6 +15,8 @@
 #   Rename sabretooth.py to sabertooth.py
 #   Added Ultility.py for small, handy classes
 #   Put Timer class in Utility.py
+#3/11/2017
+#   Added Indicator class
 
 from Sabertooth import *
 import time

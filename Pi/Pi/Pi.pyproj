@@ -23,9 +23,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Communication.py" />
-    <Compile Include="Indicator.py">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Not used\driverTMain.py" />
     <Compile Include="Not used\OldTestingSabertooth.py" />
     <Compile Include="Not used\server.py" />
