@@ -21,10 +21,6 @@ class Joystick:
       self.x = 0.0
       self.y = 0.0
 
-      #Joystick.stickCount += 1
-   #def __str__(self):
-      #return 'Point (%f, %f)' % (self.x, self.y)
-
    def setX(self, x):
        self.x = x
        if x>1.0:
@@ -123,12 +119,10 @@ class Joystick:
                     speed=(speed[0],0)
                #print("forward straight", speed)
                return speed
-
 class JoystickDriver(Joystick):
     'A child of Joystick, Handle max speeds.'
     def __init__(self,maxSpeeds,initalSpeedIndex):
-        self.x = 0.0
-        self.y = 0.0
+        super().__init__()
         self.maxSpeeds=maxSpeeds
         self.currentMaxSpeed=self.maxSpeeds[initalSpeedIndex]
     def speedUp(self): # Switch to speed of the next index in maxSpeeds, if is last index, currentMaxSpeed stay the same.
@@ -143,9 +137,20 @@ class JoystickDriver(Joystick):
             i=i-1
             self.currentMaxSpeed=self.maxSpeeds[i]
         return i
-    def speeds(self,mode): # return speeds of left and right motors based on stick coordinate.
-        return self.getSpeed(self.currentMaxSpeed,mode)
-
+    def getSpeed(self,mode): # return speeds of left and right motors based on stick coordinate.
+        return super().getSpeed(self.currentMaxSpeed,mode)
+class WheelDriver(JoystickDriver):
+    def __init__(self, maxSpeeds, initalSpeedIndex):
+        super().__init__(maxSpeeds, initalSpeedIndex)
+    def getSpeed(self):
+        super().getSpeed(self.currentMaxSpeed,0)
+class ActuatorDriver(JoystickDriver):
+    def __init__(self, maxSpeeds, initalSpeedIndex,speedRatio):
+        super().__init__(maxSpeeds, initalSpeedIndex)
+        self.speedRatio=speedRatio
+    def getSpeed(self):
+        speeds=super().getSpeed(self.currentMaxSpeed,1)
+        return (speeds[0],speeds[1]*self.speedRatio)
 class XboxController(object):
     'a class to handle joystick coordinate and convert it to motor speeds: parametter: (maxSpeeds, indexOfInitialMaxSpeed)'
     def __init__(self,dashboard,commandPipe):
@@ -154,8 +159,8 @@ class XboxController(object):
         self.dashboard=dashboard
         self.clock = pygame.time.Clock() # control the xbox controller's frequency of updating button and joystick events.
         self.joysticks = []
-        self.wheels=JoystickDriver((50,100,127),1) #a class to handle joystick coordinate and convert it to motor speeds: parametter: (maxSpeeds, indexOfInitialMaxSpeed)
-        self.arms=JoystickDriver((50,100,127),1) #a class to handle joystick coordinate and convert it to motor speeds: parametter: (maxSpeeds, indexOfInitialMaxSpeed)
+        self.wheels=WheelDriver((50,100,127),1) #a class to handle joystick coordinate and convert it to motor speeds: parametter: (maxSpeeds, indexOfInitialMaxSpeed)
+        self.arms=ActuatorDriver((50,100,127),1,0.5) #a class to handle joystick coordinate and convert it to motor speeds: parametter: (maxSpeeds, indexOfInitialMaxSpeed)
         self.arms.SPINNING_ANGLE=25
         self.arms.EQUAL_SPEED_ANGLE=25
         self.triggerAbs=0 # Moving forward and backward using top triggers has higher priority than the using the stick. This is to ensure the sticks won't take over control if top triggers are being used.
@@ -202,7 +207,7 @@ class XboxController(object):
         else:pass
 
         if (event.axis==0 or event.axis==1 or event.axis==2):
-            speeds=self.wheels.speeds(0) #Get valid Sabertooth speed based on XY coordinate of the joysticks. Ex: (-127,100)
+            speeds=self.wheels.getSpeed() #Get valid Sabertooth speed based on XY coordinate of the joysticks. Ex: (-127,100)
             self.commandPipe.tellPi('drive',speeds[0],speeds[1])
         elif(event.axis==3 or event.axis==4):
             speeds=self.arms.speeds(1) #Get valid Sabertooth speed based on XY coordinate of the joysticks. Ex: (-127,100)
