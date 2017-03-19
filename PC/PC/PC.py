@@ -33,14 +33,8 @@ host = "192.168.1.126" # Destination IP address, Pi's IP address
 commandPort = 12345    # Port that's been opened in the Pi
 dashboardSize=(1200,900)
 
-def test(controller):
-    while True:
-        controller.commandPipe.tellPi('drive',127,127)
-        controller.commandPipe.tellPi('drive',90,90)
-        controller.commandPipe.tellPi('drive',50,50)
-        controller.commandPipe.tellPi('drive',0,0)
-        controller.commandPipe.tellPi('drive',-127,-127)
-        controller.commandPipe.tellPi('drive',-125,-125)
+def test():
+    dashboard=RMCDashboard(dashboardSize,10,10)
 
 
 def main():
@@ -68,4 +62,5 @@ def main():
             dashboard.xboxDisconnected()
             commandPipe.close()
 if __name__ == "__main__":
-        main()
+        #main()
+        test()

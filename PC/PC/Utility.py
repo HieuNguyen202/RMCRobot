@@ -1,6 +1,6 @@
 import time
 import binascii
-import RPi.GPIO as GPIO
+#import RPi.GPIO as GPIO
 import threading
 class Scale(object):
     '''Scale a number from one scale to another (Ex: 2 in (0:10) scale is equivalent to 20 in (0:100) scale)'''

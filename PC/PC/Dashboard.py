@@ -30,11 +30,27 @@ class RMCFrame(RMCColor):
         self.size=size
         self.width=size[0]
         self.height=size[1]
-class RMCImage(RMCColor):
+        self.x1=0
+        self.x2=int((self.numColumm-1)/2)
+        self.x3=self.numColumm-1
+        self.y1=0
+        self.y2=int((self.numRow-1)/2)
+        self.y3=self.numRow-1
+        self.grid1=(self.x1,self.y3)
+        self.grid2=(self.x2,self.y3)
+        self.grid3=(self.x3,self.y3)
+        self.grid4=(self.x1,self.y2)
+        self.grid5=(self.x2,self.y2)
+        self.grid6=(self.x3,self.y2)
+        self.grid7=(self.x1,self.y1)
+        self.grid8=(self.x2,self.y1)
+        self.grid9=(self.x3,self.y1)
+
+class RMCRect(RMCColor):
     'The frame'
-    def __init__(self, image, frame,scaledXY):
+    def __init__(self, size, frame, scaledXY):
         super().__init__()
-        self.image=image
+        self.size=size
         self.frame=frame
         self.scaledXY=scaledXY
     def unscale(self):
@@ -50,8 +66,8 @@ class RMCImage(RMCColor):
         elif loCode==8: return (orgXY[0]+self.frame.cellWidth/2,orgXY[1])
         elif loCode==9: return (orgXY[0]+self.frame.cellWidth,orgXY[1])
     def imageAt(self,orgXY,loCode):
-        x=self.image.get_rect().width
-        y=self.image.get_rect().height
+        x=self.size[0]
+        y=self.size[1]
         if loCode==1: return (orgXY[0],orgXY[1]-y)
         elif loCode==2: return (orgXY[0]-x/2,orgXY[1]-y)
         elif loCode==3: return (orgXY[0]-x,orgXY[1]-y)
@@ -66,24 +82,20 @@ class RMCImage(RMCColor):
             cellLoCode=5
             imageLoCode=5
         return self.imageAt(self.cellAt(self.unscale(),cellLoCode),imageLoCode)
+    def hide(self,cellLoCode=None,imageLoCode=None): self.drawRect()
+    def drawRect(self,color=None,cellLoCode=None,imageLoCode=None):
+        if color is None: color = self.bgColor
+        location = self.locate(cellLoCode,imageLoCode)
+        rect=pygame.Rect(location,self.size)
+        pygame.draw.rect(self.frame.screen,color,rect)
+class RMCImage(RMCRect):
+    'The frame'
+    def __init__(self, image, frame,scaledXY):
+        super().__init__(image.get_rect().size, frame, scaledXY)
+        self.image=image
     def show(self,cellLoCode=None,imageLoCode=None):
-        if cellLoCode is None and imageLoCode is None:
-            cellLoCode=5
-            imageLoCode=5
-        #location=self.imageAt(self.cellAt(self.unscale(),cellLoCode,),imageLoCode)
-        location=self.imageAt(self.cellAt(self.unscale(),cellLoCode),imageLoCode)
-        print(location)
-        self.frame.screen.blit(self.image,location)
-        pygame.display.update()    
-    def hide(self,cellLoCode=None,imageLoCode=None):
-        if cellLoCode is None and imageLoCode is None:
-            cellLoCode=5
-            imageLoCode=5
-        iSize=self.image.get_rect().size
-        location=self.imageAt(self.cellAt(self.unscale(),cellLoCode,),imageLoCode)
-        rect=pygame.Rect(location,iSize)
-        pygame.draw.rect(self.frame.screen,self.bgColor,rect)
-        pygame.display.update()
+        location = self.locate(cellLoCode,imageLoCode)
+        self.frame.screen.blit(self.image,location) 
 class RMCDashboard(RMCFrame):
     'RMC Dashboard'
     def __init__(self, size,numRow,numColomm):
@@ -99,13 +111,18 @@ class RMCDashboard(RMCFrame):
         self.iArm = pygame.transform.scale(self.iArm , (100, 100))
         self.iXbox = pygame.image.load(os.path.join('images', 'xbox.png'))
         self.iLogo = pygame.image.load(os.path.join('images', 'iitlogo.png'))
-        self.oConnected=RMCImage(self.iConnected,self,(self.numColumm-1,int((self.numRow-1)/2)))
-        self.oMotor=RMCImage(self.iMotor,self,(int((self.numColumm-1)/2),self.numRow-1))
-        self.oArm=RMCImage(self.iArm,self,(int((self.numColumm-1)/2),self.numRow-2))
-        self.oXbox=RMCImage(self.iXbox,self,(self.numColumm-1,int((self.numRow-1)/2)+1))
-        self.oLogo=RMCImage(self.iLogo,self,(int((self.numColumm-1)/2),0))
+        self.oConnected=RMCImage(self.iConnected,self,self.grid6)
+        self.oMotor=RMCImage(self.iMotor,self,(self.x2-2,self.y3-4))
+        self.oArm=RMCImage(self.iArm,self,(self.x2-2,self.y3-2))
+        self.oXbox=RMCImage(self.iXbox,self,self.grid3)
+        self.oLogo=RMCImage(self.iLogo,self,self.grid8)
         self.screen.fill(self.bgColor)
         self.logo()
+        self.speedPanel=SpeedPanel(3,(120,20),self.red,self,(self.x2-1,self.y3-4))
+        self.speedPanel2=SpeedPanel(3,(120,20),self.blue,self,(self.x2-1,self.y3-2))
+
+        self.arm(1)
+        self.motor(1)
         self.messageBox=MessageBox(self.iLogo,self,(2,2))
     def display(self,message):
         self.messageBox.display(message)
@@ -118,7 +135,7 @@ class RMCDashboard(RMCFrame):
     def motor(self,level): #fix this later
         dist=100
         if level>=1:
-            pass#self.put(self.iMotor,2,(-dist,0))
+            self.oMotor.show()
             if level>=2:
                 pass#self.put(self.iMotor,2,(0,0))
                 if level>=3:
@@ -127,7 +144,7 @@ class RMCDashboard(RMCFrame):
     def arm(self,level): #fix this later
         dist=100
         if level>=1:
-            pass#self.put(self.iArm,2,(-dist,-100))
+            self.oArm.show()
             if level>=2:
                 pass#self.put(self.iArm,2,(0,-100))
                 if level>=3:
@@ -169,6 +186,26 @@ class MessageBox(RMCImage):
         y=cornor[1]+30
         self.text=self.front.render(line,True,self.red)
         self.frame.screen.blit(self.text,(x,y+index*self.gap))
+class SpeedPanel(RMCColor):
+    'Message Box'
+    def __init__(self, numLevel, size, color, frame, scaledXY):
+        super().__init__()
+        self.numLevel=numLevel
+        self.bars = [] 
+        self.color=color
+        for i in range(numLevel):
+            self.bars.append(RMCRect(size,frame, (scaledXY[0]+i,scaledXY[1])))
+        self.setSpeed(3)
+
+    def setSpeed(self,speedLevel):
+        if speedLevel <=self.numLevel:
+            self.clear()
+            for i in range(speedLevel):
+                self.bars[i].drawRect(self.color)
+            pygame.display.update()
+    def clear(self):
+        for i in range(self.numLevel):
+            self.bars[i].hide()
 
 #class SpeedRMCDashBoard(DashBoard):
 #    'Communication between two devices using python'

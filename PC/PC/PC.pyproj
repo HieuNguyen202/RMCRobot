@@ -33,16 +33,19 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="images\arm.png" />
+    <Content Include="images\motor.png" />
+    <Content Include="images\Other\arm.png" />
     <Content Include="images\iitlogo.png" />
     <Content Include="images\iitoff.png" />
     <Content Include="images\iiton.png" />
-    <Content Include="images\motor.png" />
-    <Content Include="images\speed.ico" />
+    <Content Include="images\Other\motor.png" />
+    <Content Include="images\Other\speed.ico" />
     <Content Include="images\wifi.png" />
     <Content Include="images\xbox.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="images\" />
+    <Folder Include="images\Other\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
