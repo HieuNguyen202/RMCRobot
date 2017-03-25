@@ -38,8 +38,7 @@ def test():
 
 
 def main():
-    #test()
-    dashboard=RMCDashboard(dashboardSize,5,5)
+    dashboard=RMCDashboard(dashboardSize,10,10)
     while True:
         #try:
             message=Message(4,6,6)
@@ -62,5 +61,5 @@ def main():
             dashboard.xboxDisconnected()
             commandPipe.close()
 if __name__ == "__main__":
-        #main()
-        test()
+        main()
+        #test()

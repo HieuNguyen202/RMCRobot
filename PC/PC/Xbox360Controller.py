@@ -143,7 +143,7 @@ class WheelDriver(JoystickDriver):
     def __init__(self, maxSpeeds, initalSpeedIndex):
         super().__init__(maxSpeeds, initalSpeedIndex)
     def getSpeed(self):
-        super().getSpeed(self.currentMaxSpeed,0)
+        return super().getSpeed(0)
 class ActuatorDriver(JoystickDriver):
     def __init__(self, maxSpeeds, initalSpeedIndex,speedRatio):
         super().__init__(maxSpeeds, initalSpeedIndex)

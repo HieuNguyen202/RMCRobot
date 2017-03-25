@@ -111,19 +111,18 @@ class RMCDashboard(RMCFrame):
         self.iArm = pygame.transform.scale(self.iArm , (100, 100))
         self.iXbox = pygame.image.load(os.path.join('images', 'xbox.png'))
         self.iLogo = pygame.image.load(os.path.join('images', 'iitlogo.png'))
-        self.oConnected=RMCImage(self.iConnected,self,self.grid6)
-        self.oMotor=RMCImage(self.iMotor,self,(self.x2-2,self.y3-4))
-        self.oArm=RMCImage(self.iArm,self,(self.x2-2,self.y3-2))
-        self.oXbox=RMCImage(self.iXbox,self,self.grid3)
+        self.oConnected=RMCImage(self.iConnected,self,(8,4))
+        self.oMotor=RMCImage(self.iMotor,self,(self.x2-2,self.y3-3))
+        self.oArm=RMCImage(self.iArm,self,(self.x2-2,self.y3-1))
+        self.oXbox=RMCImage(self.iXbox,self,(8,2))
         self.oLogo=RMCImage(self.iLogo,self,self.grid8)
         self.screen.fill(self.bgColor)
+        self.oMotor.show()
+        self.oArm.show()
         self.logo()
-        self.speedPanel=SpeedPanel(3,(120,20),self.red,self,(self.x2-1,self.y3-4))
-        self.speedPanel2=SpeedPanel(3,(120,20),self.blue,self,(self.x2-1,self.y3-2))
-
-        self.arm(1)
-        self.motor(1)
-        self.messageBox=MessageBox(self.iLogo,self,(2,2))
+        self.motorSpeedPanel=SpeedPanel(3,(120,20),self.red,self,(self.x2-1,self.y3-3))
+        self.armSpeedPanel=SpeedPanel(3,(120,20),self.blue,self,(self.x2-1,self.y3-1))
+        self.messageBox=MessageBox(self.iLogo,self,(5,2))
     def display(self,message):
         self.messageBox.display(message)
     def connected(self):
@@ -134,21 +133,11 @@ class RMCDashboard(RMCFrame):
         pygame.display.update()
     def motor(self,level): #fix this later
         dist=100
-        if level>=1:
-            self.oMotor.show()
-            if level>=2:
-                pass#self.put(self.iMotor,2,(0,0))
-                if level>=3:
-                    pass#self.put(self.iMotor,2,(dist,0))
+        self.motorSpeedPanel.setSpeed(level)
         pygame.display.update()
     def arm(self,level): #fix this later
         dist=100
-        if level>=1:
-            self.oArm.show()
-            if level>=2:
-                pass#self.put(self.iArm,2,(0,-100))
-                if level>=3:
-                    pass#self.put(self.iArm,2,(dist,-100))
+        self.armSpeedPanel.setSpeed(level)
         pygame.display.update()
     def xboxConnected(self):
         self.oXbox.show()
@@ -195,14 +184,13 @@ class SpeedPanel(RMCColor):
         self.color=color
         for i in range(numLevel):
             self.bars.append(RMCRect(size,frame, (scaledXY[0]+i,scaledXY[1])))
-        self.setSpeed(3)
+        self.setSpeed(2)
 
     def setSpeed(self,speedLevel):
         if speedLevel <=self.numLevel:
             self.clear()
             for i in range(speedLevel):
                 self.bars[i].drawRect(self.color)
-            pygame.display.update()
     def clear(self):
         for i in range(self.numLevel):
             self.bars[i].hide()

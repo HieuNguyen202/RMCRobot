@@ -32,7 +32,7 @@ motorAddress=130
 actuatorAddress=132
 #oneActs=132
 wheels = Wheels(serialPort, baudRate, motorAddress)
-acts = Wheels(serialPort, baudRate, actuatorAddress)
+arms = Wheels(serialPort, baudRate, actuatorAddress)
 #hands = Wheels(serialPort, baudRate, oneActs)
 #p=Parser("(,)|")# Command analyzer
 
