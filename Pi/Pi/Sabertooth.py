@@ -40,7 +40,7 @@ class Controller(object):
 class Wheels(Controller):
     'Basic controls for the wheels'
     def __init__(self, port, baudRate, address):
-        super().__init__(self, port, baudRate, address)
+        super().__init__(port, baudRate, address)
 
     def left(self,speed):
         self.leftMotor.drive('backward', speed)
