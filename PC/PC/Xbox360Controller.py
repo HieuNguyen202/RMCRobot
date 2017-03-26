@@ -149,7 +149,7 @@ class ActuatorDriver(JoystickDriver):
         super().__init__(maxSpeeds, initalSpeedIndex)
         self.speedRatio=speedRatio
     def getSpeed(self):
-        speeds=super().getSpeed(self.currentMaxSpeed,1)
+        speeds=super().getSpeed(1)
         return (speeds[0],speeds[1]*self.speedRatio)
 class XboxController(object):
     'a class to handle joystick coordinate and convert it to motor speeds: parametter: (maxSpeeds, indexOfInitialMaxSpeed)'
@@ -210,7 +210,7 @@ class XboxController(object):
             speeds=self.wheels.getSpeed() #Get valid Sabertooth speed based on XY coordinate of the joysticks. Ex: (-127,100)
             self.commandPipe.tellPi('drive',speeds[0],speeds[1])
         elif(event.axis==3 or event.axis==4):
-            speeds=self.arms.speeds(1) #Get valid Sabertooth speed based on XY coordinate of the joysticks. Ex: (-127,100)
+            speeds=self.arms.getSpeed() #Get valid Sabertooth speed based on XY coordinate of the joysticks. Ex: (-127,100)
             self.commandPipe.tellPi('dig',speeds[0],speeds[1])
     def keyDown(self,event):
         'Keyboard events, this is how you hack ones password'
