@@ -2,6 +2,7 @@ import time
 import binascii
 import RPi.GPIO as GPIO
 import threading
+import RPi.GPIO as GPIO
 class Scale(object):
     '''Scale a number from one scale to another (Ex: 2 in (0:10) scale is equivalent to 20 in (0:100) scale)'''
     def __init__(self, inMin,inMax, outMin,outMax):
@@ -186,3 +187,21 @@ class Indicator(threading.Thread):
     def join(self):
         self.status=-1
         super().join()
+class Encoder(object):
+    def __init__(self, greenPin, whitePin, time):
+        GPIO.setmode(GPIO.BCM)
+        GPIO.setwarnings(False)
+        GPIO.setup(greenPin,GPIO.IN,pull_up_down=GPIO.PUD_UP)
+        GPIO.setup(whitePin,GPIO.IN,pull_up_down=GPIO.PUD_UP)
+        self.greenPin=greenPin
+        self.whitePin=whitePin
+        self.count=0
+        self.v=0
+        self.t=time
+        self.timer=Timer()
+    def run(self):
+        oldGreen=GPIO.input(self.greenPin)
+        oldWhite=GPIO.input(self.whitePin)
+        pass
+    def keepCounting(self):
+        pass

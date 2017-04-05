@@ -28,6 +28,16 @@ class Controller(object):
     def stop(self):
         self.leftMotor.drive('forward', 0)
         self.rightMotor.drive('forward', 0)
+class Wheels(Controller):
+    'Basic controls for the wheels'
+    def __init__(self, port, baudRate, address):
+        super().__init__(port, baudRate, address)
+    def left(self,speed):
+        self.leftMotor.drive('backward', speed)
+        self.rightMotor.drive('forward', speed)
+    def right(self,speed):
+        self.leftMotor.drive('forward', speed)
+        self.rightMotor.drive('backward', speed)
     def drive(self,leftSpeed,rightSpeed):#speed ranging from -127 to 127 this this particular function
         if leftSpeed<0:
             self.leftMotor.drive('backward', int(math.fabs(leftSpeed)))
@@ -37,27 +47,20 @@ class Controller(object):
             self.rightMotor.drive('backward',int( math.fabs(rightSpeed)))
         else:
             self.rightMotor.drive('forward', int(math.fabs(rightSpeed)))
-class Wheels(Controller):
-    'Basic controls for the wheels'
-    def __init__(self, port, baudRate, address):
-        super().__init__(port, baudRate, address)
-
-    def left(self,speed):
-        self.leftMotor.drive('backward', speed)
-        self.rightMotor.drive('forward', speed)
-    def right(self,speed):
-        self.leftMotor.drive('forward', speed)
-        self.rightMotor.drive('backward', speed)
 class LinearActuator(Controller):
     'Basic controls for the wheels'
-    def __init__(self, port, baudRate, address):
+    def __init__(self, port, baudRate, address, leftSpeedFactor, rightSpeedFactor):
         super().__init__(self, port, baudRate, address)
+        self.leftMotor.speedFactor=leftSpeedFactor
+        self.rightMotor.speedFactor=rightSpeedFactor
 class motor(object):
     'Serial communication with the Sabertooth.'
-    def __init__(self, serial, controllerAddress, motorNum):
+    def __init__(self, serial, controllerAddress, motorNum, speedFactor):
         self.port = serial
         self.address = controllerAddress
         self.motorNum = motorNum
+        if speedFactor is None: self.speedFactor=1
+        else: self.speedFactor = speedFactor #to make two motor spin at the same speed 0 to 1
         if motorNum == 1:
             self.commands = {'forward': 0, 'backward': 1}
         elif motorNum == 2:
@@ -68,6 +71,7 @@ class motor(object):
         else:
             self.drive('forward',int(math.fabs(speed)))
     def drive(self, direction, speed):#Dumb drive! Has no idea about negative numbers. Speed range is from 0 to 127
+        speed=int(speed*self.speedFactor) #reduce speed y a little bit
         if speed >127: speed=127
         if speed <0: speed =0
         speed=int(speed)
