@@ -28,9 +28,13 @@ from Utility import *
 
 serialPort = '/dev/serial0'
 baudRate = 9600
-wheels = Wheels(serialPort, baudRate, 130)
-arms = Wheels(serialPort, baudRate, 131)
-hands = Wheels(serialPort, baudRate, 132)
+motorAddress=130
+actuatorAddress=132
+#oneActs=132
+wheels = Wheels(serialPort, baudRate, motorAddress)
+arms = Wheels(serialPort, baudRate, actuatorAddress)
+#hands = Wheels(serialPort, baudRate, oneActs)
+#p=Parser("(,)|")# Command analyzer
 
 t=Timer()
 dataCount=0
@@ -76,7 +80,7 @@ def communication(port):
                 for i in range(0,len(data),numHexPerMessage):
                     eachBlock=data[i:i+numHexPerMessage]
                     message.setValues(eachBlock)
-                    run(message)
+                    run3(message)
                     #codeInt=bin2int()
                     #run(codeInt)
                 if t.timer()>60:
@@ -89,7 +93,39 @@ def communication(port):
             wheels.stop()
             arms.stop()
             c.close()
-def run(message):
+
+def oldrun(input):
+    if input[0]=="wheels":
+        wheels.drive(input[1],input[2])
+    elif input[0]=="left":
+        wheels.left(input[1])
+    elif input[0]=="arms":
+        arms.drive(input[1],input[1])
+    elif input[0]=="hands":
+        hands.drive(input[1],input[1])
+    else:pass
+def run(input):
+    if input<0: pass
+    elif input<64:
+        wheels.leftMotor.sDrive(speedScale.scale(input,0,63))
+    elif input<128:
+        wheels.rightMotor.sDrive(speedScale.scale(input,64,127))
+    elif input<192:
+        acts.leftMotor.sDrive(speedScale.scale(input,128,191))
+    elif input<256:
+        acts.rightMotor.sDrive(speedScale.scale(input,192,255))
+    else:pass
+def run2(input):
+    if input<0: pass
+    elif input<256:
+        wheels.leftMotor.sDrive(speedScale.scale(input,0,255))
+    elif input<512:
+        wheels.rightMotor.sDrive(speedScale.scale(input,256,511))
+    elif input<768:
+        acts.leftMotor.sDrive(speedScale.scale(input,512,767))
+    else:pass
+
+def run3(message):
     commanInt=message.getCommandInt()
     data1Int=message.getData1Int()
     data2Int=message.getData2Int()
@@ -97,20 +133,19 @@ def run(message):
         wheels.stop()
         arms.stop()
     elif commanInt==1:#drive
-        lSpeed=speedScale.scaleInt(data1Int)
-        rSpeed=speedScale.scaleInt(data2Int)
+        lSpeed=speedScale.scaleInt(message.getData1Int())
+        rSpeed=speedScale.scaleInt(message.getData2Int())
         wheels.drive(lSpeed,rSpeed)
     elif commanInt==2:#both
-        lSpeed=speedScale.scaleInt(data1Int)
-        rSpeed=speedScale.scaleInt(data2Int)
-        arms.drive(lSpeed,lSpeed)
-        hands.drive(rSpeed,rSpeed)
+        lSpeed=speedScale.scaleInt(message.getData1Int())
+        rSpeed=speedScale.scaleInt(message.getData2Int())
+        arms.drive(lSpeed,rSpeed)
     elif commanInt==3:#arm
-        speed=speedScale.scaleInt(data1Int)
-        arms.drive(speed,speed)
+        speed=speedScale.scaleInt(message.getData1Int())
+        arms.leftMotor.sDrive(speed)
     elif commanInt==4:#hand
-        speed=speedScale.scaleInt(data1Int)
-        hands.drive(speed,speed)
+        speed=speedScale.scaleInt(message.getData1Int())
+        arms.rightMotor.sDrive(speed)
     elif commanInt==5:
         pass
     elif commanInt==6:
@@ -133,6 +168,7 @@ def run(message):
         pass
     elif commanInt==15:
         pass
+
 if __name__ == "__main__":
         main()
 
