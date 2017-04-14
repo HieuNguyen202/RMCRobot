@@ -111,8 +111,8 @@ class Message(NumberBase):
     def getInt(self): return self.binString2int(self.getBinString()) #integer representation of the whole message, meaningless but can be converted to bin
     def getBin(self): return self.int2bin(self.getInt(),self.getLength()) #binary representation of the whole message, again meaningless but it is something a socket object would send
     def getBinString(self): return self.getCommandBinString()+ self.getData1BinString() + self.getData2BinString() #representation the whole message as a string of 1's and 0's
-    def getData1Int(self): return self.data1Int #value of data1 as an int
-    def getData2Int(self): return self.data2Int 
+    def getData1Int(self): return self.data1Int-31 #value of data1 as an int
+    def getData2Int(self): return self.data2Int-31
     def getCommandInt(self): return self.commandInt 
     def getData1BinString(self): return self.int2binString(self.data1Int,self.numData1Digit) #value of data1 in binString representation
     def getData2BinString(self): return self.int2binString(self.data2Int,self.numData2Digit)
@@ -139,9 +139,9 @@ class Message(NumberBase):
             if isinstance(command, str): self.commandInt=self.binString2int(command) #binString
             else: self.commandInt=command #bin
             if isinstance(data1, str): self.data1Int=self.binString2int(data1)
-            else: self.data1Int=data1
+            else: self.data1Int=data1+31
             if isinstance(data2, str): self.data2Int=self.binString2int(data2)
-            else: self.data2Int=data2
+            else: self.data2Int=data2+31
     def __eq__(self, that): #not tested
         'Test if 2 instances of a Message are the same'
         if isinstance(that,Message):
