@@ -49,10 +49,8 @@ class Wheels(Controller):
             self.rightMotor.drive('forward', int(math.fabs(rightSpeed)))
 class LinearActuator(Controller):
     'Basic controls for the wheels'
-    def __init__(self, port, baudRate, address, leftSpeedFactor, forwardSpeedFactor, backwardSpeedFactor):
-        super().__init__(self, port, baudRate, address)
-        self.leftMotor.speedFactor=leftSpeedFactor
-        self.rightMotor.speedFactor=rightSpeedFactor
+    def __init__(self, port, baudRate, address, speedFactors=None ):
+        super().__init__(self, port, baudRate, address, speedFactors )
 class motor(object):
     'Serial communication with the Sabertooth.'
     def __init__(self, serial, controllerAddress, motorNum, speedFactors=None):
