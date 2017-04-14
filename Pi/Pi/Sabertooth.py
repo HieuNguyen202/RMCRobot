@@ -14,7 +14,7 @@ import serial
 import sys
 class Controller(object):
     'A Sabertooth controller'
-    def __init__(self, port, baudRate, address, speedFactors=None): #speedFactors is only for the right motor (the slower one)
+    def __init__(self, port, baudRate, address, speedFactors=None): #speedFactors is only for the right motor (the faster one)
         self.port = serial.Serial(port, baudRate, timeout=0)
         self.address = address
         self.leftMotor = motor(self.port, address, 1) #M1 is left, M2 is right
@@ -55,7 +55,7 @@ class LinearActuator(Controller):
         self.rightMotor.speedFactor=rightSpeedFactor
 class motor(object):
     'Serial communication with the Sabertooth.'
-    def __init__(self, serial, controllerAddress, motorNum, speedFactor, speedFactors=None):
+    def __init__(self, serial, controllerAddress, motorNum, speedFactors=None):
         #tel = {'jack': 4098, 'sape': 4139}
         self.port = serial
         self.address = controllerAddress
@@ -74,9 +74,9 @@ class motor(object):
     def drive(self, direction, speed):#Dumb drive! Has no idea about negative numbers. Speed range is from 0 to 127
         speedFactor=1
         if direction=="forward":
-            if -speed in self.speedFactors: speedFactor=self.speedFactors[-speed]                
+            if speed in self.speedFactors: speedFactor=self.speedFactors[speed]                
         else: 
-            if speed in self.speedFactors: speedFactor=self.speedFactors[speed] 
+            if -speed in self.speedFactors: speedFactor=self.speedFactors[-speed] 
         speed=speed*speedFactor #reduce speed the make actuators synced
         if speed >127: speed=127
         if speed <0: speed =0

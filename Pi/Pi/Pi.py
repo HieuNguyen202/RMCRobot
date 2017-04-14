@@ -29,12 +29,12 @@ from Utility import *
 serialPort = '/dev/serial0'
 baudRate = 9600
 #speedFactors is only for the right motor (the slower one)
-speedFactors={-81:0.975,
-              -102:0.975,
+speedFactors={-81:0.972,
+              -102:0.97,
               -122:0.975,
-              81:0.975,
+              81:0.970,
               102:0.975,
-              122:0.975,
+              122:0.997,
               }
 wheels = Wheels(serialPort, baudRate, 130)
 arms = Wheels(serialPort, baudRate, 131,speedFactors)
