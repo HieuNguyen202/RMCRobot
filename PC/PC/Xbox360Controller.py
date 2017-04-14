@@ -160,7 +160,7 @@ class XboxController(object):
         self.clock = pygame.time.Clock() # control the xbox controller's frequency of updating button and joystick events.
         self.joysticks = []
         self.wheels=WheelDriver((50,100,127),1) #a class to handle joystick coordinate and convert it to motor speeds: parametter: (maxSpeeds, indexOfInitialMaxSpeed)
-        self.arms=ActuatorDriver((50,100,127),1,0.5) #a class to handle joystick coordinate and convert it to motor speeds: parametter: (maxSpeeds, indexOfInitialMaxSpeed)
+        self.arms=ActuatorDriver((84,105,125),1,0.5) #a class to handle joystick coordinate and convert it to motor speeds: parametter: (maxSpeeds, indexOfInitialMaxSpeed)
         self.arms.SPINNING_ANGLE=25
         self.arms.EQUAL_SPEED_ANGLE=25
         self.triggerAbs=0 # Moving forward and backward using top triggers has higher priority than the using the stick. This is to ensure the sticks won't take over control if top triggers are being used.
