@@ -37,8 +37,8 @@ speedFactors={-81:0.972,
               122:0.997,
               }
 wheels = Wheels(serialPort, baudRate, 130)
-arms = Wheels(serialPort, baudRate, 131,speedFactors)
-hands = Wheels(serialPort, baudRate, 132)
+arms = LinearActuator(serialPort, baudRate, 131,speedFactors)
+hands = LinearActuator(serialPort, baudRate, 132)
 
 t=Timer()
 dataCount=0
