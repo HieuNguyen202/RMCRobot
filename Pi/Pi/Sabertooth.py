@@ -28,6 +28,15 @@ class Controller(object):
     def stop(self):
         self.leftMotor.drive('forward', 0)
         self.rightMotor.drive('forward', 0)
+    def drive(self,leftSpeed,rightSpeed):#speed ranging from -127 to 127 this this particular function
+        if leftSpeed<0:
+            self.leftMotor.drive('backward', int(math.fabs(leftSpeed)))
+        else:
+            self.leftMotor.drive('forward', int(math.fabs(leftSpeed)))
+        if rightSpeed<0:
+            self.rightMotor.drive('backward',int( math.fabs(rightSpeed)))
+        else:
+            self.rightMotor.drive('forward', int(math.fabs(rightSpeed)))
 class Wheels(Controller):
     'Basic controls for the wheels'
     def __init__(self, port, baudRate, address):
@@ -38,15 +47,6 @@ class Wheels(Controller):
     def right(self,speed):
         self.leftMotor.drive('forward', speed)
         self.rightMotor.drive('backward', speed)
-    def drive(self,leftSpeed,rightSpeed):#speed ranging from -127 to 127 this this particular function
-        if leftSpeed<0:
-            self.leftMotor.drive('backward', int(math.fabs(leftSpeed)))
-        else:
-            self.leftMotor.drive('forward', int(math.fabs(leftSpeed)))
-        if rightSpeed<0:
-            self.rightMotor.drive('backward',int( math.fabs(rightSpeed)))
-        else:
-            self.rightMotor.drive('forward', int(math.fabs(rightSpeed)))
 class LinearActuator(Controller):
     'Basic controls for the wheels'
     def __init__(self, port, baudRate, address, speedFactors=None ):

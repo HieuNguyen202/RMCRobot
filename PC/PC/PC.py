@@ -40,7 +40,7 @@ def test():
 def main():
     dashboard=RMCDashboard(dashboardSize,10,10)
     while True:
-        #try:
+        try:
             message=Message(4,6,6)
             commandPipe = Communication(host,commandPort,dashboard,message)
             controller=XboxController(dashboard,commandPipe)
@@ -54,7 +54,7 @@ def main():
                         #test(controller)
                         while True:# consider removing this
                             controller.listen()
-        #except:
+        except:
             dashboard.display("Communication or XboxController failed")
             dashboard.disconnected()
             controller.uninitialize()
