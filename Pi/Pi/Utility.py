@@ -139,10 +139,10 @@ class Message(NumberBase):
         else: #command variable contains only info the command, other info is held by their own variable names.
             if isinstance(command, str): self.commandInt=self.binString2int(command) #binString
             else: self.commandInt=command #bin
-            if isinstance(data1, str): self.data1Int=self.binString2int(data1)
-            else: self.data1Int=data1
-            if isinstance(data2, str): self.data2Int=self.binString2int(data2)
-            else: self.data2Int=data2
+            if isinstance(data1, str): self.data1Int=self.binString2int(data1)-31
+            else: self.data1Int=data1-31
+            if isinstance(data2, str): self.data2Int=self.binString2int(data2)-31
+            else: self.data2Int=data2-31
     def __eq__(self, that): #not tested
         'Test if 2 instances of a Message are the same'
         if isinstance(that,Message):
