@@ -50,7 +50,7 @@ class Wheels(Controller):
 class LinearActuator(Controller):
     'Basic controls for the wheels'
     def __init__(self, port, baudRate, address, speedFactors=None ):
-        super().__init__(self, port, baudRate, address, speedFactors )
+        super().__init__(port, baudRate, address, speedFactors )
 class motor(object):
     'Serial communication with the Sabertooth.'
     def __init__(self, serial, controllerAddress, motorNum, speedFactors=None):
