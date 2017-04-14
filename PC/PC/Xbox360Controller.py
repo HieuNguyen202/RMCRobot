@@ -169,8 +169,7 @@ class XboxController(object):
         self.commandPipe=commandPipe
         self.clockTick=40
         #self.clock.tick(self.clockTick) # 25 is good, how frequently the pygame module updates xbox events. Ex: 25 means 25 times/sec
-        
-        
+           
     def listen(self):
         'Listen to xbox key events and call the corresponding functions if an button is pressed or a joystick is moved.'
         for event in pygame.event.get():
@@ -211,7 +210,7 @@ class XboxController(object):
             self.commandPipe.tellPi('drive',speeds[0],speeds[1])
         elif(event.axis==3 or event.axis==4):
             speeds=self.arms.getSpeed() #Get valid Sabertooth speed based on XY coordinate of the joysticks. Ex: (-127,100)
-            self.commandPipe.tellPi('dig',speeds[0],speeds[1])
+            #self.commandPipe.tellPi('dig',speeds[0],speeds[1]) #uncomment this is use variable dig (only when actuator speeds are synced)
     def keyDown(self,event):
         'Keyboard events, this is how you hack ones password'
         print ("Keydown,",event.key)
@@ -229,9 +228,9 @@ class XboxController(object):
     def joyButtonDown(self,event):
         'A=0, B=1, X=2, Y=3, LB=4, RB=5, BACK=6, START=7, LEFT JOY BUTTON=8, RIGHT JOY BUTTON=9 down'
         if event.button==0: #A Lowers the arm
-            self.commandPipe.tellPi('arm',-(self.arms.currentMaxSpeed-7))
+            self.commandPipe.tellPi('arm',-(self.arms.currentMaxSpeed))
         if event.button==3: #Y Raises the arm
-            self.commandPipe.tellPi('arm',(self.arms.currentMaxSpeed-7))
+            self.commandPipe.tellPi('arm',(self.arms.currentMaxSpeed))
         if event.button==5: #RB Increase max speed of self.wheels or arms
             if self.arms.distToOrigin()>self.JOYSTICK_ZERO_EQUIVALENT: self.dashboard.arm(self.arms.speedUp()+1) #if the right joytick if off center more than the left one, change arm speed. Change wheel speed otherwise
             else: self.dashboard.motor(self.wheels.speedUp()+1)
@@ -243,9 +242,9 @@ class XboxController(object):
         if event.button==7:
             self.dashboard.arm(self.arms.speedUp()+1) # increase max speed of arms
         if event.button==2: #Increase max speed of self.wheels or arms (Change later depending on the feel of the robot)
-            self.commandPipe.tellPi('hand',-(self.arms.currentMaxSpeed-7))
+            self.commandPipe.tellPi('hand',-(self.arms.currentMaxSpeed))
         if event.button==1: #Increase max speed of self.wheels or arms
-            self.commandPipe.tellPi('hand',(self.arms.currentMaxSpeed-7))
+            self.commandPipe.tellPi('hand',(self.arms.currentMaxSpeed))
         #print ("Joystick '",joysticks[event.joy].get_name(),"' button",event.button,"down.")
         print ("Wheel speed: ",self.wheels.currentMaxSpeed,"     -     Arms speed: ", self.arms.currentMaxSpeed)
     def joyButtonUp(self,event):
@@ -261,29 +260,29 @@ class XboxController(object):
         left=(-1,0) - right=(1,0) - up=(0,1) - down=(0,-1) - upleft=(-1,1) - upright=(1,1) - downleft=(-1,-1) - downright(1,-1) - not pressed=(0,0)'''
         #print ("Joystick '",joysticks[event.joy].get_name(),"' hat",event.hat," moved: ",event.value)
         if event.value == (1,0): #right
-            self.commandPipe.tellPi('hand',-(self.arms.currentMaxSpeed-7))
+            self.commandPipe.tellPi('hand',-(self.arms.currentMaxSpeed))
             self.commandPipe.tellPi('arm',0)
         elif event.value == (-1,0): #left
-            self.commandPipe.tellPi('hand',(self.arms.currentMaxSpeed-7))
+            self.commandPipe.tellPi('hand',(self.arms.currentMaxSpeed))
             self.commandPipe.tellPi('arm',0)
         elif event.value == (0,-1): #down
             self.commandPipe.tellPi('hand',0)
-            self.commandPipe.tellPi('arm',-(self.arms.currentMaxSpeed-7))
+            self.commandPipe.tellPi('arm',-(self.arms.currentMaxSpeed))
         elif event.value == (0,1): #up
             self.commandPipe.tellPi('hand',0)
-            self.commandPipe.tellPi('arm',(self.arms.currentMaxSpeed-7))
+            self.commandPipe.tellPi('arm',(self.arms.currentMaxSpeed))
         elif event.value == (1,1): #upright
-            self.commandPipe.tellPi('hand',-(self.arms.currentMaxSpeed-7))
-            self.commandPipe.tellPi('arm',(self.arms.currentMaxSpeed-7))
+            self.commandPipe.tellPi('hand',-(self.arms.currentMaxSpeed))
+            self.commandPipe.tellPi('arm',(self.arms.currentMaxSpeed))
         elif event.value == (-1,1): #upleft
-            self.commandPipe.tellPi('hand',(self.arms.currentMaxSpeed-7))
-            self.commandPipe.tellPi('arm',(self.arms.currentMaxSpeed-7))
+            self.commandPipe.tellPi('hand',(self.arms.currentMaxSpeed))
+            self.commandPipe.tellPi('arm',(self.arms.currentMaxSpeed))
         elif event.value == (-1,-1): #downleft
-            self.commandPipe.tellPi('hand',(self.arms.currentMaxSpeed-7))
-            self.commandPipe.tellPi('arm',-(self.arms.currentMaxSpeed-7))
+            self.commandPipe.tellPi('hand',(self.arms.currentMaxSpeed))
+            self.commandPipe.tellPi('arm',-(self.arms.currentMaxSpeed))
         elif event.value == (1,-1): #downright
-            self.commandPipe.tellPi('hand',-(self.arms.currentMaxSpeed-7))
-            self.commandPipe.tellPi('arm',-(self.arms.currentMaxSpeed-7))
+            self.commandPipe.tellPi('hand',-(self.arms.currentMaxSpeed))
+            self.commandPipe.tellPi('arm',-(self.arms.currentMaxSpeed))
         elif event.value == (0,0): #not pressed
             self.commandPipe.tellPi('hand',0)
             self.commandPipe.tellPi('arm',0)

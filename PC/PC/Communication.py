@@ -15,7 +15,8 @@ class Communication(socket.socket):
         self.port = port
         self.connected=False
         self.dashboard=dashboard
-        self.speedScale=Scale(-127,127,1,math.pow(2,self.message.numData1Digit)-1)
+        #self.speedScale=Scale(-127,127,1,math.pow(2,self.message.numData1Digit)-1)
+        self.speedScale=Scale(-127,127,-31,31)
         self.prevMessageInt=-1
         self.commandDict={'stop':0,'drive':1, 'dig':2,'arm':3,'hand':4}
 

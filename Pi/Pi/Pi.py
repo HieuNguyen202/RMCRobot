@@ -28,15 +28,24 @@ from Utility import *
 
 serialPort = '/dev/serial0'
 baudRate = 9600
+#speedFactors is only for the right motor (the slower one)
+speedFactors={-81:0.975,
+              -102:0.975,
+              -122:0.975,
+              81:0.975,
+              102:0.975,
+              122:0.975,
+              }
 wheels = Wheels(serialPort, baudRate, 130)
-arms = Wheels(serialPort, baudRate, 131)
+arms = Wheels(serialPort, baudRate, 131,speedFactors)
 hands = Wheels(serialPort, baudRate, 132)
 
 t=Timer()
 dataCount=0
 #password=123
 message=Message(4,6,6)
-speedScale=Scale(1,math.pow(2,message.numData1Digit)-1,-127,127)
+speedScale=Scale(-31,31,-127,127)
+#speedScale=Scale(1,math.pow(2,message.numData1Digit)-1,-127,127)
 
 def main():
     #if sys.version_info[0]<3:thread.start_new_thread(communication,(12345,))
