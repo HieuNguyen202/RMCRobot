@@ -246,7 +246,7 @@ class XboxController(object):
         if event.button==1: #Increase max speed of self.wheels or arms
             self.commandPipe.tellPi('hand',(self.arms.currentMaxSpeed))
         #print ("Joystick '",joysticks[event.joy].get_name(),"' button",event.button,"down.")
-        print ("Wheel speed: ",self.wheels.currentMaxSpeed,"     -     Arms speed: ", self.arms.currentMaxSpeed)
+        #print ("Wheel speed: ",self.wheels.currentMaxSpeed,"     -     Arms speed: ", self.arms.currentMaxSpeed)
     def joyButtonUp(self,event):
         'A=0, B=1, X=2, Y=3, LB=4, RB=5, BACK=6, START=7, LEFT JOY BUTTON=8, RIGHT JOY BUTTON=9 up'
         #print ("Joystick '",joysticks[event.joy].get_name(),"' button",event.button,"up.")

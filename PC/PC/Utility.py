@@ -178,7 +178,7 @@ class Indicator(threading.Thread):
         GPIO.output(self.pinNum,GPIO.HIGH)
     def off(self):
         GPIO.output(self.pinNum,GPIO.LOW)
-    def blink(self):
+    def bilnk(self):
         self.on()
         time.sleep(0.2)
         self.off()
