@@ -48,6 +48,12 @@
     <ClInclude Include="\\mac\iCloud\Arduino Projects\libraries\SabertoothArduinoLibraries\Sabertooth\Sabertooth.h">
       <Filter>Resource Files</Filter>
     </ClInclude>
+    <ClInclude Include="PID.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Pot.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="\\mac\iCloud\Arduino Projects\RMCMotor\Box.cpp">
@@ -69,6 +75,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="\\mac\iCloud\Arduino Projects\libraries\SabertoothArduinoLibraries\Sabertooth\Sabertooth.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PID.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Pot.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
