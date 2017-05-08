@@ -82,22 +82,21 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Encoder.h" />
+    <ClInclude Include="I2C.h" />
     <ClInclude Include="PID.h" />
     <ClInclude Include="Pot.h" />
-    <ClInclude Include="\\mac\iCloud\Arduino Projects\libraries\digitalWriteFast\digitalWriteFast.h" />
-    <ClInclude Include="\\mac\iCloud\Arduino Projects\libraries\SabertoothArduinoLibraries\Sabertooth\Sabertooth.h" />
-    <ClInclude Include="\\mac\iCloud\Arduino Projects\RMCMotor\Box.h" />
-    <ClInclude Include="\\mac\iCloud\Arduino Projects\RMCMotor\Encoder.h" />
-    <ClInclude Include="\\mac\iCloud\Arduino Projects\RMCMotor\Encoderr.h" />
-    <ClInclude Include="\\mac\iCloud\Arduino Projects\RMCMotor\I2C.h" />
-    <ClInclude Include="\\mac\iCloud\Arduino Projects\RMCMotor\SpeedEncoder.h" />
-    <ClInclude Include="\\mac\iCloud\Arduino Projects\RMCMotor\Timer.h" />
+    <ClInclude Include="SpeedEncoder.h" />
+    <ClInclude Include="Timer.h" />
     <ClInclude Include="__vm\.ArduinoMotor.vsarduino.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Encoder.cpp" />
     <ClCompile Include="I2C.cpp" />
     <ClCompile Include="PID.cpp" />
     <ClCompile Include="Pot.cpp" />
+    <ClCompile Include="SpeedEncoder.cpp" />
+    <ClCompile Include="Timer.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

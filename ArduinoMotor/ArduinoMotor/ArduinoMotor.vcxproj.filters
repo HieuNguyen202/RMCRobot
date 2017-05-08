@@ -24,35 +24,23 @@
     <ClInclude Include="__vm\.ArduinoMotor.vsarduino.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="\\mac\iCloud\Arduino Projects\RMCMotor\Box.h">
-      <Filter>Resource Files</Filter>
-    </ClInclude>
-    <ClInclude Include="\\mac\iCloud\Arduino Projects\RMCMotor\Encoder.h">
-      <Filter>Resource Files</Filter>
-    </ClInclude>
-    <ClInclude Include="\\mac\iCloud\Arduino Projects\RMCMotor\Encoderr.h">
-      <Filter>Resource Files</Filter>
-    </ClInclude>
-    <ClInclude Include="\\mac\iCloud\Arduino Projects\RMCMotor\I2C.h">
-      <Filter>Resource Files</Filter>
-    </ClInclude>
-    <ClInclude Include="\\mac\iCloud\Arduino Projects\RMCMotor\SpeedEncoder.h">
-      <Filter>Resource Files</Filter>
-    </ClInclude>
-    <ClInclude Include="\\mac\iCloud\Arduino Projects\RMCMotor\Timer.h">
-      <Filter>Resource Files</Filter>
-    </ClInclude>
-    <ClInclude Include="\\mac\iCloud\Arduino Projects\libraries\digitalWriteFast\digitalWriteFast.h">
-      <Filter>Resource Files</Filter>
-    </ClInclude>
-    <ClInclude Include="\\mac\iCloud\Arduino Projects\libraries\SabertoothArduinoLibraries\Sabertooth\Sabertooth.h">
-      <Filter>Resource Files</Filter>
-    </ClInclude>
     <ClInclude Include="PID.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Pot.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Encoder.h">
+      <Filter>Resource Files</Filter>
+    </ClInclude>
+    <ClInclude Include="I2C.h">
+      <Filter>Resource Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SpeedEncoder.h">
+      <Filter>Resource Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Timer.h">
+      <Filter>Resource Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -63,6 +51,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="I2C.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Encoder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SpeedEncoder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Timer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

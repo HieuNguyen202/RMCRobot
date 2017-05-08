@@ -3,8 +3,6 @@
 #include "I2C.h"
 #include "Timer.h"
 #include "SpeedEncoder.h"
-#include "Encoderr.h"
-#include "Box.h"
 #include <Wire.h>
 #include "digitalWriteFast.h"
 #include "Sabertooth.h"
