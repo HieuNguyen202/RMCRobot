@@ -2,10 +2,8 @@
 #include "PID.h"
 #include "I2C.h"
 #include "Timer.h"
-#include "SpeedEncoder.h"
-#include <Wire.h>
-#include "digitalWriteFast.h"
-#include "Sabertooth.h"
+#include <Wire.h> //built-in library
+#include <Sabertooth.h> //Must be in local library
 #include "Timer.h"
 
 int leftTargetSpeed;
@@ -16,7 +14,7 @@ int power;
 
 TimerClass timer;
 TimerClass timer2;
-SpeedEncoderClass encoder12;
+//SpeedEncoderClass encoder12;
 I2CClass i2c12(7);
 Sabertooth ST(130);
 PIDClass posPID(0.07, 2, 0.0001, 10);
@@ -34,7 +32,7 @@ void setup() {
 	Serial.begin(9600);           // set up serial library at 9600 bps
 	Serial.println("Motor test begin!");
 	//Encoder setup
-	encoder12.attach(rise1, rise2); //attachInterupt for pin 2 and 3
+	//encoder12.attach(rise1, rise2); //attachInterupt for pin 2 and 3
 									//i2c setup
 	i2c12.attach(receiveData, sendData);
 
@@ -51,7 +49,7 @@ void setup() {
 
 }
 void loop() {
-	encoder12.updateSpeed();
+	//encoder12.updateSpeed();
 	//Motor
 	//drive(-75, -75);
 	//Encoder
@@ -100,12 +98,12 @@ void loop() {
 	//}
 }
 //Encoder
-void rise1() {
-	encoder12.rise1();
-}
-void rise2() {
-	encoder12.rise2();
-}
+//void rise1() {
+//	encoder12.rise1();
+//}
+//void rise2() {
+//	encoder12.rise2();
+//}
 
 //i2c
 void receiveData(int byteCount) {
@@ -116,21 +114,21 @@ void sendData() {//fix this
 }
 
 //PID
-void PIDTest() {//fix this
-	if (timer.getTime() > dt)
-	{
-		int error = rightTargetSpeed - encoder12.v1;
-
-		integral = integral + error*dt;
-		double derivative = (error - previous_error) / (double)dt;
-		power = power + Kp*error + Ki*integral + Kd*derivative;
-		//Serial.println("Erro " + String(error) + " Drev " + String(Kd*derivative));
-		previous_error = error;
-		if (power>127)
-		{
-			power = 127;
-		}
-		ST.drive(power);
-	}
-}
+//void PIDTest() {//fix this
+//	if (timer.getTime() > dt)
+//	{
+//		int error = rightTargetSpeed - encoder12.v1;
+//
+//		integral = integral + error*dt;
+//		double derivative = (error - previous_error) / (double)dt;
+//		power = power + Kp*error + Ki*integral + Kd*derivative;
+//		//Serial.println("Erro " + String(error) + " Drev " + String(Kd*derivative));
+//		previous_error = error;
+//		if (power>127)
+//		{
+//			power = 127;
+//		}
+//		ST.drive(power);
+//	}
+//}
 //motor

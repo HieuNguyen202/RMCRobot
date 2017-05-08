@@ -2,7 +2,6 @@
 // Email: hnguye19@hawk.iit.edu
 // Notes: Pin numbers must be hard coded in order for DigialReadFast and DigitalWriteFast work, use #define
 #include "SpeedEncoder.h"
-#include <digitalWriteFast.h>
 
 #define _gPin1 2 //Green wire of encoder 1
 #define _wPin1 10 //White wire of encoder 1

@@ -5,6 +5,7 @@
 
 #if defined(ARDUINO) && ARDUINO >= 100
 	#include "arduino.h"
+	#include "digitalWriteFast.h"
 #else
 	#include "WProgram.h"
 #endif

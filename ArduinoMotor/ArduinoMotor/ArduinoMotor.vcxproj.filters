@@ -30,16 +30,13 @@
     <ClInclude Include="Pot.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Encoder.h">
-      <Filter>Resource Files</Filter>
-    </ClInclude>
     <ClInclude Include="I2C.h">
       <Filter>Resource Files</Filter>
     </ClInclude>
-    <ClInclude Include="SpeedEncoder.h">
+    <ClInclude Include="Timer.h">
       <Filter>Resource Files</Filter>
     </ClInclude>
-    <ClInclude Include="Timer.h">
+    <ClInclude Include="Sabertooth.h">
       <Filter>Resource Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -51,12 +48,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="I2C.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Encoder.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SpeedEncoder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Timer.cpp">
