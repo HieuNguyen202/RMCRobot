@@ -56,8 +56,7 @@ class SabertoothControlers(object):
         self.hands.drive(power)
         def setArmHeight(self, height):
         """Set the height of the shovel. Take y value when arm angle is zero to be to 0 reference of height.
-           param target shovel height in centimeters. Could be negative or possitive. 0 for horizontal position.        
-           """
+           param target shovel height in centimeters. Could be negative or possitive. 0 for horizontal position."""
         self.tellArduino(self.i2cCommands['set_arm_height_offset'], height + self.heightOffset)
     def setArmAngle(self, angle):
         """Set robot arm angle. Take the angle value when arm angle is horizontal to be to 0 reference.
