@@ -56,31 +56,13 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="\\mac\iCloud\Arduino Projects\RMCMotor\Box.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="\\mac\iCloud\Arduino Projects\RMCMotor\Encoder.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="\\mac\iCloud\Arduino Projects\RMCMotor\Encoderr.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="\\mac\iCloud\Arduino Projects\RMCMotor\I2C.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="\\mac\iCloud\Arduino Projects\RMCMotor\SpeedEncoder.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="\\mac\iCloud\Arduino Projects\RMCMotor\Timer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="\\mac\iCloud\Arduino Projects\libraries\SabertoothArduinoLibraries\Sabertooth\Sabertooth.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="PID.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Pot.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="I2C.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

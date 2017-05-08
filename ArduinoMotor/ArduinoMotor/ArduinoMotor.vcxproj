@@ -95,15 +95,9 @@
     <ClInclude Include="__vm\.ArduinoMotor.vsarduino.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="I2C.cpp" />
     <ClCompile Include="PID.cpp" />
     <ClCompile Include="Pot.cpp" />
-    <ClCompile Include="\\mac\iCloud\Arduino Projects\libraries\SabertoothArduinoLibraries\Sabertooth\Sabertooth.cpp" />
-    <ClCompile Include="\\mac\iCloud\Arduino Projects\RMCMotor\Box.cpp" />
-    <ClCompile Include="\\mac\iCloud\Arduino Projects\RMCMotor\Encoder.cpp" />
-    <ClCompile Include="\\mac\iCloud\Arduino Projects\RMCMotor\Encoderr.cpp" />
-    <ClCompile Include="\\mac\iCloud\Arduino Projects\RMCMotor\I2C.cpp" />
-    <ClCompile Include="\\mac\iCloud\Arduino Projects\RMCMotor\SpeedEncoder.cpp" />
-    <ClCompile Include="\\mac\iCloud\Arduino Projects\RMCMotor\Timer.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
