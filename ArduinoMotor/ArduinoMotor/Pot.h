@@ -1,4 +1,7 @@
-// Pot.h
+//!  PID Class. 
+/*!
+This is class is written for the IIT's mining robot who competes in NASA Robotic Mining Competition.
+*/
 
 #ifndef _POT_h
 #define _POT_h
@@ -8,14 +11,14 @@
 #else
 	#include "WProgram.h"
 #endif
-
+/*!
+\class Pot
+\brief  This class takes care of conversions between the IIT RMC robot arm angle and the potentiometer reading.
+*/
 class PotClass
 {
  protected:
 	 int getRawValue();
-
-	 
-
  public:
 	PotClass(int potPin);
 	PotClass();
@@ -24,6 +27,8 @@ class PotClass
 	float getAngle();
 	void setMax();
 	void setMin();
+	void setMax(int potValue);
+	void setMin(int potValue);
 	void setMaxAngle(float newAngle);
 	void setMinAngle(float newAngle);
 	void setFactor();
@@ -37,7 +42,6 @@ class PotClass
 	float maxAngle;
 	float minAngle;
 	float factor; // pot reading/ degree
-
 };
 
 extern PotClass Pot;

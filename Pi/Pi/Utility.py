@@ -205,3 +205,146 @@ class Encoder(object):
         pass
     def keepCounting(self):
         pass
+class I2C(object):
+    """ 
+    #have to run 'sudo apt-get install python-smbus'
+    #in Terminal to install smbus
+    #handle error when data slave is unavailable
+    """
+    def __init__(self, slaveAddress):
+        self.i2cCommands={'is_connected':0,
+                          'set_arm_address':1,
+                          'set_hand_address':2,
+                          'set_arm_height':3,
+                          'set_arm_height_offset':4,
+                          'set_arm_angle':5,
+                          'set_arm_angle_offset':6,
+                          'set_motor_speed':7,
+                          'set_motor_power':8,
+                          'set_arm_power':9,
+                          'set_hand_power':10,
+                          'set_hand_angle':11,
+                          'set_hand_angle_offset':12,
+                          'set_hand_height':13,
+                          'set_hand_height_offset':14,
+                          'set_motor_address':15,
+                          'stop_motor':16,
+                          'stop_arm':17,
+                          'stop_hand':18,
+                          }
+        self.slaveAddress=slaveAddress
+        self.bus = smbus.SMBus(1)
+        self.heightOffset = 127 #centimeters
+        self.handHeightOffset = 127 #centimeters
+        self.armAngleOffset=127 #centimetter
+        self.handAngleOffset=127 #centimetter
+        self.DEDAULT_MOTOR_ADDRESS = 130
+        self.DEDAULT_ARM_ADDRESS = 131
+        self.DEDAULT_HAND_ADDRESS = 132
+    def connected(self):
+        return self.tellArduino(self.i2cCommands['is_connected'], 0)
+    def getData(self, slaveAddress): return bus.read_byte(slaveAddress)
+    def sendData(self, slaveAddress, command, data):
+        try:
+            bus.write_i2c_block_data(slaveAddress, command, data)
+            return True
+        except:
+            print("I2c failed. Delete this print after done debugging.")
+            return False
+        #time.sleep(0.1)#must delay 0.01 second
+    def tellArduino(self, command, data): return self.sendData(self.slaveAddress, command, data)
+    def setMotorAdress(self, address):
+        """Set Sabertooth address for the motors in the Arduino slave."""
+        if address<128 or address>135: address=self.DEDAULT_MOTOR_ADDRESS
+        self.tellArduino(self.i2cCommands['set_motor_address'], address)
+    def setArmAdress(self, address):
+        """Set Sabertooth address for the arm in the Arduino slave."""
+        if address<128 or address>135: address=self.DEDAULT_ARM_ADDRESS
+        self.tellArduino(self.i2cCommands['set_arm_address'], address)
+    def setHandAdress(self, address):
+        """Set Sabertooth address for the hand in the Arduino slave."""
+        if address<128 or address>135: address=self.DEDAULT_HAND_ADDRESS
+        self.tellArduino(self.i2cCommands['set_hand_address'], address)
+    def setArmHeight(self, height):
+        """Set the height of the shovel. Take y value when arm angle is zero to be to 0 reference of height.
+           param target shovel height in centimeters. Could be negative or possitive. 0 for horizontal position.        
+           """
+        self.tellArduino(self.i2cCommands['set_arm_height_offset'], height + self.heightOffset)
+    def setArmAngle(self, angle):
+        """Set robot arm angle. Take the angle value when arm angle is horizontal to be to 0 reference.
+           param angle target shovel angle in degrees. Could be negative or possitive. 0 for horizontal position.        
+           """
+        self.tellArduino(self.i2cCommands['set_arm_angle'], angle + self.armAngleOffset)
+    def setHandAngle(self, angle):
+        """Set robot hand angle. Take the angle value when hand angle is horizontal to be to 0 reference.
+           param angle target shovel angle in degrees. Could be negative or possitive. 0 for horizontal position.        
+           """
+        self.tellArduino(self.i2cCommands['set_hand_angle'], angle + self.handAngleOffset)
+    def setHandHeight(self, height):
+        """Set the height ofthe tip of the shovel. Take y value when arm angle is zero to be to 0 reference of height.
+           param height target height of the tip of the shovel in centimeters. Could be negative or possitive. 0 for horizontal position.        
+           """
+        self.tellArduino(self.i2cCommands['set_hand_height'], height + self.handHeightOffset)
+    def setHeightOffset(self, offset):
+        """Sets offset for the height of the shovel
+           param offset the offset of the height in centimeters
+           """
+        self.tellArduino(self.i2cCommands['set_height_offset'], offset)
+    def setHandHeightOffset(self, offset):
+        """Sets offset for the height of the tip of the shovel
+           param offset the offset of the height in centimeters
+           """
+        self.tellArduino(self.i2cCommands['set_hand_height_offset'], offset)
+    def setAngleOffset(self, offset):
+        """Sets offset for the angle of the arm
+           param offset the offset of the angle in degrees
+           """
+        self.tellArduino(self.i2cCommands['set_arm_angle_offset'], offset)
+    def setHandAngleOffset(self, offset):
+        """Sets offset for the angle of the hand
+           param offset the offset of the angle in degrees
+           """
+        self.tellArduino(self.i2cCommands['set_hand_angle_offset'], offset)
+    def setMotorSpeed(self, lSpeed, rSpeed):
+        """Sets speed for the left and right motors.
+           param lSpeed speed level for the left motor (pulses/miliseconds)       
+           param rSpeed speed level for the right motor (pulses/miliseconds)     
+           note that the speed levels are offsetted by +xxx here, so make sure the
+           Arduino program offsets them by -xxx to bright them back to their original values.      
+           """
+        self.tellArduino(self.i2cCommands['set_motor_speed'], [lSpeed + 127, rSpeed + 127])
+    def setMotorPower(self, lPower, rPower):
+        """Sets power for the left and right motors.
+           param lPower level for the left motor. Integers from -127 to 127.       
+           param rPower level for the right motor. Integers from -127 to 127.
+           note that the power levels are offsetted by +127 here, so make sure the
+           Arduino program offsets them by -127 to bright them back to their original values.    
+           """
+        self.tellArduino(self.i2cCommands['set_motor_power'], [lPower + 127, rPower + 127])
+    def setArmPower(self, power):
+        """Sets power for the actuators of the arm.
+           param power the same power level for both actuators of the arm. Integers from -127 to 127.     
+           note that the power level is offsetted by +127 here, so make sure the
+           Arduino program offsets it by -127 to bright it back to its original values.     
+           """
+        self.tellArduino(self.i2cCommands['set_arm_power'], power + 127)
+    def setHandPower(self, power):
+        """Sets power for the actuator of the hand.
+           param power level for the actuator of the hand. Integers from -127 to 127.     
+           note that the power level is offsetted by +127 here, so make sure the
+           Arduino program offsets it by -127 to bright it back to its original values.     
+           """
+        self.tellArduino(self.i2cCommands['set_hand_power'], power + 127)
+    def stopMotor(self):
+        """Stop motor power and set speed to zero."""
+        self.tellArduino(self.i2cCommands['stop_motor'], 0)
+    def stopArm(self):
+        """Stop arm power and set target arm angle to current angle."""
+        self.tellArduino(self.i2cCommands['stop_arm'], 0)
+    def stopHand(self):
+        """Stop hand power and set target hand angle to current angle."""
+        self.tellArduino(self.i2cCommands['stop_hand'], 0)
+    def setSabertoothAddresses(self, motorAddress, armAddress, handAddress):
+        self.setMotorAddress(motorAddress)
+        self.setArmAddress(armAddress)
+        self.setHandAddress(handAddress)

@@ -12,8 +12,100 @@ Similarly, LinearActuator is also another kind of Controller with some additiona
 import math
 import serial
 import sys
+class SabertoothControlers(object):
+    """A Sabertooth controller"""
+    def __init__(self, motorAddress, armAddress, handAddress):
+        self.serialPort = '/dev/serial0'
+        self.baudRate = 9600
+        self.DEDAULT_MOTOR_ADDRESS = 130
+        self.DEDAULT_ARM_ADDRESS = 131
+        self.DEDAULT_HAND_ADDRESS = 132
+
+        #speedFactors is only for the right motor (the slower one)
+        self.speedFactors={-81:0.972,
+                      -102:0.97,
+                      -122:0.975,
+                      81:0.970,
+                      102:0.975,
+                      122:0.997,
+                      }
+        setMotorAddress(motorAddress)
+        setArmAddress(armAddress)
+        setHandAddress(handAddress)
+    def setMotorAddress(self, address):
+        if address<128 or address>135: address=self.DEDAULT_MOTOR_ADDRESS
+        self.wheels = Wheels(self.serialPort, self.baudRate, address)
+    def setArmAddress(self, address):
+        if address<128 or address>135: address=self.DEDAULT_ARM_ADDRESS
+        self.arms = LinearActuator(self.serialPort, self.baudRate, address, self.speedFactors)
+    def setHandAddress(self, address):
+        if address<128 or address>135: address=self.DEDAULT_HAND_ADDRESS
+        self.hands = LinearActuator(self.serialPort, self.baudRate, address)
+    def setMotorPower(self, lPower, rPower):
+        """Sets power for the left and right motors.
+           param lPower level for the left motor. Integers from -127 to 127.       
+           param rPower level for the right motor. Integers from -127 to 127."""
+        self.wheels.drive(lPower,rPower)
+    def setArmPower(self, power):
+        """Sets power for the actuators of the arm.
+           param power the same power level for both actuators of the arm. Integers from -127 to 127."""
+        self.arms.drive(power)
+    def setHandPower(self, power):
+        """Sets power for the actuator of the hand.
+           param power level for the actuator of the hand. Integers from -127 to 127."""
+        self.hands.drive(power)
+        def setArmHeight(self, height):
+        """Set the height of the shovel. Take y value when arm angle is zero to be to 0 reference of height.
+           param target shovel height in centimeters. Could be negative or possitive. 0 for horizontal position.        
+           """
+        self.tellArduino(self.i2cCommands['set_arm_height_offset'], height + self.heightOffset)
+    def setArmAngle(self, angle):
+        """Set robot arm angle. Take the angle value when arm angle is horizontal to be to 0 reference.
+           param target shovel angle in degrees. Could be negative or possitive. 0 for horizontal position."""
+        pass
+    def setHeightOffset(self, offset):
+        """Sets offset for the height of the shovel
+           param offset the offset of the height in centimeters"""
+        pass
+    def setAngleOffset(self, offset):
+        """Sets offset for the angle of the arm
+           param offset the offset of the angle in degrees."""
+        pass
+    def setMotorSpeed(self, lSpeed, rSpeed):
+        """Sets speed for the left and right motors.
+           param lSpeed speed level for the left motor (pulses/miliseconds)       
+           param rSpeed speed level for the right motor (pulses/miliseconds)     
+           note that the speed levels are offsetted by +xxx here, so make sure the
+           Arduino program offsets them by -xxx to bright them back to their original values."""
+        pass
+    def setHandHeightOffset(self, offset):
+        """Sets offset for the height of the tip of the shovel
+           param offset the offset of the height in centimeters."""
+        pass
+    def setHandHeight(self, height):
+        """Set the height ofthe tip of the shovel. Take y value when arm angle is zero to be to 0 reference of height.
+           param height target height of the tip of the shovel in centimeters. Could be negative or possitive. 0 for horizontal position."""
+        pass
+    def setHandAngle(self, angle):
+        """Set robot hand angle. Take the angle value when hand angle is horizontal to be to 0 reference.
+           param angle target shovel angle in degrees. Could be negative or possitive. 0 for horizontal position."""
+        pass
+    def setHandAngleOffset(self, offset):
+        """Sets offset for the angle of the hand
+           param offset the offset of the angle in degrees
+           """
+        pass
+    def stopMotor(self):
+        """Stop motor power."""
+        self.setMotorPower(0,0)
+    def stopArm(self):
+        """Stop arm power."""
+        self.setArmPower(0,0)
+    def stopHand(self):
+        """Stop hand power."""
+        self.setHandPower(0,0)
 class Controller(object):
-    'A Sabertooth controller'
+    """A Sabertooth controller"""
     def __init__(self, port, baudRate, address, speedFactors=None): #speedFactors is only for the right motor (the faster one)
         self.port = serial.Serial(port, baudRate, timeout=0)
         self.address = address
@@ -51,6 +143,8 @@ class LinearActuator(Controller):
     'Basic controls for the wheels'
     def __init__(self, port, baudRate, address, speedFactors=None ):
         super().__init__(port, baudRate, address, speedFactors )
+    def drive(self, speed):
+        super().drive(speed, speed)
 class motor(object):
     'Serial communication with the Sabertooth.'
     def __init__(self, serial, controllerAddress, motorNum, speedFactors=None):

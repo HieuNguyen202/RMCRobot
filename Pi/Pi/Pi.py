@@ -17,7 +17,8 @@
 #   Put Timer class in Utility.py
 #3/11/2017
 #   Added Indicator class
-
+#   Write a i2c receiver in Arduino
+#   Add system commends to PC and Pi
 from Sabertooth import *
 import time
 import socket
@@ -36,6 +37,14 @@ speedFactors={-81:0.972,
               102:0.975,
               122:0.997,
               }
+self.sabertoothAddress={0: 128,
+                        1: 129,
+                        2: 130,
+                        3: 131,
+                        4: 132,
+                        5: 133,
+                        6: 134,
+                        7: 135,}
 wheels = Wheels(serialPort, baudRate, 130)
 arms = LinearActuator(serialPort, baudRate, 131,speedFactors)
 hands = LinearActuator(serialPort, baudRate, 132)
@@ -47,10 +56,36 @@ message=Message(4,6,6)
 speedScale=Scale(-31,31,-127,127)
 #speedScale=Scale(1,math.pow(2,message.numData1Digit)-1,-127,127)
 
+motorAddress = 130
+armAddress = 131
+handAddress = 132
+
+piController = SabertoothControlers(motorAddress,armAddress,handAddress)
+arduinoController = I2C(7)
+hybridController = piController
+
+#switches
+useArduino=True #use arduino to control the Sabertooths.
+
 def main():
+    if  useArduino: tryToConnectArduino();
+    
     #if sys.version_info[0]<3:thread.start_new_thread(communication,(12345,))
     #else: _thread.start_new_thread(communication,(12345,))
     communication(12345)
+def tryToConnectArduino():
+    if  arduinoController.connected():
+        arduinoController.setSabertoothAddresses(motorAddress, armAddress, handAddress)
+        hybridController = arduinoController
+        #tellPC using arduino
+    else:
+        #tellPC not using arduino
+        useArduino=False
+def disconnectArduino():
+    useArduino=False
+    hybridController = piController
+    #tellPC not using arduino
+        
 def getLocalIP():
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     try:
@@ -112,14 +147,14 @@ def run(message):
     elif commanInt==2:#both
         lSpeed=speedScale.scaleInt(data1Int)
         rSpeed=speedScale.scaleInt(data2Int)
-        arms.drive(lSpeed,lSpeed)
-        hands.drive(rSpeed,rSpeed)
+        arms.drive(lSpeed)
+        hands.drive(rSpeed)
     elif commanInt==3:#arm
         speed=speedScale.scaleInt(data1Int)
-        arms.drive(speed,speed)
+        arms.drive(speed)
     elif commanInt==4:#hand
         speed=speedScale.scaleInt(data1Int)
-        hands.drive(speed,speed)
+        hands.drive(speed)
     elif commanInt==5:
         pass
     elif commanInt==6:
@@ -128,6 +163,58 @@ def run(message):
         pass
     elif commanInt==8:
         pass
+    elif commanInt==9:
+        pass
+    elif commanInt==10:
+        pass
+    elif commanInt==11:
+        pass
+    elif commanInt==12:
+        pass
+    elif commanInt==13:
+        pass
+    elif commanInt==14:
+        pass
+    elif commanInt==15:
+        pass
+def run1(message):#change to text switch case
+    commanInt=message.getCommandInt()
+    data1Int=message.getData1Int()
+    data2Int=message.getData2Int()
+    if commanInt==0:#stop
+        hybridController.stopMotor()
+        hybridController.stopArm()
+        hybridController.stopHand()
+    elif commanInt==1:#power drive
+        lSpeed=speedScale.scaleInt(data1Int)
+        rSpeed=speedScale.scaleInt(data2Int)
+        hybridController.setMotorPower(lSpeed,rSpeed)
+    elif commanInt==2:#power arm and hand 
+        lSpeed=speedScale.scaleInt(data1Int)
+        rSpeed=speedScale.scaleInt(data2Int)
+        hybridController.setArmPower(lSpeed)
+        hybridController.handArmPower(rSpeed)
+    elif commanInt==3:#power arm
+        speed=speedScale.scaleInt(data1Int)
+        hybridController.setArmPower(speed)
+    elif commanInt==4:#power hand
+        speed=speedScale.scaleInt(data1Int)
+        hybridController.handArmPower(speed)
+    elif commanInt==5:#speed drive
+        lSpeed=speedScale.scaleInt(data1Int)
+        rSpeed=speedScale.scaleInt(data2Int)
+        hybridController.setMotorSpeed(lSpeed,rSpeed)
+    elif commanInt==6:#angular arm and hand 
+        armAngle=armAngleScale.scaleInt(data1Int)
+        handAngle=handAngleScale.scaleInt(data2Int)
+        hybridController.setArmAngle(armAngle)
+        hybridController.setHandAngle(handAngle)
+    elif commanInt==7:#angular arm
+        armAngle=armAngleScale.scaleInt(data1Int)
+        hybridController.setArmAngle(armAngle)
+    elif commanInt==8:#angular hand
+        handAngle=handAngleScale.scaleInt(data1Int)
+        hybridController.setHandAngle(handAngle)
     elif commanInt==9:
         pass
     elif commanInt==10:
