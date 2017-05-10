@@ -1,4 +1,5 @@
-//I2C
+//This is the official code. Don't delete.
+#include <Wire.h>
 /*
 RPI               Arduino Uno		Arduino Mega
 --------------------------------------------

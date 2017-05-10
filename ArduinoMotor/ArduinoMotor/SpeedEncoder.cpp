@@ -9,6 +9,10 @@
 #define _wPin2 13 //White wire of encoder 2
 SpeedEncoderClass::SpeedEncoderClass()
 {
+	init();
+}
+void SpeedEncoderClass::init()
+{
 	pinMode(_gPin1, INPUT_PULLUP);
 	pinMode(_wPin1, INPUT_PULLUP);
 	pinMode(_gPin2, INPUT_PULLUP);

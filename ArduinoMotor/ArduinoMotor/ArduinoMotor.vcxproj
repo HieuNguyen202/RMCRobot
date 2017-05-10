@@ -47,8 +47,8 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\..\..\OneDrive\Documents\Arduino\libraries\Sabertooth;$(ProjectDir)..\..\..\..\..\..\..\Program Files (x86)\Arduino\hardware\arduino\avr\libraries\Wire\src;$(ProjectDir)..\..\..\..\..\..\..\Program Files (x86)\Arduino\libraries;$(ProjectDir)..\..\..\..\..\..\..\Program Files (x86)\Arduino\hardware\arduino\avr\libraries;$(ProjectDir)..\..\..\..\..\OneDrive\Documents\Arduino\libraries;$(ProjectDir)..\..\..\..\..\..\..\Program Files (x86)\Arduino\hardware\arduino\avr\cores\arduino;$(ProjectDir)..\..\..\..\..\..\..\Program Files (x86)\Arduino\hardware\arduino\avr\variants\mega;$(ProjectDir)..\ArduinoMotor;$(ProjectDir)..\..\..\..\..\..\..\Program Files (x86)\Arduino\hardware\tools\avr\avr\include\;$(ProjectDir)..\..\..\..\..\..\..\Program Files (x86)\Arduino\hardware\tools\avr\avr\include\avr\;$(ProjectDir)..\..\..\..\..\..\..\Program Files (x86)\Arduino\hardware\tools\avr\lib\gcc\avr\4.8.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <ForcedIncludeFiles>arduino.h;pins_arduino.h;ArduinoMotor.ino;EncoderTest.ino;I2CTest.ino;PIDTest.ino;RMCSabertoothTest.ino;SabertoothTest.ino;__vm\.ArduinoMotor.vsarduino.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\..\..\OneDrive\Documents\Arduino\libraries\Sabertooth;$(ProjectDir)..\..\..\..\..\OneDrive\Documents\Arduino\libraries\digitalWriteFast;$(ProjectDir)..\..\..\..\..\..\..\Program Files (x86)\Arduino\hardware\arduino\avr\libraries\Wire\src;$(ProjectDir)..\..\..\..\..\..\..\Program Files (x86)\Arduino\hardware\arduino\avr\libraries\Wire\src\utility;$(ProjectDir)..\..\..\..\..\..\..\Program Files (x86)\Arduino\libraries;$(ProjectDir)..\..\..\..\..\..\..\Program Files (x86)\Arduino\hardware\arduino\avr\libraries;$(ProjectDir)..\..\..\..\..\OneDrive\Documents\Arduino\libraries;$(ProjectDir)..\..\..\..\..\..\..\Program Files (x86)\Arduino\hardware\arduino\avr\cores\arduino;$(ProjectDir)..\..\..\..\..\..\..\Program Files (x86)\Arduino\hardware\arduino\avr\variants\mega;$(ProjectDir)..\ArduinoMotor;$(ProjectDir)..\..\..\..\..\..\..\Program Files (x86)\Arduino\hardware\tools\avr\avr\include\;$(ProjectDir)..\..\..\..\..\..\..\Program Files (x86)\Arduino\hardware\tools\avr\avr\include\avr\;$(ProjectDir)..\..\..\..\..\..\..\Program Files (x86)\Arduino\hardware\tools\avr\lib\gcc\avr\4.8.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <ForcedIncludeFiles>arduino.h;pins_arduino.h;ArduinoMotor.ino;EncoderTest.ino;I2CTest.ino;PIDTest.ino;PotTest.ino;RMCArmSabertoothTest.ino;RMCSabertoothTest.ino;SabertoothTest.ino;__vm\.ArduinoMotor.vsarduino.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
       <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
       <PreprocessorDefinitions>__AVR_ATmega2560__;F_CPU=16000000L;ARDUINO=10801;ARDUINO_AVR_MEGA2560;ARDUINO_ARCH_AVR;__cplusplus=201103L;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
@@ -89,6 +89,12 @@
     <None Include="PIDTest.ino">
       <FileType>CppCode</FileType>
     </None>
+    <None Include="PotTest.ino">
+      <FileType>CppCode</FileType>
+    </None>
+    <None Include="RMCArmSabertoothTest.ino">
+      <FileType>CppCode</FileType>
+    </None>
     <None Include="RMCSabertoothTest.ino">
       <FileType>CppCode</FileType>
     </None>
@@ -99,14 +105,20 @@
   <ItemGroup>
     <ClInclude Include="PID.h" />
     <ClInclude Include="Pot.h" />
+    <ClInclude Include="RMCArmSabertooth.h" />
+    <ClInclude Include="RMCMotorSabertooth.h" />
     <ClInclude Include="RMCSabertooth.h" />
+    <ClInclude Include="SpeedEncoder.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="__vm\.ArduinoMotor.vsarduino.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PID.cpp" />
     <ClCompile Include="Pot.cpp" />
+    <ClCompile Include="RMCArmSabertooth.cpp" />
+    <ClCompile Include="RMCMotorSabertooth.cpp" />
     <ClCompile Include="RMCSabertooth.cpp" />
+    <ClCompile Include="SpeedEncoder.cpp" />
     <ClCompile Include="Timer.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

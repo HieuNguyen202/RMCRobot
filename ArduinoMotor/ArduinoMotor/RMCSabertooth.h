@@ -9,6 +9,11 @@
 	#include "WProgram.h"
 #endif
 #include <Sabertooth.h>
+#define power_mode 0
+#define speed_mode 1
+#define position_mode 2
+#define angle_mode 3
+#define height_mode 4
 
 class RMCSabertoothClass
 {
@@ -16,8 +21,16 @@ class RMCSabertoothClass
 
 
  public:
-	void init();
-	
+	 RMCSabertoothClass();
+	 RMCSabertoothClass(byte address, byte initalMode);
+
+	 void init(byte address, byte initalMode);
+	 void setAddress(byte address);
+	 void setMode(byte mode);
+	 Sabertooth *sabertooth;
+	 byte address;
+	 byte mode;
+
 };
 
 extern RMCSabertoothClass RMCSabertooth;

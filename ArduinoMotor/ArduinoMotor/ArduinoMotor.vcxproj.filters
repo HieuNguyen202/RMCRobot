@@ -24,6 +24,8 @@
     <None Include="EncoderTest.ino" />
     <None Include="PIDTest.ino" />
     <None Include="SabertoothTest.ino" />
+    <None Include="PotTest.ino" />
+    <None Include="RMCArmSabertoothTest.ino" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="__vm\.ArduinoMotor.vsarduino.h">
@@ -41,6 +43,15 @@
     <ClInclude Include="RMCSabertooth.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SpeedEncoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RMCMotorSabertooth.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RMCArmSabertooth.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PID.cpp">
@@ -53,6 +64,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="RMCSabertooth.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SpeedEncoder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RMCMotorSabertooth.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RMCArmSabertooth.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

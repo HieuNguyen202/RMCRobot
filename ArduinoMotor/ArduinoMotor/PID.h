@@ -26,9 +26,9 @@ class PIDClass
 	int previous_error;
 	int integral;
 	int dt;
-	long Kp;
-	long Kd;
-	long Ki;
+	float Kp;
+	float Kd;
+	float Ki;
 	PIDClass();
 	PIDClass(float Kp, float Kd, float Ki, int dt);
 	void init(float Kp, float Kd, float Ki, int dt);

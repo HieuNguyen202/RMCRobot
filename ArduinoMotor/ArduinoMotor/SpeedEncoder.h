@@ -5,11 +5,12 @@
 
 #if defined(ARDUINO) && ARDUINO >= 100
 	#include "arduino.h"
-	#include "digitalWriteFast.h"
+	
 #else
 	#include "WProgram.h"
 #endif
 #include "Timer.h"
+#include <digitalWriteFast.h>
 
 class SpeedEncoderClass
 {
@@ -28,6 +29,7 @@ class SpeedEncoderClass
 	void attach(voidFuncPtr interuptFunction1, voidFuncPtr interuptFunction2);
 	void rise1();
 	void rise2();
+	void init();
 	void updateSpeed();
 	long interval;//mili seconds
 	TimerClass timer;

@@ -55,33 +55,33 @@ Sets the potentiometer's value that is associated with the robot arm's highest a
 The current potentiometer's raw value will be used automatically.
 */
 void PotClass::setMax() {
-	max= getRawValue();    // read the value from the sensor
+	maxVal= getRawValue();    // read the value from the sensor
 }
 /*!
 Sets the potentiometer's value that is associated with the robot arm's lowest angle.
 The current potentiometer's raw value will be used automatically.
 */
-void PotClass::setMin() {
-	min = getRawValue();    // read the value from the sensor
+void PotClass::setMinVal() {
+	minVal = getRawValue();    // read the value from the sensor
 }
 /*!
 Sets the potentiometer's value that is associated with the robot arm's highest angle.
 \param potValue the potentiometer's raw value that is determined to be the max.
 */
-void PotClass::setMax(int potValue) {
+void PotClass::setMaxVal(int potValue) {
 	if (potValue>=0)
 	{
-		max = potValue;    // read the value from the sensor
+		maxVal = potValue;    // read the value from the sensor
 	}
 }
 /*!
 Sets the potentiometer's value that is associated with the robot arm's lowest angle.
 \param potValue the potentiometer's raw value that is determined to be the min.
 */
-void PotClass::setMin(int potValue) {
+void PotClass::setMinVal(int potValue) {
 	if (potValue >= 0)
 	{
-		min = potValue;    // read the value from the sensor
+		minVal = potValue;    // read the value from the sensor
 	}
 }
 /*!
@@ -108,15 +108,68 @@ void PotClass::setMinAngle(float newAngle) {
 Calculates and sets the [pot value/angle] convertion factor based on the pot's extrema.
 */
 void PotClass::setFactor() {
-	factor = (max - min) / (maxAngle - minAngle);
+	factor = (maxVal - minVal) / (maxAngle - minAngle);
 }
 /*!
-Converts a potentiometer's raw value to a robot arm's angle.
-\param angle the potentiometer's raw value
+Converts shovel's height to a robot arm's angle.
+\param height the shovel's height
 \return the equivalent robot arm's angle
 */
-float PotClass::raw2Angle(int raw) {
-	return mapfloat(raw, min, max, minAngle, maxAngle);
+float PotClass::height2Angle(int height) {
+	return height*0.1;//find formula for this
+}
+/*!
+Converts the robot arm's angle to shovel's height.
+\param angle robot arm's angle
+\return the shovel's height
+*/
+int PotClass::angle2Height(float angle) {
+	//float heightFromParallel = (armLength*sin(degree2Radian(getAngle())));
+	//return (shoulderHeight + heightFromParallel);
+	return angle*0.1;//find formula for this
+}
+/*!
+Converts shovel's height to a robot arm's angle.
+\param height the shovel's height
+\return the equivalent potentiometer value.
+*/
+int PotClass::height2Raw(int height) {
+	return angle2Raw(height2Angle(height));
+}
+/*!
+Converts shovel's height to a robot arm's angle.
+\param height the shovel's height
+\return the equivalent potentiometer value.
+*/
+int PotClass::raw2Height(int raw) {
+	return angle2Height(raw2Angle(raw));
+}
+/*!
+Converts actuator's position to a robot arm's angle.
+\param pos actuator's position
+\return the equivalent robot arm's angle
+*/
+float PotClass::pos2Angle(int pos) {
+	return pos*0.1;//find formula for this
+}
+int PotClass::angle2Pos(float angle) {
+	return angle*0.1;//find formula for this
+}
+/*!
+Converts actuator's position to an equivelant potentiometer value.
+\param pos actuator's position
+\return the equivalent potentiometer value.
+*/
+int PotClass::pos2Raw(int pos) {
+	return angle2Raw(pos2Angle(pos));
+}
+/*!
+Converts actuator's position to an equivelant potentiometer value.
+\param pos actuator's position
+\return the equivalent potentiometer value.
+*/
+int PotClass::raw2Pos(int raw) {
+	return angle2Pos(raw2Angle(raw));
 }
 /*!
 Converts a desired robot's arm angle to an equivelant potentiometer value.
@@ -124,7 +177,27 @@ Converts a desired robot's arm angle to an equivelant potentiometer value.
 \return the equivalent potentiometer value.
 */
 int PotClass::angle2Raw(float angle) {
-	return (int)mapfloat(angle, minAngle, maxAngle, min, max);
+	return (int)mapfloat(angle, minAngle, maxAngle, minVal, maxVal);
+}
+/*!
+Converts a potentiometer's raw value to a robot arm's angle.
+\param angle the potentiometer's raw value
+\return the equivalent robot arm's angle
+*/
+float PotClass::raw2Angle(int raw) {
+	return mapfloat(raw, minVal, maxVal, minAngle, maxAngle);
+}
+float PotClass::degree2Radian(float angle) {
+	return (angle*(PI / 180));
+}
+float PotClass::radian2Degree(float radian) {
+	return (radian*(180 / PI));
+}
+int PotClass::getHeight() {
+	return raw2Height(getValue());
+}
+int PotClass::getPos() {
+	return raw2Pos(getValue());
 }
 float PotClass::mapfloat(float x, float in_min, float in_max, float out_min, float out_max)
 {
@@ -135,6 +208,11 @@ float PotClass::mapfloat(float x, float in_min, float in_max, float out_min, flo
 */
 String PotClass::toString()
 {
-	return "raw:[" + String(getRawValue()) + "] Angle:[" + String(getAngle()) + "] Min:[" + String(min) + "] Max:[" + String(max) + "]" + "] MinAngle:[" + String(minAngle) + "] MaxAngle:[" + String(maxAngle) + "]";
+	return "raw:[" + String(getRawValue()) + "] Angle:[" + String(getAngle())
+		+ "] Height:[" + String(getHeight()) + "] Pos:[" + String(getPos()) + "] MinVal:["
+		+ String(minVal) + "] MaxVal:[" + String(maxVal) + "]" + "] MinAngle:[" + String(minAngle)
+		+ "] MaxAngle:[" + String(maxAngle) + "] MaxHeight:[" + String(raw2Height(maxVal))
+		+ "] MinHeight:[" + String(raw2Height(minVal)) + "] MaxHeight:[" + String(raw2Height(maxVal))
+		+ "] MaxPos:[" + String(raw2Pos(maxVal)) + "] MinPos:[" + String(raw2Pos(minVal));
 }
 PotClass Pot;
