@@ -24,6 +24,7 @@ import time
 import socket
 import sys
 from Utility import *
+
 #if sys.version_info[0]<3: import thread
 #else: import _thread
 
@@ -37,7 +38,7 @@ speedFactors={-81:0.972,
               102:0.975,
               122:0.997,
               }
-self.sabertoothAddress={0: 128,
+sabertoothAddress={0: 128,
                         1: 129,
                         2: 130,
                         3: 131,
@@ -229,6 +230,10 @@ def run1(message):#change to text switch case
         pass
     elif commanInt==15:
         pass
+def i2cTest():
+    for x in range(0,18):
+        arduinoController.tellArduino(x,[0,1])
+
 if __name__ == "__main__":
         main()
 

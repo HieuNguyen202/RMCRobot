@@ -3,6 +3,7 @@ import binascii
 import RPi.GPIO as GPIO
 import threading
 import RPi.GPIO as GPIO
+import smbus as smbus
 class Scale(object):
     '''Scale a number from one scale to another (Ex: 2 in (0:10) scale is equivalent to 20 in (0:100) scale)'''
     def __init__(self, inMin,inMax, outMin,outMax):
@@ -206,12 +207,13 @@ class Encoder(object):
     def keepCounting(self):
         pass
 class I2C(object):
-    """ 
+    """
     #have to run 'sudo apt-get install python-smbus'
     #in Terminal to install smbus
+    import smbus as smbus
     #handle error when data slave is unavailable
     """
-    def __init__(self, slaveAddress):
+    def __init__(self, slaveAddress=None):
         self.i2cCommands={'is_connected':0,
                           'set_arm_address':1,
                           'set_hand_address':2,
@@ -232,6 +234,7 @@ class I2C(object):
                           'stop_arm':17,
                           'stop_hand':18,
                           }
+        if slaveAddress==None: slaveAddress=7
         self.slaveAddress=slaveAddress
         self.bus = smbus.SMBus(1)
         self.heightOffset = 127 #centimeters
@@ -246,22 +249,24 @@ class I2C(object):
     def getData(self, slaveAddress): return bus.read_byte(slaveAddress)
     def sendData(self, slaveAddress, command, data):
         try:
-            bus.write_i2c_block_data(slaveAddress, command, data)
+            if not isinstance(data,list):
+                    data=[data,]
+            self.bus.write_i2c_block_data(slaveAddress, command, data)
             return True
         except:
             print("I2c failed. Delete this print after done debugging.")
             return False
         #time.sleep(0.1)#must delay 0.01 second
     def tellArduino(self, command, data): return self.sendData(self.slaveAddress, command, data)
-    def setMotorAdress(self, address):
+    def setMotorAddress(self, address):
         """Set Sabertooth address for the motors in the Arduino slave."""
         if address<128 or address>135: address=self.DEDAULT_MOTOR_ADDRESS
         self.tellArduino(self.i2cCommands['set_motor_address'], address)
-    def setArmAdress(self, address):
+    def setArmAddress(self, address):
         """Set Sabertooth address for the arm in the Arduino slave."""
         if address<128 or address>135: address=self.DEDAULT_ARM_ADDRESS
         self.tellArduino(self.i2cCommands['set_arm_address'], address)
-    def setHandAdress(self, address):
+    def setHandAddress(self, address):
         """Set Sabertooth address for the hand in the Arduino slave."""
         if address<128 or address>135: address=self.DEDAULT_HAND_ADDRESS
         self.tellArduino(self.i2cCommands['set_hand_address'], address)
@@ -285,11 +290,11 @@ class I2C(object):
            param height target height of the tip of the shovel in centimeters. Could be negative or possitive. 0 for horizontal position.        
            """
         self.tellArduino(self.i2cCommands['set_hand_height'], height + self.handHeightOffset)
-    def setHeightOffset(self, offset):
+    def setArmHeightOffset(self, offset):
         """Sets offset for the height of the shovel
            param offset the offset of the height in centimeters
            """
-        self.tellArduino(self.i2cCommands['set_height_offset'], offset)
+        self.tellArduino(self.i2cCommands['set_arm_height_offset'], offset)
     def setHandHeightOffset(self, offset):
         """Sets offset for the height of the tip of the shovel
            param offset the offset of the height in centimeters

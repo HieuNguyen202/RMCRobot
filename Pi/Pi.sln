@@ -8,11 +8,19 @@ EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
+		Debug|RP3 = Debug|RP3
 		Release|Any CPU = Release|Any CPU
+		Release|RP3 = Release|RP3
+		Remote RP3|Any CPU = Remote RP3|Any CPU
+		Remote RP3|RP3 = Remote RP3|RP3
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{80463061-F4AA-4CA4-8483-4AFD0BB8FB6B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{80463061-F4AA-4CA4-8483-4AFD0BB8FB6B}.Debug|RP3.ActiveCfg = Debug|Any CPU
 		{80463061-F4AA-4CA4-8483-4AFD0BB8FB6B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{80463061-F4AA-4CA4-8483-4AFD0BB8FB6B}.Release|RP3.ActiveCfg = Release|Any CPU
+		{80463061-F4AA-4CA4-8483-4AFD0BB8FB6B}.Remote RP3|Any CPU.ActiveCfg = Release|Any CPU
+		{80463061-F4AA-4CA4-8483-4AFD0BB8FB6B}.Remote RP3|RP3.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

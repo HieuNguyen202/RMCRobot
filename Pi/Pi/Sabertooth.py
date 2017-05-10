@@ -54,7 +54,7 @@ class SabertoothControlers(object):
         """Sets power for the actuator of the hand.
            param power level for the actuator of the hand. Integers from -127 to 127."""
         self.hands.drive(power)
-        def setArmHeight(self, height):
+    def setArmHeight(self, height):
         """Set the height of the shovel. Take y value when arm angle is zero to be to 0 reference of height.
            param target shovel height in centimeters. Could be negative or possitive. 0 for horizontal position."""
         self.tellArduino(self.i2cCommands['set_arm_height_offset'], height + self.heightOffset)

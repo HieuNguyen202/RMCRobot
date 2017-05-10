@@ -32,6 +32,26 @@ void I2CClass::receiveData(int byteCount) {
 		leftTargetSpeed = data[1];
 		rightTargetSpeed = data[2];
 	}
+	/*self.i2cCommands = { 'is_connected':0,
+		'set_arm_address' : 1,
+		'set_hand_address' : 2,
+		'set_arm_height' : 3,
+		'set_arm_height_offset' : 4,
+		'set_arm_angle' : 5,
+		'set_arm_angle_offset' : 6,
+		'set_motor_speed' : 7,
+		'set_motor_power' : 8,
+		'set_arm_power' : 9,
+		'set_hand_power' : 10,
+		'set_hand_angle' : 11,
+		'set_hand_angle_offset' : 12,
+		'set_hand_height' : 13,
+		'set_hand_height_offset' : 14,
+		'set_motor_address' : 15,
+		'stop_motor' : 16,
+		'stop_arm' : 17,
+		'stop_hand' : 18,
+	}*/
 }
 void I2CClass::sendData() {//fix this
 	Wire.write(leftTargetSpeed);
