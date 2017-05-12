@@ -69,6 +69,7 @@ typedef void *__builtin_va_list;
 #include "I2CTest.ino"
 #include "PIDTest.ino"
 #include "PotTest.ino"
+#include "RMCArmSabertooth.ino"
 #include "RMCArmSabertoothTest.ino"
 #include "RMCSabertoothTest.ino"
 #include "SabertoothTest.ino"

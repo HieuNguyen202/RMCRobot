@@ -30,15 +30,13 @@ Parser: used to construct a command to send to a Pi. It's also used to in a Pi t
  '''
  #Variables
 host = "192.168.2.201" # Destination IP address, Pi's IP address
-#host = "192.168.2.110" # Destination IP address, Pi's IP address
 commandPort = 12345    # Port that's been opened in the Pi
 dashboardSize=(1200,900)
 
 def test():
     dashboard=RMCDashboard(dashboardSize,10,10)
 
-
-def main():
+def main():    
     dashboard=RMCDashboard(dashboardSize,10,10)
     while True:
         try:

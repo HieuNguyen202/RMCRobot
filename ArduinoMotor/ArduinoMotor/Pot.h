@@ -25,10 +25,13 @@ class PotClass
 	void init(int potPin);
 	int getValue();
 	float getAngle();
-	void setMax();
+	void setMaxVal();
 	void setMinVal();
 	void setMaxVal(int potValue);
+	void setArmLength(float armLength);
 	void setMinVal(int potValue);
+	void setAngleOffset(float angleOffset);
+	void setHeightOffset(float heightOffset);
 	void setMaxAngle(float newAngle);
 	void setMinAngle(float newAngle);
 	void setFactor();
@@ -54,8 +57,8 @@ class PotClass
 	float maxAngle;
 	float minAngle;
 	float factor; // pot reading/ degree
-	float shoulderHeight = 65.34; //height of the arm pivot point WRT to the ground in cetimeters
-	float armLength = 51.5; //in cetimeters
+	float heightOffset; //height of the arm pivot point WRT to the ground in cetimeters
+	float armLength; //in cetimeters
 	float foreArmLength = 53; //in cetimeters
 	float angleOffset;
 };

@@ -54,15 +54,15 @@ float PotClass::getAngle() {
 Sets the potentiometer's value that is associated with the robot arm's highest angle.
 The current potentiometer's raw value will be used automatically.
 */
-void PotClass::setMax() {
-	maxVal= getRawValue();    // read the value from the sensor
+void PotClass::setMaxVal() {
+	this->maxVal= getRawValue();    // read the value from the sensor
 }
 /*!
 Sets the potentiometer's value that is associated with the robot arm's lowest angle.
 The current potentiometer's raw value will be used automatically.
 */
 void PotClass::setMinVal() {
-	minVal = getRawValue();    // read the value from the sensor
+	this->minVal = getRawValue();    // read the value from the sensor
 }
 /*!
 Sets the potentiometer's value that is associated with the robot arm's highest angle.
@@ -71,7 +71,17 @@ Sets the potentiometer's value that is associated with the robot arm's highest a
 void PotClass::setMaxVal(int potValue) {
 	if (potValue>=0)
 	{
-		maxVal = potValue;    // read the value from the sensor
+		this->maxVal = potValue;    // read the value from the sensor
+	}
+}
+/*!
+Sets arm length, the length of the straight line from the pivot point to the tip of the arm.
+\param armLength The arm length.
+*/
+void PotClass::setArmLength(float armLength) {
+	if (armLength >= 0)
+	{
+		this->armLength = armLength;    // read the value from the sensor
 	}
 }
 /*!
@@ -81,7 +91,31 @@ Sets the potentiometer's value that is associated with the robot arm's lowest an
 void PotClass::setMinVal(int potValue) {
 	if (potValue >= 0)
 	{
-		minVal = potValue;    // read the value from the sensor
+		this->minVal = potValue;    // read the value from the sensor
+	}
+}
+/*!
+Sets offset angle from it's max and min angles. This is to deal with the fact the the 
+robot arm consists of 2 segments that are 140 degrees from each other.
+\param angleOffset the offset angle.
+*/
+void PotClass::setAngleOffset(float angleOffset) {
+	if (angleOffset >= -180 && angleOffset <= 180)
+	{
+		this->angleOffset = angleOffset;    // read the value from the sensor
+		setMaxAngle(maxAngle);
+		setMinAngle(minAngle);
+	}
+}
+/*!
+Sets offset angle from it's max and min angles. This is to deal with the fact the the
+robot arm consists of 2 segments that are 140 degrees from each other.
+\param angleOffset the offset angle.
+*/
+void PotClass::setHeightOffset(float heightOffset) {
+	if (heightOffset >= 0)
+	{
+		this->heightOffset = heightOffset;    // read the value from the sensor
 	}
 }
 /*!
@@ -91,7 +125,7 @@ Sets the robot arm's highest angle.
 void PotClass::setMaxAngle(float newAngle) {
 	if (newAngle>=-180&&newAngle<=180)
 	{
-		maxAngle = newAngle;    // read the value from the sensor
+		this->maxAngle = newAngle+angleOffset;    // read the value from the sensor
 	}
 }
 /*!
@@ -101,14 +135,14 @@ Sets the robot arm's lowest angle.
 void PotClass::setMinAngle(float newAngle) {
 	if (newAngle >= -180 && newAngle <= 180)
 	{
-		minAngle = newAngle;    // read the value from the sensor
+		this->minAngle = newAngle + angleOffset;    // read the value from the sensor
 	}
 }
 /*!
 Calculates and sets the [pot value/angle] convertion factor based on the pot's extrema.
 */
 void PotClass::setFactor() {
-	factor = (maxVal - minVal) / (maxAngle - minAngle);
+	this->factor = (maxVal - minVal) / (maxAngle - minAngle);
 }
 /*!
 Converts shovel's height to a robot arm's angle.
@@ -116,7 +150,8 @@ Converts shovel's height to a robot arm's angle.
 \return the equivalent robot arm's angle
 */
 float PotClass::height2Angle(int height) {
-	return height*0.1;//find formula for this
+	height = height - heightOffset;
+	return radian2Degree(asin(height / armLength));//find formula for this
 }
 /*!
 Converts the robot arm's angle to shovel's height.
@@ -124,9 +159,7 @@ Converts the robot arm's angle to shovel's height.
 \return the shovel's height
 */
 int PotClass::angle2Height(float angle) {
-	//float heightFromParallel = (armLength*sin(degree2Radian(getAngle())));
-	//return (shoulderHeight + heightFromParallel);
-	return angle*0.1;//find formula for this
+	return (int)(armLength*sin(degree2Radian(angle)));
 }
 /*!
 Converts shovel's height to a robot arm's angle.
@@ -142,7 +175,7 @@ Converts shovel's height to a robot arm's angle.
 \return the equivalent potentiometer value.
 */
 int PotClass::raw2Height(int raw) {
-	return angle2Height(raw2Angle(raw));
+	return angle2Height(raw2Angle(raw))+ heightOffset;
 }
 /*!
 Converts actuator's position to a robot arm's angle.
@@ -194,7 +227,7 @@ float PotClass::radian2Degree(float radian) {
 	return (radian*(180 / PI));
 }
 int PotClass::getHeight() {
-	return raw2Height(getValue());
+	return raw2Height(getValue())+ heightOffset;
 }
 int PotClass::getPos() {
 	return raw2Pos(getValue());

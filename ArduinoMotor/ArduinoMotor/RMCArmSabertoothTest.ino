@@ -7,5 +7,9 @@ RMCArmSabertoothClass arm((byte)131, 0, 20, myLeftArmPot, myRightArmPot, myPosPI
 
 void RMCArmSabertoothTestSetup()
 {
-	arm.setPower(120);
+	arm.setPower(-120);
+}
+void RMCArmSabertoothTestLoop()
+{
+	arm.Update();
 }
