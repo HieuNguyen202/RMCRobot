@@ -13,7 +13,7 @@ void setup() {
 }
 void loop() {
 	PotTestLoop();
-	delay(500);
+	delay(10);
 	//RMCArmSabertoothTestLoop();
 }
 

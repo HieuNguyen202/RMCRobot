@@ -95,6 +95,16 @@ void PotClass::setMinVal(int potValue) {
 	}
 }
 /*!
+Sets the potentiometer's value that is associated with the robot arm's lowest angle.
+\param potValue the potentiometer's raw value that is determined to be the min.
+*/
+void PotClass::setZeroVal(int potValue) {
+	if (potValue >= 0)
+	{
+		this->zeroVal = potValue;    // read the value from the sensor
+	}
+}
+/*!
 Sets offset angle from it's max and min angles. This is to deal with the fact the the 
 robot arm consists of 2 segments that are 140 degrees from each other.
 \param angleOffset the offset angle.
@@ -112,12 +122,6 @@ Sets offset angle from it's max and min angles. This is to deal with the fact th
 robot arm consists of 2 segments that are 140 degrees from each other.
 \param angleOffset the offset angle.
 */
-void PotClass::setHeightOffset(float heightOffset) {
-	if (heightOffset >= 0)
-	{
-		this->heightOffset = heightOffset;    // read the value from the sensor
-	}
-}
 /*!
 Sets the robot arm's highest angle.
 \param newAngle the highest angle the robot arm can reach.
@@ -150,7 +154,7 @@ Converts shovel's height to a robot arm's angle.
 \return the equivalent robot arm's angle
 */
 float PotClass::height2Angle(int height) {
-	height = height - heightOffset;
+	height = height;
 	return radian2Degree(asin(height / armLength));//find formula for this
 }
 /*!
@@ -175,7 +179,7 @@ Converts shovel's height to a robot arm's angle.
 \return the equivalent potentiometer value.
 */
 int PotClass::raw2Height(int raw) {
-	return angle2Height(raw2Angle(raw))+ heightOffset;
+	return angle2Height(raw2Angle(raw));
 }
 /*!
 Converts actuator's position to a robot arm's angle.
@@ -218,7 +222,7 @@ Converts a potentiometer's raw value to a robot arm's angle.
 \return the equivalent robot arm's angle
 */
 float PotClass::raw2Angle(int raw) {
-	return mapfloat(raw, minVal, maxVal, minAngle, maxAngle);
+	return (raw - zeroVal)*raw2AngleFactor;
 }
 float PotClass::degree2Radian(float angle) {
 	return (angle*(PI / 180));
@@ -227,7 +231,7 @@ float PotClass::radian2Degree(float radian) {
 	return (radian*(180 / PI));
 }
 int PotClass::getHeight() {
-	return raw2Height(getValue())+ heightOffset;
+	return raw2Height(getValue());
 }
 int PotClass::getPos() {
 	return raw2Pos(getValue());
@@ -247,5 +251,10 @@ String PotClass::toString()
 		+ "] MaxAngle:[" + String(maxAngle) + "] MaxHeight:[" + String(raw2Height(maxVal))
 		+ "] MinHeight:[" + String(raw2Height(minVal)) + "] MaxHeight:[" + String(raw2Height(maxVal))
 		+ "] MaxPos:[" + String(raw2Pos(maxVal)) + "] MinPos:[" + String(raw2Pos(minVal));
+}
+String PotClass::toStringLite()
+{
+	return "raw:[" + String(getRawValue()) + "] Angle:[" + String(getAngle())
+		+ "] Height:[" + String(getHeight()+56);
 }
 PotClass Pot;

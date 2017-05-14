@@ -30,8 +30,8 @@ class PotClass
 	void setMaxVal(int potValue);
 	void setArmLength(float armLength);
 	void setMinVal(int potValue);
+	void setZeroVal(int potValue);
 	void setAngleOffset(float angleOffset);
-	void setHeightOffset(float heightOffset);
 	void setMaxAngle(float newAngle);
 	void setMinAngle(float newAngle);
 	void setFactor();
@@ -51,16 +51,18 @@ class PotClass
 	int getPos();
 	float mapfloat(float x, float in_min, float in_max, float out_min, float out_max);
 	String toString();
+	String toStringLite();
 	int potPin;    // select the input pin for the potentiometer
 	int maxVal;
 	int minVal;
+	int zeroVal;
 	float maxAngle;
 	float minAngle;
 	float factor; // pot reading/ degree
-	float heightOffset; //height of the arm pivot point WRT to the ground in cetimeters
 	float armLength; //in cetimeters
 	float foreArmLength = 53; //in cetimeters
 	float angleOffset;
+	double raw2AngleFactor = 315./1023;
 };
 
 extern PotClass Pot;

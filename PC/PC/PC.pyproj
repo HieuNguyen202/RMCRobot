@@ -5,13 +5,14 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>939c75fe-9f28-41ef-b7bc-b93f664ffa6f</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>PC.py</StartupFile>
+    <StartupFile>PConPi.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
     <Name>PC</Name>
     <RootNamespace>PC</RootNamespace>
+    <IsWindowsApplication>False</IsWindowsApplication>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -22,12 +23,15 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="HeadlessCommunication.py" />
     <Compile Include="Communication.py" />
     <Compile Include="Dashboard.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="PConPi.py" />
     <Compile Include="PC.py" />
     <Compile Include="Utility.py" />
+    <Compile Include="HeadlessXbox360Controller.py" />
     <Compile Include="Xbox360Controller.py" />
     <Compile Include="Xbox360Testing.py" />
   </ItemGroup>
