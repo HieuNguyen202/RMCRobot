@@ -25,6 +25,9 @@ import socket
 import sys
 from Utility import *
 
+#if sys.version_info[0]<3: import thread
+#else: import _thread
+
 serialPort = '/dev/serial0'
 baudRate = 9600
 #speedFactors is only for the right motor (the slower one)
@@ -47,11 +50,43 @@ wheels = Wheels(serialPort, baudRate, 130)
 arms = LinearActuator(serialPort, baudRate, 131,speedFactors)
 hands = LinearActuator(serialPort, baudRate, 132)
 
+t=Timer()
+dataCount=0
+#password=123
 message=Message(4,6,6)
-speedScale=Scale(1,math.pow(2,message.numData1Digit)-1,-127,127)
+speedScale=Scale(-31,31,-127,127)
+#speedScale=Scale(1,math.pow(2,message.numData1Digit)-1,-127,127)
+
+motorAddress = 130
+armAddress = 131
+handAddress = 132
+
+piController = SabertoothControlers(motorAddress,armAddress,handAddress)
+arduinoController = I2C(7)
+hybridController = piController
+
+#switches
+useArduino=True #use arduino to control the Sabertooths.
 
 def main():
-    communication(12345)    
+    if  useArduino: tryToConnectArduino();
+    
+    #if sys.version_info[0]<3:thread.start_new_thread(communication,(12345,))
+    #else: _thread.start_new_thread(communication,(12345,))
+    communication(12345)
+def tryToConnectArduino():
+    if  arduinoController.connected():
+        arduinoController.setSabertoothAddresses(motorAddress, armAddress, handAddress)
+        hybridController = arduinoController
+        #tellPC using arduino
+    else:
+        #tellPC not using arduino
+        useArduino=False
+def disconnectArduino():
+    useArduino=False
+    hybridController = piController
+    #tellPC not using arduino
+        
 def getLocalIP():
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     try:
@@ -76,8 +111,8 @@ def communication(port):
             print (str(host)+":"+str(port)+" is listening...")
             s.listen(1)
             c, addr = s.accept()
-            print("Connection from: "+ str(addr))
             data = c.recv(1024)
+            print("Connection from: "+ str(addr))
             t.resetTimer()
             while True:
                 data = c.recv(1024)
@@ -87,11 +122,17 @@ def communication(port):
                     eachBlock=data[i:i+numHexPerMessage]
                     message.setValues(eachBlock)
                     run(message)
+                    #codeInt=bin2int()
+                    #run(codeInt)
+                if t.timer()>60:
+                    numBytes=dataCount/2 #1 byte == 2 hex letter
+                    print ("Total number of bytes used in 1 minute: ",numBytes)
+                    t.resetTimer()
+                    dataCount=0
         except:
             print("Socket comunication failed.")
             wheels.stop()
             arms.stop()
-            hands.stop()
             c.close()
 def run(message):
     commanInt=message.getCommandInt()
@@ -137,6 +178,62 @@ def run(message):
         pass
     elif commanInt==15:
         pass
+def run1(message):#change to text switch case
+    commanInt=message.getCommandInt()
+    data1Int=message.getData1Int()
+    data2Int=message.getData2Int()
+    if commanInt==0:#stop
+        hybridController.stopMotor()
+        hybridController.stopArm()
+        hybridController.stopHand()
+    elif commanInt==1:#power drive
+        lSpeed=speedScale.scaleInt(data1Int)
+        rSpeed=speedScale.scaleInt(data2Int)
+        hybridController.setMotorPower(lSpeed,rSpeed)
+    elif commanInt==2:#power arm and hand 
+        lSpeed=speedScale.scaleInt(data1Int)
+        rSpeed=speedScale.scaleInt(data2Int)
+        hybridController.setArmPower(lSpeed)
+        hybridController.handArmPower(rSpeed)
+    elif commanInt==3:#power arm
+        speed=speedScale.scaleInt(data1Int)
+        hybridController.setArmPower(speed)
+    elif commanInt==4:#power hand
+        speed=speedScale.scaleInt(data1Int)
+        hybridController.handArmPower(speed)
+    elif commanInt==5:#speed drive
+        lSpeed=speedScale.scaleInt(data1Int)
+        rSpeed=speedScale.scaleInt(data2Int)
+        hybridController.setMotorSpeed(lSpeed,rSpeed)
+    elif commanInt==6:#angular arm and hand 
+        armAngle=armAngleScale.scaleInt(data1Int)
+        handAngle=handAngleScale.scaleInt(data2Int)
+        hybridController.setArmAngle(armAngle)
+        hybridController.setHandAngle(handAngle)
+    elif commanInt==7:#angular arm
+        armAngle=armAngleScale.scaleInt(data1Int)
+        hybridController.setArmAngle(armAngle)
+    elif commanInt==8:#angular hand
+        handAngle=handAngleScale.scaleInt(data1Int)
+        hybridController.setHandAngle(handAngle)
+    elif commanInt==9:
+        pass
+    elif commanInt==10:
+        pass
+    elif commanInt==11:
+        pass
+    elif commanInt==12:
+        pass
+    elif commanInt==13:
+        pass
+    elif commanInt==14:
+        pass
+    elif commanInt==15:
+        pass
+def i2cTest():
+    for x in range(0,18):
+        arduinoController.tellArduino(x,[0,1])
+
 if __name__ == "__main__":
         main()
 

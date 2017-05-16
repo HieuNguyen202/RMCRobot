@@ -27,7 +27,7 @@ commandPort = 12345    # Port that's been opened in the Pi
 
 def main():    
     while True:
-        #try:
+        try:
             message=Message(4,6,6)
             commandPipe = Communication(host,commandPort,message)
             controller=XboxController(commandPipe)
@@ -43,7 +43,7 @@ def main():
                             print("Connected to the robot at "+str(host)+":"+str(commandPort))
                             while True:# consider removing this
                                 controller.listen()
-        #except:
+        except:
             print("Connection failed!")
             controller.uninitialize()
             commandPipe.close()

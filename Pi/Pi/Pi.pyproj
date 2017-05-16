@@ -28,9 +28,11 @@
     </Compile>
     <Compile Include="Not used\driverTMain.py" />
     <Compile Include="Not used\OldTestingSabertooth.py" />
+    <Compile Include="Not used\Pi.py" />
     <Compile Include="Not used\server.py" />
     <Compile Include="Not used\socket_programming.py" />
     <Compile Include="Not used\TestingSabertooth.py" />
+    <Compile Include="Not used\Utility.py" />
     <Compile Include="Pi - Backup4.8.2017.py" />
     <Compile Include="Pi.py" />
     <Compile Include="Sabertooth.py" />
