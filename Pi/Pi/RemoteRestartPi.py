@@ -1,7 +1,7 @@
 import sys
 import socket
 from Utility import *
-
+message=Message(4,6,6)
 serialPort = '/dev/serial0'
 baudRate = 9600
 
