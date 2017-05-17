@@ -25,7 +25,7 @@ def communication(port):
     s.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1)# add this to reuse the port
     s.bind((host,port))
     while True:
-        #try:
+        try:
             numHexPerMessage=int(message.getLength()/4)
             print (str(host)+":"+str(port)+" is listening...")
             s.listen(1)
@@ -39,11 +39,11 @@ def communication(port):
                     eachBlock=data[i:i+numHexPerMessage]
                     message.setValues(eachBlock)
                     run(message)
-        #except (KeyboardInterrupt, SystemExit):
+        except (KeyboardInterrupt, SystemExit):
                 print("Keyboard interupted")
                 c.close()
                 raise
-        #except:
+        except:
             print("Socket comunication failed.")
             c.close()
 def run(message):
