@@ -78,11 +78,9 @@ def communication(port):
             c, addr = s.accept()
             print("Connection from: "+ str(addr))
             data = c.recv(1024)
-            t.resetTimer()
             while True:
                 data = c.recv(1024)
                 if not data: break
-                dataCount=dataCount+len(data)
                 for i in range(0,len(data),numHexPerMessage):
                     eachBlock=data[i:i+numHexPerMessage]
                     message.setValues(eachBlock)

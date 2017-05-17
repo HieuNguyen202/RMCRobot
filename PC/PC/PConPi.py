@@ -22,29 +22,35 @@ Timer: Just a simple timer like in ECE 100.
 Parser: used to construct a command to send to a Pi. It's also used to in a Pi to parse a command back to its elements.
  '''
  #Variables
-host = "192.168.2.201" # Destination IP address, Pi's IP address
+#hostLst = ["192.168.2.201", "192.168.2.202","192.168.2.203","192.168.2.204","192.168.2.205"] # List containing the different addresses for the raspberry pi units
+host="192.168.2.201"
+#i = 0 # counter for the index of the hostLst list. Defaulted to 0.
 commandPort = 12345    # Port that's been opened in the Pi
-def main():    
-    while True:
-        try:
-            message=Message(4,6,6)
-            commandPipe = Communication(host,commandPort,message)
-            controller=XboxController(commandPipe)
-            print("Connecting to a Xbox controller...")
-            while True:
-                if controller.connected is False:
-                    controller.initialize()
-                else:
-                    while True:
-                        if commandPipe.connected is False:
-                            commandPipe.connect()
-                        else:
-                            print("Connected to the robot at "+str(host)+":"+str(commandPort))
-                            while True:# consider removing this
-                                controller.listen()
-        except:
-            print("Connection failed!")
-            controller.uninitialize()
-            commandPipe.close()
+
+def main():
+        print("Target Pi: "+str(host)+":"+str(commandPort))
+        while True:
+            try:
+                message=Message(4,6,6)
+                commandPipe = HeadlessCommunication(host,commandPort,message)
+                controller=HeadlessXboxController(commandPipe)
+                print("Connecting to a Xbox controller...")
+                while True:
+                    if controller.connected is False:
+                        controller.initialize()
+                    else:
+                        print("Xbox controller connected.")
+                        print("Connecting to the robot at "+str(host)+":"+str(commandPort))
+                        while True:
+                            if commandPipe.connected is False:
+                                commandPipe.connect()
+                            else:
+                                print("Connected to the robot at "+str(host)+":"+str(commandPort))
+                                while True:# consider removing this
+                                    controller.listen()
+            except:
+                print("Connection failed!")
+                controller.uninitialize()
+                commandPipe.close()
 if __name__ == "__main__":
         main()

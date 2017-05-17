@@ -150,7 +150,7 @@ class ActuatorDriver(JoystickDriver):
     def getSpeed(self):
         speeds=super().getSpeed(1)
         return (speeds[0],speeds[1]*self.speedRatio)
-class XboxController(object):
+class HeadlessXboxController(object):
     'a class to handle joystick coordinate and convert it to motor speeds: parametter: (maxSpeeds, indexOfInitialMaxSpeed)'
     def __init__(self,commandPipe):
         pygame.init()

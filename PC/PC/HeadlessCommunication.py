@@ -6,7 +6,7 @@ import socket
 import math
 from Utility import *
 
-class Communication(socket.socket):
+class HeadlessCommunication(socket.socket):
     'Communication between two devices using python'
     def __init__(self, host, port, message):
         super().__init__()
@@ -27,7 +27,10 @@ class Communication(socket.socket):
         return self.connected
     def privateConnect(self):# to be called by self.connect()
         try:
+            
+            super().settimeout(1)
             super().connect((self.host, self.port))
+            #super().settimeout(None)
             self.connected=True
         except:
             self.connected=False
