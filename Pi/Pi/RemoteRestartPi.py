@@ -1,4 +1,5 @@
 import sys
+import socket
 from Utility import *
 
 serialPort = '/dev/serial0'
