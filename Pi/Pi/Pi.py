@@ -48,7 +48,8 @@ arms = LinearActuator(serialPort, baudRate, 131,speedFactors)
 hands = LinearActuator(serialPort, baudRate, 132)
 
 message=Message(4,6,6)
-speedScale=Scale(1,math.pow(2,message.numData1Digit)-1,-127,127)
+#speedScale=Scale(1,math.pow(2,message.numData1Digit)-1,-127,127)
+speedScale=Scale(-31,31,-127,127)
 
 def main():
     communication(12345)    

@@ -23,7 +23,7 @@ Parser: used to construct a command to send to a Pi. It's also used to in a Pi t
  '''
  #Variables
 #hostLst = ["192.168.2.201", "192.168.2.202","192.168.2.203","192.168.2.204","192.168.2.205"] # List containing the different addresses for the raspberry pi units
-host="192.168.2.201"
+host="192.168.2.202"
 #i = 0 # counter for the index of the hostLst list. Defaulted to 0.
 commandPort = 12345    # Port that's been opened in the Pi
 
