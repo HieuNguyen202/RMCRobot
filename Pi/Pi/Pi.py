@@ -86,6 +86,13 @@ def communication(port):
                     eachBlock=data[i:i+numHexPerMessage]
                     message.setValues(eachBlock)
                     run(message)
+        except (KeyboardInterrupt, SystemExit):
+                print("Keyboard interupted")
+                wheels.stop()
+                arms.stop()
+                hands.stop()
+                c.close()
+                raise
         except:
             print("Socket comunication failed.")
             wheels.stop()
