@@ -22,7 +22,7 @@ Timer: Just a simple timer like in ECE 100.
 Parser: used to construct a command to send to a Pi. It's also used to in a Pi to parse a command back to its elements.
  '''
  #Variables
-host="192.168.2.202"
+host="192.168.2.201"
 #i = 0 # counter for the index of the hostLst list. Defaulted to 0.
 commandPort = 12345    # Port that's been opened in the Pi
 
