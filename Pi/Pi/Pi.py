@@ -65,7 +65,6 @@ def getLocalIP():
         s.close()
     return IP
 def communication(port):
-    global dataCount
     global message
     host =getLocalIP()
     s = socket.socket()

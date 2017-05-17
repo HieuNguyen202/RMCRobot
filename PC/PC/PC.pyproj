@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>939c75fe-9f28-41ef-b7bc-b93f664ffa6f</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>PConPi.py</StartupFile>
+    <StartupFile>RemoteRestartPC.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -28,6 +28,7 @@
     <Compile Include="Dashboard.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="RemoteRestartPC.py" />
     <Compile Include="PConPi.py" />
     <Compile Include="PC.py" />
     <Compile Include="Utility.py" />

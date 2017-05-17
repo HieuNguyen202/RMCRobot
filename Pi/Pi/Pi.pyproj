@@ -34,6 +34,7 @@
     <Compile Include="Not used\TestingSabertooth.py" />
     <Compile Include="Not used\Utility.py" />
     <Compile Include="Pi - Backup4.8.2017.py" />
+    <Compile Include="RemoteRestartPi.py" />
     <Compile Include="Pi.py" />
     <Compile Include="Sabertooth.py" />
     <Compile Include="Utility.py">
