@@ -230,15 +230,15 @@ class HeadlessXboxController(object):
         if event.button==3: #Y Raises the arm
             self.commandPipe.tellPi('arm',(self.arms.currentMaxSpeed))
         if event.button==5: #RB Increase max speed of self.wheels or arms
-            if self.arms.distToOrigin()>self.JOYSTICK_ZERO_EQUIVALENT: self.arms.speedUp() #if the right joytick if off center more than the left one, change arm speed. Change wheel speed otherwise
-            else: self.wheels.speedUp()
+            if self.arms.distToOrigin()>self.JOYSTICK_ZERO_EQUIVALENT: print("Arms' Speed: "+str(self.arms.speedUp()+1)) #if the right joytick if off center more than the left one, change arm speed. Change wheel speed otherwise
+            else:  print("Wheels' Speed: "+str(self.wheels.speedUp()+1))
         if event.button==4: #LB decrease max speed of wheel or arms
-            if self.arms.distToOrigin()>self.JOYSTICK_ZERO_EQUIVALENT: self.arms.slowDown() #if the right joytick if off center more than the left one, change arm speed. Change wheel speed otherwise
-            else: self.wheels.slowDown()
+            if self.arms.distToOrigin()>self.JOYSTICK_ZERO_EQUIVALENT: print("Arms' Speed: "+str(self.arms.slowDown()+1)) #if the right joytick if off center more than the left one, change arm speed. Change wheel speed otherwise
+            else: print("Wheels' Speed: "+str(self.wheels.slowDown()+1))
         if event.button==6:
-            self.arms.slowDown() # decrease max speed of arms
+            print("Arms' Speed: "+str(self.arms.slowDown()+1)) # decrease max speed of arms
         if event.button==7:
-            self.arms.speedUp() # increase max speed of arms
+            print("Arms' Speed: "+str(self.arms.speedUp()+1))
         if event.button==2: #Increase max speed of self.wheels or arms (Change later depending on the feel of the robot)
             self.commandPipe.tellPi('hand',-(self.arms.currentMaxSpeed))
         if event.button==1: #Increase max speed of self.wheels or arms
