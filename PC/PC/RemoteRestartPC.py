@@ -14,6 +14,7 @@
 from HeadlessCommunication import *
 from Utility import *
 import sys
+import time
 
 '''There are also some other custom classes whose functions are used by this script, all of them has to be placed in a same folder with this script:
 Xbox360Controller: contains the Joystick and Driver class, which tracks joystick coordinate and return scaled motor speed.
@@ -31,17 +32,12 @@ def main():
         try:
             message=Message(4,6,6)
             commandPipe = HeadlessCommunication(host,commandPort,message)
-            while True:
-                print("Connecting to the remote restart pi at "+str(host)+":"+str(commandPort))
-                while True:
-                    if commandPipe.connected is False:
-                        commandPipe.connect()
-                    else:
-                        print("Connected to the robot at "+str(host)+":"+str(commandPort))
-                        commandPipe.tellPi('drive',0,0)#send a number 1 to restart the Pi.
-                        print("Success, program exited!")
-                        commandPipe.close()
-                        sys.exit()
+            print("RMC Remote Restart: Connecting to "+str(host)+":"+str(commandPort))
+            while not commandPipe.connected:
+                commandPipe.connect()
+            print("Success!")
+            time.sleep(2)
+            commandPipe.close()
         except (KeyboardInterrupt, SystemExit):
             print("Keyboard interupted")
             commandPipe.close()

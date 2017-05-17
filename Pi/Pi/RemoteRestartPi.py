@@ -31,14 +31,7 @@ def communication(port):
             s.listen(1)
             c, addr = s.accept()
             print("Connection from: "+ str(addr))
-            data = c.recv(1024)
-            while True:
-                data = c.recv(1024)
-                if not data: break
-                for i in range(0,len(data),numHexPerMessage):
-                    eachBlock=data[i:i+numHexPerMessage]
-                    message.setValues(eachBlock)
-                    run(message)
+            remoteRestart()
         except (KeyboardInterrupt, SystemExit):
                 print("Keyboard interupted")
                 c.close()
@@ -46,11 +39,8 @@ def communication(port):
         except:
             print("Socket comunication failed.")
             c.close()
-def run(message):
-    if message.getCommandInt()==1:
-        print("The robot has been rebooted!")
-    else:
-        print("In valid command, the only valid command is 1.")
+def remoteRestart():
+    print("The robot has been rebooted!")
     
 if __name__ == "__main__":
         main()
