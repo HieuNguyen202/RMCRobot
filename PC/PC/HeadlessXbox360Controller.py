@@ -118,7 +118,7 @@ class Joystick:
                     speed=(speed[0],0)
                #print("forward straight", speed)
                return speed
-class JoystickDriver(Joystick):
+class JoystickDriver(Joystick):n
     'A child of Joystick, Handle max speeds.'
     def __init__(self,maxSpeeds,initalSpeedIndex, minSpeed=None):
         super().__init__()
@@ -233,7 +233,7 @@ class HeadlessXboxController(object):
         if (event.axis==0 or event.axis==1 or event.axis==2):
             speeds=self.wheels.getSpeed() #Get valid Sabertooth speed based on XY coordinate of the joysticks. Ex: (-127,100)
             self.commandPipe.tellPi('drive',speeds[0],speeds[1])
-            print(speeds)
+            #print(speeds)
         elif(event.axis==3 or event.axis==4):
             speeds=self.arms.getSpeed() #Get valid Sabertooth speed based on XY coordinate of the joysticks. Ex: (-127,100)
             #self.commandPipe.tellPi('dig',speeds[0],speeds[1]) #uncomment this is use variable dig (only when actuator speeds are synced)
