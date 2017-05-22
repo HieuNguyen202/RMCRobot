@@ -12,6 +12,7 @@ void PotTestSetup() {
 
 }
 void PotTestLoop() {
+	delay(100);
 	Serial.println(rightArmPot.toStringLite());
 }
 

@@ -29,11 +29,11 @@ serialPort = '/dev/serial0'
 baudRate = 9600
 #speedFactors is only for the right motor (the slower one)
 speedFactors={-81:0.972,
-              -102:0.97,
-              -122:0.975,
+              -102:0.950,
+              -122:0.955,
               81:0.970,
-              102:0.975,
-              122:0.997,
+              102:0.95,
+              122:0.955,
               }
 sabertoothAddress={0: 128,
                         1: 129,

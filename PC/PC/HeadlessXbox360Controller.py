@@ -14,7 +14,7 @@ class Joystick:
    SPINNING_ANGLE=20 #angle in degrees from the positive and negative x axis in which spinning operation is executed
    CURVE_FACTOR=0.0 #lowest percentage of fullspeed, which determine the speed of the slower motor when the robot is turning. 1 will have two motor running at the same speed.
    EQUAL_SPEED_ANGLE = 10 #angle in degrees from the positive and negative y axis in which the speed of 2 motors are always the same
-   ZERO_EQUIVALANCE=0.3 #less than this mean zero
+   ZERO_EQUIVALANCE=0.2 #less than this mean zero
 
    def __init__(self,SPINNING_ANGLE=None,CURVE_FACTOR=None,EQUAL_SPEED_ANGLE=None,ZERO_EQUIVALANCE=None):
       self.x = 0.0
@@ -60,6 +60,7 @@ class Joystick:
    def getSpeed(self,fullSpeed,mode):# TA DEVIDE BY 0: mode = 0 for wheels; mode=1 for actuators
        speedFactor=self.distToOrigin() #The perentage of the motor speed with respect to max speed, measured by distance to origin of the joystick coordinate
        if speedFactor<self.ZERO_EQUIVALANCE: speedFactor=0 # if the joy stick is 0.3 away from its center, consider it as the center
+       else: speedFactor=self.map(speedFactor,self.ZERO_EQUIVALANCE, 1.0, 0, 1.0)
        speed=(0,0)
        angle = math.degrees(math.atan2(self.y,self.x)) #angle in degrees from the possitive x axis, angle is possitive at I and II quadrants, negative at III and IV quadrants
        if math.fabs(angle)<self.SPINNING_ANGLE:#spin right region
@@ -93,8 +94,7 @@ class Joystick:
                if mode!=0:
                     speed=(speed[0],0)
                #print("Backward straight", speed)
-               return speed
-               
+               return speed     
        else: #forward reason
            if angle<=90-self.EQUAL_SPEED_ANGLE:
                curveFactor=self.map(angle,self.SPINNING_ANGLE,90-self.EQUAL_SPEED_ANGLE,self.CURVE_FACTOR,1)
@@ -120,10 +120,13 @@ class Joystick:
                return speed
 class JoystickDriver(Joystick):
     'A child of Joystick, Handle max speeds.'
-    def __init__(self,maxSpeeds,initalSpeedIndex):
+    def __init__(self,maxSpeeds,initalSpeedIndex, minSpeed=None):
         super().__init__()
         self.maxSpeeds=maxSpeeds
         self.currentMaxSpeed=self.maxSpeeds[initalSpeedIndex]
+        if minSpeed==None: self.minSpeed=1
+        else: self.minSpeed=minSpeed
+        
     def speedUp(self): # Switch to speed of the next index in maxSpeeds, if is last index, currentMaxSpeed stay the same.
         i=self.maxSpeeds.index(self.currentMaxSpeed)
         if i<len(self.maxSpeeds)-1:
@@ -137,15 +140,23 @@ class JoystickDriver(Joystick):
             self.currentMaxSpeed=self.maxSpeeds[i]
         return i
     def getSpeed(self,mode): # return speeds of left and right motors based on stick coordinate.
-        return super().getSpeed(self.currentMaxSpeed,mode)
+        speeds = super().getSpeed(self.currentMaxSpeed,mode)
+        if speeds[0]==0 and speeds[1]==0:
+            return speeds
+        else:
+            lSpeed=self.map(math.fabs(speeds[0]), 1, self.currentMaxSpeed, self.minSpeed, self.currentMaxSpeed)
+            if speeds[0]<0: lSpeed=-lSpeed
+            rSpeed=self.map(math.fabs(speeds[1]), 1, self.currentMaxSpeed, self.minSpeed, self.currentMaxSpeed)
+            if speeds[1]<0: rSpeed=-rSpeed
+            return (lSpeed,rSpeed)
 class WheelDriver(JoystickDriver):
-    def __init__(self, maxSpeeds, initalSpeedIndex):
-        super().__init__(maxSpeeds, initalSpeedIndex)
+    def __init__(self, maxSpeeds, initalSpeedIndex, minSpeed=None):
+        super().__init__(maxSpeeds, initalSpeedIndex, minSpeed)
     def getSpeed(self):
         return super().getSpeed(0)
 class ActuatorDriver(JoystickDriver):
-    def __init__(self, maxSpeeds, initalSpeedIndex,speedRatio):
-        super().__init__(maxSpeeds, initalSpeedIndex)
+    def __init__(self, maxSpeeds, initalSpeedIndex,speedRatio, minSpeed=None):
+        super().__init__(maxSpeeds, initalSpeedIndex, minSpeed)
         self.speedRatio=speedRatio
     def getSpeed(self):
         speeds=super().getSpeed(1)
@@ -157,10 +168,13 @@ class HeadlessXboxController(object):
         self.connected=False
         self.clock = pygame.time.Clock() # control the xbox controller's frequency of updating button and joystick events.
         self.joysticks = []
-        self.wheels=WheelDriver((50,100,127),1) #a class to handle joystick coordinate and convert it to motor speeds: parametter: (maxSpeeds, indexOfInitialMaxSpeed)
-        self.arms=ActuatorDriver((84,105,125),1,0.5) #a class to handle joystick coordinate and convert it to motor speeds: parametter: (maxSpeeds, indexOfInitialMaxSpeed)
-        self.arms.SPINNING_ANGLE=25
-        self.arms.EQUAL_SPEED_ANGLE=25
+        self.wheelMinSpeed=1
+        self.actMinSpeed=1
+        self.actRatio=1 #ratio hand/arm power100
+        self.wheels=WheelDriver((50,100,127),1,self.wheelMinSpeed) #a class to handle joystick coordinate and convert it to motor speeds: parametter: (maxSpeeds, indexOfInitialMaxSpeed)
+        self.arms=ActuatorDriver((84,105,125),1,self.actRatio, self.actMinSpeed) #a class to handle joystick coordinate and convert it to motor speeds: parametter: (maxSpeeds, indexOfInitialMaxSpeed)
+        self.ARM_SPINNING_ANGLE=25
+        self.ARM_EQUAL_SPEED_ANGLE=25
         self.triggerAbs=0 # Moving forward and backward using top triggers has higher priority than the using the stick. This is to ensure the sticks won't take over control if top triggers are being used.
         self.AXIS_2_ZERO_EQUIVALENT=0.1 # if top triggers' value is less than this number, it's considered zero.
         self.JOYSTICK_ZERO_EQUIVALENT=0.2
@@ -168,6 +182,19 @@ class HeadlessXboxController(object):
         self.clockTick=40
         #self.clock.tick(self.clockTick) # 25 is good, how frequently the pygame module updates xbox events. Ex: 25 means 25 times/sec
            
+    def setWheelMinSpeed(self, newMinSpeed):
+        if newMinSpeed>0 and newMinSpeed<=127:
+            self.wheelMinSpeed=newMinSpeed
+            speedInterval=int((127-self.wheelMinSpeed)/4)
+            self.wheels=WheelDriver((self.wheelMinSpeed+speedInterval,self.wheelMinSpeed+speedInterval*2,127),1,self.wheelMinSpeed) #a class to handle joystick coordinate and convert it to motor speeds: parametter: (maxSpeeds, indexOfInitialMaxSpeed)
+
+    def setActuatorMinSpeed(self, newMinSpeed):
+        if newMinSpeed>0 and newMinSpeed<=127:
+            self.actMinSpeed=newMinSpeed
+            speedInterval=int((127-self.actMinSpeed)/4)
+            self.arms=ActuatorDriver((self.actMinSpeed+speedInterval,self.actMinSpeed+speedInterval*2,127),1, self.actRatio,self.actMinSpeed) #a class to handle joystick coordinate and convert it to motor speeds: parametter: (maxSpeeds, indexOfInitialMaxSpeed)
+            self.arms.SPINNING_ANGLE=self.ARM_SPINNING_ANGLE
+            self.arms.EQUAL_SPEED_ANGLE=self.ARM_EQUAL_SPEED_ANGLE
     def listen(self):
         'Listen to xbox key events and call the corresponding functions if an button is pressed or a joystick is moved.'
         for event in pygame.event.get():
@@ -206,6 +233,7 @@ class HeadlessXboxController(object):
         if (event.axis==0 or event.axis==1 or event.axis==2):
             speeds=self.wheels.getSpeed() #Get valid Sabertooth speed based on XY coordinate of the joysticks. Ex: (-127,100)
             self.commandPipe.tellPi('drive',speeds[0],speeds[1])
+            print(speeds)
         elif(event.axis==3 or event.axis==4):
             speeds=self.arms.getSpeed() #Get valid Sabertooth speed based on XY coordinate of the joysticks. Ex: (-127,100)
             #self.commandPipe.tellPi('dig',speeds[0],speeds[1]) #uncomment this is use variable dig (only when actuator speeds are synced)

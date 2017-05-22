@@ -6,7 +6,7 @@ import time
 '''This program will try to connect to a remote restart Pi in the robot. Once the connectin is established, the remote restart pi in the robot will
 restart the main pi of the robot. '''
  #Variables
-host="192.168.2.205"
+host="192.168.2.202"
 commandPort = 12346    # Port that's been opened in the Pi
 
 def main():

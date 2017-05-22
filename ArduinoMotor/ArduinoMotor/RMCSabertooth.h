@@ -14,6 +14,7 @@
 #define position_mode 2
 #define angle_mode 3
 #define height_mode 4
+#define raw_mode 5
 
 class RMCSabertoothClass
 {

@@ -7,13 +7,15 @@
 void setup() {
 	Serial.begin(9600);
 	Serial.println("Motor test begin!");
-	PotTestSetup();
+	RMCArmSabertoothTestSetup();
+	//PotTestSetup();
 
 	//RMCArmSabertoothTestSetup();
 }
 void loop() {
-	PotTestLoop();
-	delay(10);
+	RMCArmSabertoothTestLoop();
+	//PotTestLoop();
+	//delay(10);
 	//RMCArmSabertoothTestLoop();
 }
 

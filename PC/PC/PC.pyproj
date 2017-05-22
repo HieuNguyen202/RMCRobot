@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>939c75fe-9f28-41ef-b7bc-b93f664ffa6f</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>RemoteRestartPC.py</StartupFile>
+    <StartupFile>PConPi.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>

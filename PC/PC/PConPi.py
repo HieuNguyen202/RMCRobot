@@ -33,6 +33,7 @@ def main():
                 message=Message(4,6,6)
                 commandPipe = HeadlessCommunication(host,commandPort,message)
                 controller=HeadlessXboxController(commandPipe)
+                controller.setWheelMinSpeed(20)
                 print("Connecting to a Xbox controller...")
                 while True:
                     if controller.connected is False:

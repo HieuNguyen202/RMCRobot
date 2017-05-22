@@ -27,6 +27,7 @@ class RMCArmSabertoothClass :public RMCSabertoothClass
 	float targetAngle; //arm and hand
 	int targetHeight; //arm and hand
 	int updatePeriod;
+	int targetRaw;
 	int DEFAULT_UPDATE_PERIOD = 20;
 	int MAX_HEIGHT; //in centimeter
 	int MIN_HEIGHT; //in centimeter
@@ -41,6 +42,7 @@ class RMCArmSabertoothClass :public RMCSabertoothClass
 	void setHeight(int targetHeight);
 	void setAngle(float targetAngle);
 	void setPower(int targetPower);
+	void setRaw(int raw);
 	String toString();
 	void Update();
 

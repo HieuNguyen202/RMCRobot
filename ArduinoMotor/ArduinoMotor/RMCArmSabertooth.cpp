@@ -86,6 +86,19 @@ void RMCArmSabertoothClass::setPower(int power)
 	setMode(power_mode);
 }
 /*!
+Sets power of the arm’s actuators, then change mode to raw mode.
+\param raw The raw value of the arm. Pos pot.
+\implementation Update power. Set mode to raw mode. PID to sync two actuators.
+*/
+void RMCArmSabertoothClass::setRaw(int targetRaw)
+{
+	if (targetRaw >= 0 && targetRaw <= 1023)
+	{
+		this->targetRaw = targetRaw;
+		setMode(raw_mode);
+	}
+}
+/*!
 Sets left and right actuator power to achieve either power, position, height and angle targets.
 \implementation Switch on mode. Need to sync the motor.
 Case power: check timer, drive with lPower and rPower
@@ -117,9 +130,13 @@ void RMCArmSabertoothClass::Update()
 			case position_mode:
 				targetPotVal = rightArmPot.pos2Raw(targetPos);
 				break;
+			case raw_mode:
+				targetPotVal = targetRaw;
+				break;
 			}
 			int tempPower = posPID.getPower(rightArmPot.getValue(), targetPotVal);
-			sabertooth->motor(1, tempPower);
+			Serial.println("Power: "+String(tempPower)+" Currebt Raw: " + String(rightArmPot.getValue()) + " target Raw: " + String(targetPotVal));
+			//sabertooth->motor(1, tempPower);
 			sabertooth->motor(2, tempPower);//adjusted power
 		}
 		break;

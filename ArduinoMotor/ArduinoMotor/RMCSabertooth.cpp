@@ -38,7 +38,7 @@ Sets driving mode to either power, speed, position, angle, or height.
 \implementation Make sure mode is either 0, 1, 2, or 4. Assign new mode to mode. Default is power mode (0).
 */
 void RMCSabertoothClass::setMode(byte mode) {
-	if (mode>=0 && mode <=4)
+	if (mode>=0)
 	{
 		this->mode = mode;
 	}
