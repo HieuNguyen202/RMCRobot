@@ -118,7 +118,7 @@ class Joystick:
                     speed=(speed[0],0)
                #print("forward straight", speed)
                return speed
-class JoystickDriver(Joystick):n
+class JoystickDriver(Joystick):
     'A child of Joystick, Handle max speeds.'
     def __init__(self,maxSpeeds,initalSpeedIndex, minSpeed=None):
         super().__init__()

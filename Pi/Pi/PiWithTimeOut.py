@@ -72,13 +72,15 @@ def communication(port):
     s = socket.socket()
     s.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1)# add this to reuse the port
     s.bind((host,port))
+    numHexPerMessage=int(message.getLength()/4)
     while True:
         try:
-            numHexPerMessage=int(message.getLength()/4)
+            numTimeout=0
             print (str(host)+":"+str(port)+" is listening...")
+            s.settimeout(20)
             s.listen(1)
             c, addr = s.accept()
-            c.settimeout(7)
+            c.settimeout(10)
             print("Connection from: "+ str(addr))
             while True:
                 try:
@@ -89,9 +91,18 @@ def communication(port):
                         message.setValues(eachBlock)
                         run(message)
                 except (socket.timeout):
+                    print('Receiver timeout!')
                     wheels.stop()
                     arms.stop()
                     hands.stop()
+                    numTimeout=numTimeout+1
+                    if numTimeout>2:
+                        c.close()
+                        break
+        except (socket.timeout):
+                print("Listener timeout!")
+                print('Updating the new IP address!')
+                host =getLocalIP()
         except (KeyboardInterrupt, SystemExit):
                 print("Keyboard interupted")
                 wheels.stop()
@@ -113,6 +124,7 @@ def run(message):
         wheels.stop()
         arms.stop()
     elif commanInt==1:#drive
+        print('drive')
         lSpeed=speedScale.scaleInt(data1Int)
         rSpeed=speedScale.scaleInt(data2Int)
         wheels.drive(lSpeed,rSpeed)
