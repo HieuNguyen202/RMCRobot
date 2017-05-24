@@ -23,14 +23,12 @@ class HeadlessCommunication(socket.socket):
     def connect(self):
         timer1=Timer()
         timer1.resetTimer()
-        while self.privateConnect()==False and timer1.timer()<30.0:pass #emmty while loop for 30 seconds 
+        self.privateConnect()
+        #while self.privateConnect()==False and timer1.timer()<30.0:pass #emmty while loop for 30 seconds 
         return self.connected
     def privateConnect(self):# to be called by self.connect()
         try:
-            
-            super().settimeout(1)
             super().connect((self.host, self.port))
-            #super().settimeout(None)
             self.connected=True
         except:
             self.connected=False

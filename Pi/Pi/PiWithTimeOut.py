@@ -77,7 +77,7 @@ def communication(port):
         try:
             numTimeout=0
             print (str(host)+":"+str(port)+" is listening...")
-            s.settimeout(20)
+            s.settimeout(30)
             s.listen(1)
             c, addr = s.accept()
             c.settimeout(10)
@@ -85,18 +85,19 @@ def communication(port):
             while True:
                 try:
                     data = c.recv(1024)
+                    numTimeout=0
                     if not data: break
                     for i in range(0,len(data),numHexPerMessage):
                         eachBlock=data[i:i+numHexPerMessage]
                         message.setValues(eachBlock)
                         run(message)
                 except (socket.timeout):
-                    print('Receiver timeout!')
+                    print('Receiver timeout! '+str(numTimeout))
                     wheels.stop()
                     arms.stop()
                     hands.stop()
                     numTimeout=numTimeout+1
-                    if numTimeout>2:
+                    if numTimeout>9:
                         c.close()
                         break
         except (socket.timeout):
@@ -124,7 +125,6 @@ def run(message):
         wheels.stop()
         arms.stop()
     elif commanInt==1:#drive
-        print('drive')
         lSpeed=speedScale.scaleInt(data1Int)
         rSpeed=speedScale.scaleInt(data2Int)
         wheels.drive(lSpeed,rSpeed)

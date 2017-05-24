@@ -35,8 +35,8 @@ class Joystick:
            self.y=-1.0
 
    def setXY(self, x,y):
-       setX(x)
-       setY(y)
+       self.setX(x)
+       self.setY(y)
 
    def getX(self):
        return self.x
@@ -118,6 +118,12 @@ class Joystick:
                     speed=(speed[0],0)
                #print("forward straight", speed)
                return speed
+   def getSpeedTank(self,fullSpeed):# TA DEVIDE BY 0: mode = 0 for wheels; mode=1 for actuators
+       if math.fabs(self.x)<self.ZERO_EQUIVALANCE: x=0
+       else: x=self.x
+       if math.fabs(self.y)<self.ZERO_EQUIVALANCE: y=0
+       else: y=self.y
+       return (fullSpeed*x,fullSpeed*y)
 class JoystickDriver(Joystick):
     'A child of Joystick, Handle max speeds.'
     def __init__(self,maxSpeeds,initalSpeedIndex, minSpeed=None):
@@ -149,6 +155,16 @@ class JoystickDriver(Joystick):
             rSpeed=self.map(math.fabs(speeds[1]), 1, self.currentMaxSpeed, self.minSpeed, self.currentMaxSpeed)
             if speeds[1]<0: rSpeed=-rSpeed
             return (lSpeed,rSpeed)
+    def getSpeedTank(self,mode): # return speeds of left and right motors based on stick coordinate.
+        speeds = super().getSpeedTank(self.currentMaxSpeed)
+        if speeds[0]==0 and speeds[1]==0:
+            return speeds
+        else:
+            lSpeed=self.map(math.fabs(speeds[0]), 1, self.currentMaxSpeed, self.minSpeed, self.currentMaxSpeed)
+            if speeds[0]<0: lSpeed=-lSpeed
+            rSpeed=self.map(math.fabs(speeds[1]), 1, self.currentMaxSpeed, self.minSpeed, self.currentMaxSpeed)
+            if speeds[1]<0: rSpeed=-rSpeed
+            return (lSpeed,rSpeed)
 class WheelDriver(JoystickDriver):
     def __init__(self, maxSpeeds, initalSpeedIndex, minSpeed=None):
         super().__init__(maxSpeeds, initalSpeedIndex, minSpeed)
@@ -171,7 +187,7 @@ class HeadlessXboxController(object):
         self.wheelMinSpeed=1
         self.actMinSpeed=1
         self.actRatio=1 #ratio hand/arm power100
-        self.wheels=WheelDriver((50,100,127),1,self.wheelMinSpeed) #a class to handle joystick coordinate and convert it to motor speeds: parametter: (maxSpeeds, indexOfInitialMaxSpeed)
+        self.wheels=WheelDriver((50,80,100),1,self.wheelMinSpeed) #a class to handle joystick coordinate and convert it to motor speeds: parametter: (maxSpeeds, indexOfInitialMaxSpeed)
         self.arms=ActuatorDriver((84,105,125),1,self.actRatio, self.actMinSpeed) #a class to handle joystick coordinate and convert it to motor speeds: parametter: (maxSpeeds, indexOfInitialMaxSpeed)
         self.ARM_SPINNING_ANGLE=25
         self.ARM_EQUAL_SPEED_ANGLE=25
@@ -206,7 +222,7 @@ class HeadlessXboxController(object):
             elif event.type == KEYUP: keyUp(event)
             elif event.type == MOUSEBUTTONDOWN: self.mouseButtonDown(event)
             elif event.type == MOUSEBUTTONUP: self.mouseButtonUp(event)
-            elif event.type == JOYAXISMOTION: self.joyAxisMotion(event)
+            elif event.type == JOYAXISMOTION: self.joyAxisMotionTank(event)
             elif event.type == JOYBUTTONDOWN: self.joyButtonDown(event)           
             elif event.type == JOYBUTTONUP: self.joyButtonUp(event)
             elif event.type == JOYHATMOTION: self.joyHatMotion(event)           
@@ -237,6 +253,26 @@ class HeadlessXboxController(object):
         elif(event.axis==3 or event.axis==4):
             speeds=self.arms.getSpeed() #Get valid Sabertooth speed based on XY coordinate of the joysticks. Ex: (-127,100)
             #self.commandPipe.tellPi('dig',speeds[0],speeds[1]) #uncomment this is use variable dig (only when actuator speeds are synced)
+    def joyAxisMotionTank(self,event):
+        'This function update X and Y coordinate of the joysticks, converts it into speeds (from -127 to 127), send the command to the Pi.'
+        self.clock.tick(self.clockTick)
+        if (event.axis==0): #left stick, horizontal
+            pass
+        elif (event.axis==1): #left stick, vertical
+            if self.triggerAbs<self.AXIS_2_ZERO_EQUIVALENT: #if using the top triggers, don't update Y
+                self.wheels.setX(-event.value)
+        elif (event.axis==4):#right stick, vertical.
+            pass
+        elif (event.axis==3):#right stick, horizontal
+            self.wheels.setY(-event.value)
+        elif (event.axis==2):
+            self.wheels.setXY(-event.value, -event.value)#Update the value of top triggers to Y, right trigger for going forward, left trigger for going backward.
+            self.triggerAbs=math.fabs(event.value) #Update this so next time, it knows whether top triggers are being used.
+        else:pass
+        if (event.axis==1 or event.axis==2 or event.axis==3):
+            speeds=self.wheels.getSpeedTank(0) #Get valid Sabertooth speed based on XY coordinate of the joysticks. Ex: (-127,100)
+            self.commandPipe.tellPi('drive',speeds[0],speeds[1])
+            #print(speeds)
     def keyDown(self,event):
         'Keyboard events, this is how you hack ones password'
         print ("Keydown,",event.key)

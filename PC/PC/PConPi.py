@@ -22,8 +22,7 @@ Timer: Just a simple timer like in ECE 100.
 Parser: used to construct a command to send to a Pi. It's also used to in a Pi to parse a command back to its elements.
  '''
  #Variables
-#host="192.168.2.201"
-host="192.168.2.204"
+host="192.168.2.201"
 #i = 0 # counter for the index of the hostLst list. Defaulted to 0.
 commandPort = 12345    # Port that's been opened in the Pi
 
@@ -34,21 +33,14 @@ def main():
                 message=Message(4,6,6)
                 commandPipe = HeadlessCommunication(host,commandPort,message)
                 controller=HeadlessXboxController(commandPipe)
-                controller.setWheelMinSpeed(20)
+                controller.setWheelMinSpeed(30)
                 print("Connecting to a Xbox controller...")
-                while True:
-                    if controller.connected is False:
-                        controller.initialize()
-                    else:
-                        print("Xbox controller connected.")
-                        print("Connecting to the robot at "+str(host)+":"+str(commandPort))
-                        while True:
-                            if commandPipe.connected is False:
-                                commandPipe.connect()
-                            else:
-                                print("Connected to the robot at "+str(host)+":"+str(commandPort))
-                                while True:# consider removing this
-                                    controller.listen()
+                while controller.connected is False: controller.initialize()
+                print("Xbox controller connected.")
+                print("Connecting to the robot at "+str(host)+":"+str(commandPort))
+                while commandPipe.connect() is False: time.sleep(1)
+                print("Connected to the robot at "+str(host)+":"+str(commandPort))
+                while True: controller.listen()
             except (KeyboardInterrupt, SystemExit):
                 print("Keyboard interupted")
                 raise
