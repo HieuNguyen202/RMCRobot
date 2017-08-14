@@ -157,13 +157,16 @@ class JoystickDriver(Joystick):
             return (lSpeed,rSpeed)
     def getSpeedTank(self,mode): # return speeds of left and right motors based on stick coordinate.
         speeds = super().getSpeedTank(self.currentMaxSpeed)
+        #print(speeds)
         if speeds[0]==0 and speeds[1]==0:
             return speeds
         else:
-            lSpeed=self.map(math.fabs(speeds[0]), 1, self.currentMaxSpeed, self.minSpeed, self.currentMaxSpeed)
+            lSpeed=self.map(math.fabs(speeds[0]), 0, self.currentMaxSpeed, self.minSpeed, self.currentMaxSpeed)
+            rSpeed=self.map(math.fabs(speeds[1]), 0, self.currentMaxSpeed, self.minSpeed, self.currentMaxSpeed)
             if speeds[0]<0: lSpeed=-lSpeed
-            rSpeed=self.map(math.fabs(speeds[1]), 1, self.currentMaxSpeed, self.minSpeed, self.currentMaxSpeed)
             if speeds[1]<0: rSpeed=-rSpeed
+            if lSpeed==self.minSpeed and rSpeed<0:lSpeed=-lSpeed
+            if rSpeed==self.minSpeed and lSpeed<0:rSpeed=-rSpeed
             return (lSpeed,rSpeed)
 class WheelDriver(JoystickDriver):
     def __init__(self, maxSpeeds, initalSpeedIndex, minSpeed=None):
@@ -181,13 +184,14 @@ class HeadlessXboxController(object):
     'a class to handle joystick coordinate and convert it to motor speeds: parametter: (maxSpeeds, indexOfInitialMaxSpeed)'
     def __init__(self,commandPipe):
         pygame.init()
+        pygame.display.set_mode()
         self.connected=False
         self.clock = pygame.time.Clock() # control the xbox controller's frequency of updating button and joystick events.
         self.joysticks = []
         self.wheelMinSpeed=1
         self.actMinSpeed=1
         self.actRatio=1 #ratio hand/arm power100
-        self.wheels=WheelDriver((50,80,100),1,self.wheelMinSpeed) #a class to handle joystick coordinate and convert it to motor speeds: parametter: (maxSpeeds, indexOfInitialMaxSpeed)
+        self.wheels=WheelDriver((50,90,127),1,self.wheelMinSpeed) #a class to handle joystick coordinate and convert it to motor speeds: parametter: (maxSpeeds, indexOfInitialMaxSpeed)
         self.arms=ActuatorDriver((84,105,125),1,self.actRatio, self.actMinSpeed) #a class to handle joystick coordinate and convert it to motor speeds: parametter: (maxSpeeds, indexOfInitialMaxSpeed)
         self.ARM_SPINNING_ANGLE=25
         self.ARM_EQUAL_SPEED_ANGLE=25
@@ -216,10 +220,10 @@ class HeadlessXboxController(object):
         for event in pygame.event.get():
             if event.type==QUIT: self.quit(event)
             elif event.type == KEYDOWN and event.key == K_ESCAPE: self.quit(event)
-            elif event.type == KEYDOWN: keyDownevent(event)
+            elif event.type == KEYDOWN: self.keyDown(event)
                         #elif event.type == MOUSEMOTION:
                 #       print "Mouse movement detected."
-            elif event.type == KEYUP: keyUp(event)
+            elif event.type == KEYUP: self.keyUp(event)
             elif event.type == MOUSEBUTTONDOWN: self.mouseButtonDown(event)
             elif event.type == MOUSEBUTTONUP: self.mouseButtonUp(event)
             elif event.type == JOYAXISMOTION: self.joyAxisMotionTank(event)
@@ -259,7 +263,7 @@ class HeadlessXboxController(object):
         if (event.axis==0): #left stick, horizontal
             pass
         elif (event.axis==1): #left stick, vertical
-            if self.triggerAbs<self.AXIS_2_ZERO_EQUIVALENT: #if using the top triggers, don't update Y
+            #if self.triggerAbs<self.AXIS_2_ZERO_EQUIVALENT: #if using the top triggers, don't update Y
                 self.wheels.setX(-event.value)
         elif (event.axis==4):#right stick, vertical.
             pass
@@ -274,11 +278,22 @@ class HeadlessXboxController(object):
             self.commandPipe.tellPi('drive',speeds[0],speeds[1])
             #print(speeds)
     def keyDown(self,event):
+
         'Keyboard events, this is how you hack ones password'
-        print ("Keydown,",event.key)
+        #print ("Keydown,",event.key)
+        if event.key==119 or event.key==264 or event.key==273: self.commandPipe.tellPi('arm',(self.arms.currentMaxSpeed)) #w
+        elif event.key==115 or event.key==261 or event.key==274: self.commandPipe.tellPi('arm',-(self.arms.currentMaxSpeed)) #s
+        elif event.key==97 or event.key==260 or event.key==276: self.commandPipe.tellPi('hand',-(self.arms.currentMaxSpeed)) #a
+        elif event.key==100 or event.key==262 or event.key==275: self.commandPipe.tellPi('hand',(self.arms.currentMaxSpeed)) #d
+        else: pass
     def keyUp(self,event):
         'Keyboard events'
-        print ("Keyup,",event.key)
+        #print ("Keyup,",event.key)
+        if event.key==119 or event.key==264 or event.key==273 : self.commandPipe.tellPi('arm',0) #w
+        elif event.key==115 or event.key==261 or event.key==274: self.commandPipe.tellPi('arm',0) #s
+        elif event.key==97 or event.key==260 or event.key==276: self.commandPipe.tellPi('hand',0) #a
+        elif event.key==100 or event.key==262 or event.key==275: self.commandPipe.tellPi('hand',0) #d
+        else: pass
     def mouseButtonDown(self,event):
         'Mouse button'
         #print ("Mouse button",event.button,"down at",pygame.mouse.get_pos())
